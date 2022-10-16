@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "migrate": "ts-node src/database/migrate.ts",
+    "seed": "ts-node src/database/seed.ts"
   },
   "author": "",
   "license": "ISC",

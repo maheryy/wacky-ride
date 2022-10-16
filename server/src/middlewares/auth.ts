@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { checkToken } from "../lib/jwt";
+import User from "../models/user";
 
 export const authentication = async (
   req: Request,
@@ -15,11 +16,12 @@ export const authentication = async (
     return res.sendStatus(401);
   }
   const user = await checkToken(token);
-  if (user) {
-    //   req.user = await User.findByPk(user.id);
-  } else {
+
+  if (!user) {
     return res.sendStatus(401);
   }
+
+  req.user = await User.findByPk(user.id);
   next();
 };
 

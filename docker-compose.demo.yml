@@ -1,0 +1,44 @@
+version: "3.6"
+
+services:
+  server:
+    image: node:alpine
+    container_name: wacky-ride-server
+    working_dir: /usr/local/server
+    command: npm run start
+    ports:
+      - "8080:3000"
+    volumes:
+      - ./server:/usr/local/server
+    environment:
+      - PORT=3000
+      - DB_URI=postgres://root:password@db/app
+      - JWT_SECRET=mySecret
+    depends_on:
+      - db
+
+  client:
+    image: caddy:latest
+    container_name: wacky-ride-client
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./.docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./client/dist:/srv
+
+  db:
+    image: postgres:alpine
+    container_name: wacky-ride-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - wacky-ride-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=app
+
+volumes:
+  wacky-ride-data: {}

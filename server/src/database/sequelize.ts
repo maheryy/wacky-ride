@@ -1,14 +1,16 @@
-import { Dialect, Sequelize } from "sequelize";
+import { Sequelize } from "sequelize";
 
-const dbName = process.env.DB_NAME as string;
-const dbUser = process.env.DB_USER as string;
-const dbHost = process.env.DB_HOST as string;
-const dbDriver = process.env.DB_DRIVER as Dialect;
-const dbPassword = process.env.DB_PASSWORD as string;
-
-const db: Sequelize = new Sequelize(dbName, dbUser, dbPassword, {
-  host: dbHost,
-  dialect: dbDriver,
+const sequelize: Sequelize = new Sequelize(process.env.DB_URI as string, {
+  logging: false,
 });
 
-export default db;
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("[database]: Connection has been established successfully.");
+  } catch (error) {
+    console.error("[database]: Unable to connect to the database:", error);
+  }
+})();
+
+export default sequelize;
