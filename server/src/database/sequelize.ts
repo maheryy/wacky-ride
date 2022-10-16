@@ -1,4 +1,5 @@
 import { Sequelize } from "sequelize";
+import User from "../models/user";
 
 const sequelize: Sequelize = new Sequelize(process.env.DB_URI as string, {
   logging: false,
@@ -12,5 +13,9 @@ const sequelize: Sequelize = new Sequelize(process.env.DB_URI as string, {
     console.error("[database]: Unable to connect to the database:", error);
   }
 })();
+
+export const db = {
+  User: User(sequelize),
+};
 
 export default sequelize;

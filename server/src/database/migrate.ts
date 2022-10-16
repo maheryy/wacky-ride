@@ -1,29 +1,14 @@
 import { config } from "dotenv";
-import path from "path";
-import fs from "fs";
 config();
-import sequelize from "./sequelize";
+import sequelize, { db } from "./sequelize";
 
 (async () => {
   try {
     await sequelize.authenticate();
 
-    const modelsDirectory: string = path.join(__dirname, "..", "models");
-    const modules = await Promise.all(
-      fs
-        .readdirSync(modelsDirectory)
-        .filter((file) => file.indexOf(".") !== 0 && file.slice(-3) === ".ts")
-        .map((file) => import(path.join(modelsDirectory, file)))
-    );
-
-    const models = modules.reduce(
-      (db, mod) => ({ ...db, [mod.default.name]: mod.default }),
-      {}
-    );
-
-    modules.forEach((mod) => {
-      if (mod.hasOwnProperty("associate")) {
-        mod.associate(models);
+    Object.values(db).forEach((model) => {
+      if (model.associate) {
+        model.associate(db);
       }
     });
 

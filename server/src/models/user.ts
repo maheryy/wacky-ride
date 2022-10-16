@@ -1,57 +1,96 @@
-import { DataTypes, Model, ModelDefined, UpdateOptions } from "sequelize";
-import { IUser, IUserCreation } from "../types/user";
-import sequelize from "../database/sequelize";
+import {
+  Sequelize,
+  DataTypes,
+  Model,
+  Optional,
+  UpdateOptions,
+} from "sequelize";
 import bcrypt from "bcrypt";
+import { IUser } from "../types/user";
 
-const User: ModelDefined<IUser, IUserCreation> = sequelize.define("user", {
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      len: [3, 20],
-    },
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true,
-    },
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  status: {
-    type: DataTypes.SMALLINT,
-    allowNull: true,
-    defaultValue: 0,
-  },
-  isAdmin: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-    allowNull: false,
-  },
-});
+export type UserCreationAttributes = Optional<
+  IUser,
+  "id" | "isAdmin" | "status"
+>;
 
-User.beforeBulkCreate(async (users: Model<IUser, IUserCreation>[]) => {
-  const salt = await bcrypt.genSalt(10);
-  for (const user of users) {
+class UserModel extends Model<IUser, UserCreationAttributes> implements IUser {
+  declare id: number;
+  declare username: string;
+  declare email: string;
+  declare password: string;
+  declare status: number;
+  declare isAdmin: boolean;
+
+  declare readonly createdAt?: Date;
+  declare readonly updatedAt?: Date;
+
+  declare static associate?: (models: any) => void;
+  declare static seed?: () => Promise<any>;
+}
+
+const User = (sequelize: Sequelize): typeof UserModel => {
+  UserModel.init(
+    {
+      id: {
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: [3, 20],
+        },
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      status: {
+        type: DataTypes.SMALLINT,
+        allowNull: true,
+        defaultValue: 0,
+      },
+      isAdmin: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+    },
+    {
+      tableName: "user",
+      sequelize,
+    }
+  );
+
+  UserModel.beforeBulkCreate(async (users: UserModel[]) => {
+    const salt = await bcrypt.genSalt(10);
+    for (const user of users) {
+      user.set(
+        "password",
+        await bcrypt.hash(user.get("password") as string, salt)
+      );
+    }
+  });
+
+  UserModel.beforeCreate(async (user: UserModel) => {
+    const salt = await bcrypt.genSalt(10);
     user.set(
       "password",
       await bcrypt.hash(user.get("password") as string, salt)
     );
-  }
-});
+  });
 
-User.beforeCreate(async (user: Model<IUser, IUserCreation>) => {
-  const salt = await bcrypt.genSalt(10);
-  user.set("password", await bcrypt.hash(user.get("password") as string, salt));
-});
-
-User.beforeUpdate(
-  async (user: Model<IUser, IUserCreation>, options: UpdateOptions) => {
+  UserModel.beforeUpdate(async (user: UserModel, options: UpdateOptions) => {
     const salt = await bcrypt.genSalt(10);
     if (options.fields?.includes("password")) {
       user.set(
@@ -59,33 +98,28 @@ User.beforeUpdate(
         await bcrypt.hash(user.get("password") as string, salt)
       );
     }
-  }
-);
-
-export const associate = (models: any) => {
-  /*
-  User.hasMany(models.message, {
-    foreignKey: "messageId",
-    as: "messages",
   });
-  */
-};
 
-export const seed = async () => {
-  return User.bulkCreate([
-    {
-      username: "admin",
-      email: "admin@mail.com",
-      password: "admin",
-      isAdmin: true,
-    },
-    {
-      username: "user",
-      email: "user@mail.com",
-      password: "user",
-      isAdmin: false,
-    },
-  ]);
+  UserModel.associate = (models: any) => {};
+
+  UserModel.seed = async () => {
+    return UserModel.bulkCreate([
+      {
+        username: "admin",
+        email: "admin@mail.com",
+        password: "admin",
+        isAdmin: true,
+      },
+      {
+        username: "user",
+        email: "user@mail.com",
+        password: "user",
+        isAdmin: false,
+      },
+    ]);
+  };
+
+  return UserModel;
 };
 
 export default User;

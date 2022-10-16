@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
+import { db } from "../database/sequelize";
 import { checkToken } from "../lib/jwt";
-import User from "../models/user";
+
 
 export const authentication = async (
   req: Request,
@@ -21,7 +22,7 @@ export const authentication = async (
     return res.sendStatus(401);
   }
 
-  req.user = await User.findByPk(user.id);
+  req.user = await db.User.findByPk(user.id);
   next();
 };
 

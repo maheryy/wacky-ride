@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import User from "../models/user";
+import { db } from "../database/sequelize";
 
 const router: Router = Router();
 
@@ -13,7 +13,7 @@ router.get("/sse", (req: Request, res: Response) => {
 });
 
 router.get("/test", async (req: Request, res: Response) => {
-  res.json(await User.findAll());
+  res.json(await db.User.findAll());
 });
 
 export default router;
