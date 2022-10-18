@@ -2,18 +2,25 @@ import {
   Sequelize,
   DataTypes,
   Model,
-  Optional,
   UpdateOptions,
+  NonAttribute,
+  HasManyGetAssociationsMixin,
+  HasManyAddAssociationMixin,
+  HasManySetAssociationsMixin,
+  HasManyRemoveAssociationsMixin,
+  HasManyHasAssociationsMixin,
+  HasManyCountAssociationsMixin,
+  HasManyCreateAssociationMixin,
+  HasManyHasAssociationMixin,
+  HasManyRemoveAssociationMixin,
+  HasManyAddAssociationsMixin,
 } from "sequelize";
 import bcrypt from "bcrypt";
-import { IUser } from "../types/user";
+import { MessageModel } from "./message";
+import { ConversationModel } from "./conversation";
+import { RoomModel } from "./room";
 
-export type UserCreationAttributes = Optional<
-  IUser,
-  "id" | "isAdmin" | "status"
->;
-
-class UserModel extends Model<IUser, UserCreationAttributes> implements IUser {
+export class UserModel extends Model {
   declare id: number;
   declare username: string;
   declare email: string;
@@ -23,6 +30,33 @@ class UserModel extends Model<IUser, UserCreationAttributes> implements IUser {
 
   declare readonly createdAt?: Date;
   declare readonly updatedAt?: Date;
+
+  declare messages?: NonAttribute<MessageModel[]>;
+  declare customerConversations?: NonAttribute<ConversationModel[]>;
+  declare advisorConversations?: NonAttribute<ConversationModel[]>;
+  declare rooms?: NonAttribute<RoomModel[]>;
+
+  declare getMessages: HasManyGetAssociationsMixin<MessageModel>;
+  declare addMessages: HasManyAddAssociationsMixin<MessageModel, number>;
+  declare addMessage: HasManyAddAssociationMixin<MessageModel, number>;
+  declare setMessages: HasManySetAssociationsMixin<MessageModel, number>;
+  declare removeMessages: HasManyRemoveAssociationsMixin<MessageModel, number>;
+  declare removeMessage: HasManyRemoveAssociationMixin<MessageModel, number>;
+  declare hasMessages: HasManyHasAssociationsMixin<MessageModel, number>;
+  declare hasMessage: HasManyHasAssociationMixin<MessageModel, number>;
+  declare countMessages: HasManyCountAssociationsMixin;
+  declare createMessage: HasManyCreateAssociationMixin<MessageModel>;
+
+  declare getRooms: HasManyGetAssociationsMixin<RoomModel>;
+  declare addRooms: HasManyAddAssociationsMixin<RoomModel, number>;
+  declare addRoom: HasManyAddAssociationMixin<RoomModel, number>;
+  declare setRooms: HasManySetAssociationsMixin<RoomModel, number>;
+  declare removeRooms: HasManyRemoveAssociationsMixin<RoomModel, number>;
+  declare removeRoom: HasManyRemoveAssociationMixin<RoomModel, number>;
+  declare hasRooms: HasManyHasAssociationsMixin<RoomModel, number>;
+  declare hasRoom: HasManyHasAssociationMixin<RoomModel, number>;
+  declare countRoom: HasManyCountAssociationsMixin;
+  declare createRoom: HasManyCreateAssociationMixin<RoomModel>;
 
   declare static associate?: (models: any) => void;
   declare static seed?: () => Promise<any>;
@@ -100,7 +134,25 @@ const User = (sequelize: Sequelize): typeof UserModel => {
     }
   });
 
-  UserModel.associate = (models: any) => {};
+  UserModel.associate = (models: any) => {
+    UserModel.hasMany(models.Message, {
+      as: "messages",
+      foreignKey: "userId",
+    });
+    UserModel.hasMany(models.Conversation, {
+      as: "customerConversations",
+      foreignKey: "customerId",
+    });
+    UserModel.hasMany(models.Conversation, {
+      as: "advisorConversations",
+      foreignKey: "advisorId",
+    });
+    UserModel.belongsToMany(models.Room, {
+      through: "user_room",
+      as: "rooms",
+      foreignKey: "userId",
+    });
+  };
 
   UserModel.seed = async () => {
     return UserModel.bulkCreate([

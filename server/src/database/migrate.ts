@@ -1,16 +1,10 @@
 import { config } from "dotenv";
 config();
-import sequelize, { db } from "./sequelize";
+import sequelize from "./sequelize";
 
 (async () => {
   try {
     await sequelize.authenticate();
-
-    Object.values(db).forEach((model) => {
-      if (model.associate) {
-        model.associate(db);
-      }
-    });
 
     await sequelize.sync({ force: true, alter: true });
     console.log("[database]: Database synced successfully.");

@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import User from "../models/user";
+import { getModels } from "./models";
 
 const sequelize: Sequelize = new Sequelize(process.env.DB_URI as string, {
   logging: false,
@@ -14,8 +14,5 @@ const sequelize: Sequelize = new Sequelize(process.env.DB_URI as string, {
   }
 })();
 
-export const db = {
-  User: User(sequelize),
-};
-
+export const db = getModels(sequelize);
 export default sequelize;

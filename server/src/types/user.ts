@@ -1,3 +1,5 @@
+import { Optional } from "sequelize";
+
 export interface IUser {
   id: number;
   username: string;
@@ -8,3 +10,8 @@ export interface IUser {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type UserCreationAttributes = Optional<
+  IUser,
+  "id" | "isAdmin" | "status"
+>;
