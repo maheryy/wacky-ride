@@ -1,4 +1,22 @@
-import { Sequelize, DataTypes, Model, NonAttribute } from "sequelize";
+import { faker } from "@faker-js/faker";
+import {
+  Sequelize,
+  DataTypes,
+  Model,
+  NonAttribute,
+  HasManyGetAssociationsMixin,
+  HasManyAddAssociationsMixin,
+  HasManyAddAssociationMixin,
+  HasManySetAssociationsMixin,
+  HasManyRemoveAssociationsMixin,
+  HasManyRemoveAssociationMixin,
+  HasManyHasAssociationsMixin,
+  HasManyHasAssociationMixin,
+  HasManyCountAssociationsMixin,
+  HasManyCreateAssociationMixin,
+} from "sequelize";
+import { IListModel } from "../types/models";
+import { RoomCreationAttributes } from "../types/room";
 import { MessageModel } from "./message";
 import { UserModel } from "./user";
 
@@ -14,8 +32,30 @@ export class RoomModel extends Model {
   declare users?: NonAttribute<UserModel>;
   declare messages?: NonAttribute<MessageModel>;
 
-  declare static associate?: (models: any) => void;
-  declare static seed?: () => Promise<any>;
+  declare getUsers: HasManyGetAssociationsMixin<UserModel>;
+  declare addUsers: HasManyAddAssociationsMixin<UserModel, number>;
+  declare addUser: HasManyAddAssociationMixin<UserModel, number>;
+  declare setUsers: HasManySetAssociationsMixin<UserModel, number>;
+  declare removeUsers: HasManyRemoveAssociationsMixin<UserModel, number>;
+  declare removeUser: HasManyRemoveAssociationMixin<MessageModel, number>;
+  declare hasUsers: HasManyHasAssociationsMixin<UserModel, number>;
+  declare hasUser: HasManyHasAssociationMixin<UserModel, number>;
+  declare countUsers: HasManyCountAssociationsMixin;
+  declare createUser: HasManyCreateAssociationMixin<UserModel>;
+
+  declare getMessages: HasManyGetAssociationsMixin<MessageModel>;
+  declare addMessages: HasManyAddAssociationsMixin<MessageModel, number>;
+  declare addMessage: HasManyAddAssociationMixin<MessageModel, number>;
+  declare setMessages: HasManySetAssociationsMixin<MessageModel, number>;
+  declare removeMessages: HasManyRemoveAssociationsMixin<MessageModel, number>;
+  declare removeMessage: HasManyRemoveAssociationMixin<MessageModel, number>;
+  declare hasMessages: HasManyHasAssociationsMixin<MessageModel, number>;
+  declare hasMessage: HasManyHasAssociationMixin<MessageModel, number>;
+  declare countMessages: HasManyCountAssociationsMixin;
+  declare createMessage: HasManyCreateAssociationMixin<MessageModel>;
+
+  declare static associate?: (models: IListModel) => void;
+  declare static seed?: (models: IListModel) => Promise<void>;
 }
 
 const Room = (sequelize: Sequelize): typeof RoomModel => {
@@ -49,7 +89,7 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
     }
   );
 
-  RoomModel.associate = (models: any) => {
+  RoomModel.associate = (models: IListModel) => {
     RoomModel.belongsToMany(models.User, {
       through: "user_room",
       as: "users",
@@ -61,21 +101,22 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
     });
   };
 
-  RoomModel.seed = async () => {
-    return RoomModel.bulkCreate([
-      {
-        name: "Room 1",
-        limit: 25,
-      },
-      {
-        name: "Room 2",
-        limit: 45,
-      },
-      {
-        name: "Room 3",
-        limit: 50,
-      },
-    ]);
+  RoomModel.seed = async (models: IListModel) => {
+    const users = await models.User.findAll();
+    const rooms: RoomCreationAttributes[] = Array.from({ length: 5 }, () => ({
+      name: `${faker.word.adjective()} ${faker.word.noun()}`,
+      limit: faker.datatype.number({ min: 10, max: 50 }),
+    }));
+
+    await Promise.all(
+      rooms.map(async (room) => {
+        const randomUsers = faker.helpers
+          .shuffle(users)
+          .slice(0, Math.floor(Math.random() * users.length));
+        const newRoom = await models.Room.create(room);
+        return newRoom.setUsers(randomUsers);
+      })
+    );
   };
 
   return RoomModel;

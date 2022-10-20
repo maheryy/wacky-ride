@@ -5,7 +5,6 @@ import sequelize from "./sequelize";
 (async () => {
   try {
     await sequelize.authenticate();
-
     await sequelize.sync({ force: true, alter: true });
     console.log("[database]: Database synced successfully.");
   } catch (error) {

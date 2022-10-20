@@ -1,10 +1,20 @@
-import { HasOneCreateAssociationMixin, HasOneSetAssociationMixin } from "sequelize";
-import { Sequelize, DataTypes, Model, Optional, NonAttribute, HasOneGetAssociationMixin } from "sequelize";
-import { IMessage } from "../types/message";
+import {
+  HasOneCreateAssociationMixin,
+  HasOneSetAssociationMixin,
+} from "sequelize";
+import {
+  Sequelize,
+  DataTypes,
+  Model,
+  NonAttribute,
+  HasOneGetAssociationMixin,
+} from "sequelize";
+import { MessageCreationAttributes } from "../types/message";
+import { IListModel } from "../types/models";
 import { ConversationModel } from "./conversation";
 import { RoomModel } from "./room";
 import { UserModel } from "./user";
-
+import { faker } from "@faker-js/faker";
 export class MessageModel extends Model {
   declare id: number;
   declare content: string;
@@ -26,8 +36,8 @@ export class MessageModel extends Model {
   declare getConversation: HasOneGetAssociationMixin<ConversationModel>;
   declare setConversation: HasOneSetAssociationMixin<ConversationModel, number>;
 
-  declare static associate?: (models: any) => void;
-  declare static seed?: () => Promise<any>;
+  declare static associate?: (models: IListModel) => void;
+  declare static seed?: (models: IListModel) => Promise<void>;
 }
 
 const Message = (sequelize: Sequelize): typeof MessageModel => {
@@ -49,7 +59,7 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
     }
   );
 
-  MessageModel.associate = (models: any) => {
+  MessageModel.associate = (models: IListModel) => {
     MessageModel.belongsTo(models.User, {
       as: "user",
       foreignKey: "userId",
@@ -64,7 +74,36 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
     });
   };
 
-  MessageModel.seed = async () => {};
+  MessageModel.seed = async (models: IListModel) => {
+    const messages: MessageCreationAttributes[] = Array.from(
+      { length: 50 },
+      () => ({
+        content: faker.lorem.sentence(),
+      })
+    );
+
+    const users = await models.User.findAll();
+    const rooms = await models.Room.findAll();
+    const conversations = await models.Conversation.findAll();
+
+    await Promise.all(
+      messages.map(async (message, key) => {
+        const user = users[Math.floor(Math.random() * users.length)];
+        const room = rooms[Math.floor(Math.random() * rooms.length)];
+        const conversation =
+          conversations[Math.floor(Math.random() * conversations.length)];
+
+        const newMessage = await models.Message.create(message);
+
+        return Promise.all([
+          newMessage.setUser(user),
+          key % 2 === 0
+            ? newMessage.setRoom(room)
+            : newMessage.setConversation(conversation),
+        ]);
+      })
+    );
+  };
 
   return MessageModel;
 };

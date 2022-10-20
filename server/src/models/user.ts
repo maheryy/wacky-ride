@@ -19,6 +19,9 @@ import bcrypt from "bcrypt";
 import { MessageModel } from "./message";
 import { ConversationModel } from "./conversation";
 import { RoomModel } from "./room";
+import { IListModel } from "../types/models";
+import { UserCreationAttributes } from "../types/user";
+import { faker } from "@faker-js/faker";
 
 export class UserModel extends Model {
   declare id: number;
@@ -58,8 +61,8 @@ export class UserModel extends Model {
   declare countRoom: HasManyCountAssociationsMixin;
   declare createRoom: HasManyCreateAssociationMixin<RoomModel>;
 
-  declare static associate?: (models: any) => void;
-  declare static seed?: () => Promise<any>;
+  declare static associate?: (models: IListModel) => void;
+  declare static seed?: (models: IListModel) => Promise<void>;
 }
 
 const User = (sequelize: Sequelize): typeof UserModel => {
@@ -134,18 +137,18 @@ const User = (sequelize: Sequelize): typeof UserModel => {
     }
   });
 
-  UserModel.associate = (models: any) => {
+  UserModel.associate = (models: IListModel) => {
     UserModel.hasMany(models.Message, {
       as: "messages",
       foreignKey: "userId",
     });
     UserModel.hasMany(models.Conversation, {
-      as: "customerConversations",
-      foreignKey: "customerId",
+      as: "senderConversations",
+      foreignKey: "senderId",
     });
     UserModel.hasMany(models.Conversation, {
-      as: "advisorConversations",
-      foreignKey: "advisorId",
+      as: "receiverConversations",
+      foreignKey: "receiverId",
     });
     UserModel.belongsToMany(models.Room, {
       through: "user_room",
@@ -154,20 +157,34 @@ const User = (sequelize: Sequelize): typeof UserModel => {
     });
   };
 
-  UserModel.seed = async () => {
-    return UserModel.bulkCreate([
+  UserModel.seed = async (models: IListModel) => {
+    const users: UserCreationAttributes[] = Array.from({ length: 10 }, () => {
+      const username = faker.name.fullName();
+      return {
+        username: username,
+        email: `${username
+          .toLowerCase()
+          .replace(".", "")
+          .replace(/ /g, ".")}@wacky.com`,
+        password: "password",
+        isAdmin: faker.datatype.boolean(),
+      };
+    });
+
+    await UserModel.bulkCreate<UserModel>([
       {
         username: "admin",
-        email: "admin@mail.com",
-        password: "admin",
+        email: "admin@wacky.com",
+        password: "password",
         isAdmin: true,
       },
       {
         username: "user",
-        email: "user@mail.com",
-        password: "user",
+        email: "user@wacky.com",
+        password: "password",
         isAdmin: false,
       },
+      ...users,
     ]);
   };
 

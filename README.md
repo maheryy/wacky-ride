@@ -13,6 +13,12 @@ _Run the entire app through docker_
 docker compose -f docker-compose.demo.yml up -d
 ```
 
+_Install dependencies_
+
+```
+npm install
+```
+
 _Create database schemas (recreate if already exist)_
 
 ```

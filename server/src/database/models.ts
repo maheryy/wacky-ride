@@ -3,13 +3,14 @@ import Conversation from "../models/conversation";
 import Message from "../models/message";
 import Room from "../models/room";
 import User from "../models/user";
+import { IListModel } from "../types/models";
 
-export const getModels = (sequelize: Sequelize) => {
+export const getModels = (sequelize: Sequelize): IListModel => {
   const models = {
     User: User(sequelize),
     Room: Room(sequelize),
-    Message: Message(sequelize),
     Conversation: Conversation(sequelize),
+    Message: Message(sequelize),
   };
 
   Object.values(models).forEach((model) => {

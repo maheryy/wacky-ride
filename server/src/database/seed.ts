@@ -5,14 +5,13 @@ import sequelize, { db } from "./sequelize";
 (async () => {
   try {
     await sequelize.authenticate();
+    await sequelize.sync({ force: true, alter: true });
 
-    await Promise.all(
-      Object.values(db).map((mod) => {
-        if (mod.seed) {
-          return mod.seed();
-        }
-      })
-    );
+    for (const model of Object.values(db)) {
+      if (model.seed) {
+        await model.seed(db);
+      }
+    }
 
     console.log("[database]: Seeding complete.");
   } catch (error) {
