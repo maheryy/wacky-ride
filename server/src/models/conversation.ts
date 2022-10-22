@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import {
   Sequelize,
   DataTypes,
@@ -82,17 +83,28 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
 
   ConversationModel.seed = async (models: IListModel) => {
     const users = await models.User.findAll();
-    users.forEach(async (user1, i) => {
-      users.forEach(async (user2, j) => {
-        if (user1.id === user2.id || j < i) return;
+    const binds: string[] = [];
+    for (let i = 0; i < 15; i++) {
+      const randomUser1 = [
+        users[0],
+        users[1],
+        faker.helpers.arrayElement(users),
+      ][i % 3];
+      const randomUser2 = faker.helpers.arrayElement(users);
 
-        const conversation = await ConversationModel.create({ status: 0 });
-        await Promise.all([
-          conversation.setSender(user1),
-          conversation.setReceiver(user2),
-        ]);
-      });
-    });
+      if (
+        randomUser1.id == randomUser2.id ||
+        binds.includes(`${randomUser2.id}-${randomUser1.id}`)
+      ) {
+        i--;
+        continue;
+      }
+
+      const conversation = await ConversationModel.create({ status: 0 });
+      await conversation.setSender(randomUser1);
+      await conversation.setReceiver(randomUser2);
+      binds.push(`${randomUser1.id}-${randomUser2.id}`);
+    }
   };
 
   return ConversationModel;

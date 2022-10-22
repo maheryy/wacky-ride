@@ -12,8 +12,8 @@ export interface IMessage {
 
 export interface IFullMessage extends IMessage {
   user: IUser;
-  room: IRoom;
-  conversation: IConversation;
+  room?: IRoom;
+  conversation?: IConversation;
 }
 
 export type MessageCreationAttributes = Optional<IMessage, "id">;

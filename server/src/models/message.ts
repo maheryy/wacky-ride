@@ -1,7 +1,4 @@
-import {
-  HasOneCreateAssociationMixin,
-  HasOneSetAssociationMixin,
-} from "sequelize";
+import { HasOneSetAssociationMixin } from "sequelize";
 import {
   Sequelize,
   DataTypes,
@@ -75,34 +72,62 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
   };
 
   MessageModel.seed = async (models: IListModel) => {
-    const messages: MessageCreationAttributes[] = Array.from(
-      { length: 50 },
-      () => ({
-        content: faker.lorem.sentence(),
-      })
-    );
-
-    const users = await models.User.findAll();
     const rooms = await models.Room.findAll();
     const conversations = await models.Conversation.findAll();
 
-    await Promise.all(
-      messages.map(async (message, key) => {
-        const user = users[Math.floor(Math.random() * users.length)];
-        const room = rooms[Math.floor(Math.random() * rooms.length)];
-        const conversation =
-          conversations[Math.floor(Math.random() * conversations.length)];
+    const roomsMessagesPromises = rooms.map(async (room) => {
+      const users = await room.getUsers();
+      const messages: MessageCreationAttributes[] = Array.from(
+        { length: faker.datatype.number({ min: 5, max: 10 }) },
+        () => ({
+          content: faker.lorem.sentence(),
+        })
+      );
 
-        const newMessage = await models.Message.create(message);
+      return Promise.all(
+        messages.map(async (message) => {
+          const newMessage = await models.Message.create(message);
 
-        return Promise.all([
-          newMessage.setUser(user),
-          key % 2 === 0
-            ? newMessage.setRoom(room)
-            : newMessage.setConversation(conversation),
+          return Promise.all([
+            newMessage.setUser(users[Math.floor(Math.random() * users.length)]),
+            newMessage.setRoom(room),
+          ]);
+        })
+      );
+    });
+
+    const conversationsMessagesPromises = conversations.map(
+      async (conversation) => {
+        const users = await Promise.all([
+          conversation.getReceiver(),
+          conversation.getSender(),
         ]);
-      })
+        const messages: MessageCreationAttributes[] = Array.from(
+          { length: faker.datatype.number({ min: 1, max: 5 }) },
+          () => ({
+            content: faker.lorem.sentence(),
+          })
+        );
+
+        return Promise.all(
+          messages.map(async (message) => {
+            const newMessage = await models.Message.create(message);
+
+            return Promise.all([
+              newMessage.setUser(
+                users[Math.floor(Math.random() * users.length)]
+              ),
+              newMessage.setConversation(conversation),
+            ]);
+          })
+        );
+      }
     );
+
+    await Promise.all([
+      ...roomsMessagesPromises,
+      ...conversationsMessagesPromises,
+    ]);
   };
 
   return MessageModel;

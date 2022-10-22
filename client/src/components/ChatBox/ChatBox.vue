@@ -1,100 +1,63 @@
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  onUnmounted,
-  onUpdated,
-  nextTick,
-} from "vue";
+import { ref, watch, onMounted, nextTick } from "vue";
 import { IUser } from "../../types/user";
 import { IMessage } from "../../types/message";
+import { IConversation } from "../../types/conversation";
+import { EmitEvents, ListenEvents } from "../../types/socket.io";
+import { io, Socket } from "socket.io-client";
 import Message from "./Message.vue";
 
-const recipient: IUser = {
+const sender: IUser = {
   id: 1,
-  username: "John",
-  email: "email@example.com",
+  username: "admin",
+  email: "admin@wacky.com",
+  status: 1,
   isAdmin: true,
 };
 
-const sender: IUser = {
-  id: 2,
-  username: "Jane",
-  email: "email.example.com",
-  isAdmin: false,
-};
-
-const messages = ref<IMessage[]>([
-  {
-    id: 1,
-    user: sender,
-    content: "Hello",
-    createdAt: new Date(),
-  },
-  {
-    id: 2,
-    user: recipient,
-    content: "Hi",
-    createdAt: new Date(),
-  },
-  {
-    id: 3,
-    user: sender,
-    content: "How are you?",
-    createdAt: new Date(),
-  },
-  {
-    id: 4,
-    user: recipient,
-    content: "I'm fine, thanks",
-    createdAt: new Date(),
-  },
-  {
-    id: 5,
-    user: sender,
-    content: "What about you?",
-    createdAt: new Date(),
-  },
-  {
-    id: 6,
-    user: recipient,
-    content: "I'm fine too",
-    createdAt: new Date(),
-  },
-  {
-    id: 7,
-    user: sender,
-    content: "Nice to hear that",
-    createdAt: new Date(),
-  },
-  {
-    id: 8,
-    user: recipient,
-    content: "Bye",
-    createdAt: new Date(),
-  },
-  {
-    id: 9,
-    user: sender,
-    content: "Bye",
-    createdAt: new Date(),
-  },
-]);
-
+const messages = ref<IMessage[]>([]);
 const message = ref<string>("");
+const socket: Socket<ListenEvents, EmitEvents> = io("http://localhost:3000");
+
+let conversation: IConversation;
+let targetUser: number = 7;
+
+socket.on(
+  "conversation:load",
+  (conversationRef: IConversation, messageList: IMessage[]) => {
+    messages.value = messageList;
+    conversation = conversationRef;
+  }
+);
+
+socket.on("conversation:message:received", (message: IMessage) => {
+  messages.value.push(message);
+});
+
+socket.on("connect", () => {
+  console.log("connected");
+});
+
+socket.on("disconnect", () => {
+  console.log("disconnected");
+});
 
 const sendMessage = () => {
   if (!message.value.trim()) {
     return;
   }
-  messages.value.push({
-    id: messages.value.length + 1,
-    user: sender,
+
+  const messageData: Omit<IMessage, "id"> = {
     content: message.value,
-    createdAt: new Date(),
-  });
+    user: sender,
+    conversation: conversation,
+  };
+
+  socket.emit("conversation:message:send", messageData);
+
+  // TODO ? : add directly messageData to messages
+  // Implying that we cannot edit the inserted message without the newly created id from the database
+
   message.value = "";
 };
 
@@ -110,14 +73,19 @@ watch(
     }
   }
 );
+
+onMounted(() => {
+  socket.emit("conversation:open", targetUser);
+});
 </script>
 
 <template>
   <div id="chat-box" class="chat-box">
-    <h3>{{ recipient.username }}</h3>
+    <h3>{{ "Johnny" }}</h3>
     <div class="chat-box__messages">
       <ul id="chat-box-messages" class="chat-box__messages__container">
         <Message
+          v-if="messages.length"
           v-for="message in messages"
           :key="message.id"
           :message="message"

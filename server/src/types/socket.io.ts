@@ -1,14 +1,29 @@
 import { Socket as IOSocket } from "socket.io";
-import { IUser } from "./user";
+import { IConversation } from "./conversation";
+import { IFullMessage, IMessage } from "./message";
+import { IRoom } from "./room";
 
 export interface EmitEvents {
-  noArg: () => void;
-  basicEmit: (a: number, b: string, c: Buffer) => void;
-  withAck: (d: string, callback: (e: number) => void) => void;
+  "conversation:message:received": (message: IFullMessage) => void;
+  "conversation:load": (
+    conversation: IConversation,
+    messages: IFullMessage[]
+  ) => void;
+  "room:message:received": (message: IFullMessage) => void;
+  "room:load": (room: IRoom, messages: IFullMessage[]) => void;
 }
 
 export interface ListenEvents {
-  hello: () => void;
+  "conversation:open": (userId: number) => void;
+  "conversation:close": (userId: number) => void;
+  "conversation:message:send": (message: Omit<IFullMessage, "id">) => void;
+  "room:join": (roomId?: number) => void;
+  "room:leave": (roomId: number) => void;
+  "room:message:send": (
+    authorId: number,
+    roomId: number,
+    message: Omit<IFullMessage, "id">
+  ) => void;
 }
 
 export interface InterServerEvents {

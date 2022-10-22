@@ -6,6 +6,14 @@ interface Props {
 }
 
 defineProps<Props>();
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const withLeadingZero = (n: number) => (n < 10 ? "0" + n : n);
+  return `${withLeadingZero(hours)}:${withLeadingZero(minutes)}`;
+};
 </script>
 
 <template>
@@ -15,10 +23,8 @@ defineProps<Props>();
     </div>
     <div class="message__meta">
       <span class="message__meta__user">{{ message.user.username }}</span>
-      <span class="message__meta__date">
-        {{
-          `${message.createdAt.getHours()}:${message.createdAt.getMinutes()}`
-        }}
+      <span class="message__meta__date" v-if="message.createdAt">
+        {{ formatDate(message.createdAt as unknown as string) }}
       </span>
     </div>
   </li>
