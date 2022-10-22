@@ -1,25 +1,14 @@
 import { config } from "dotenv";
 config();
+import { createServer, Server as HttpServer } from "http";
+import { Server as SocketIOServer } from "socket.io";
+import app from "./express";
+import createSocketIOServer from "./socket.io";
 
-import express, { Express } from "express";
-import cors from "cors";
-import PublicRouter from "./routes/public";
-import ProtectedRouter from "./routes/protected";
-import AdminRouter from "./routes/admin";
-import sse from "./middlewares/sse";
-import { authentication, isAdmin } from "./middlewares/auth";
-
-const app: Express = express();
 const port = process.env.PORT || 8080;
+const httpServer: HttpServer = createServer(app);
+const io: SocketIOServer = createSocketIOServer(httpServer);
 
-app.use(cors());
-app.use(sse());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use("/", PublicRouter, authentication, ProtectedRouter);
-app.use("/admin", isAdmin, AdminRouter);
-
-app.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
