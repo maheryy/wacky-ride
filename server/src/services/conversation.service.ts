@@ -46,7 +46,7 @@ export const getConversationBetweenUsers = async (
         include: [
           {
             model: db.User,
-            as: "user",
+            as: "author",
           },
         ],
       },

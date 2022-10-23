@@ -20,7 +20,7 @@ const message = ref<string>("");
 
 let socket: Socket<ListenEvents, EmitEvents>;
 let conversation: IConversation;
-let targetUser: number = 7;
+let targetUser: number = 2;
 
 const sendMessage = () => {
   if (!message.value.trim()) {
@@ -29,7 +29,7 @@ const sendMessage = () => {
 
   const messageData: Omit<IMessage, "id"> = {
     content: message.value,
-    user: sender,
+    author: sender,
     conversation: conversation,
   };
 

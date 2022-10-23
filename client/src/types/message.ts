@@ -4,7 +4,7 @@ import { IUser } from "./user";
 export interface IMessage {
   id: number;
   content: string;
-  user: IUser;
+  author: IUser;
   room?: IRoom;
   conversation?: IConversation;
   createdAt?: Date;

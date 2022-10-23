@@ -11,7 +11,7 @@ export interface IMessage {
 }
 
 export interface IFullMessage extends IMessage {
-  user: IUser;
+  author: IUser;
   room?: IRoom;
   conversation?: IConversation;
 }

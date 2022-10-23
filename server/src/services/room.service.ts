@@ -21,7 +21,7 @@ export const getRoomByIdWithUsersAndMessages = async (
         include: [
           {
             model: db.User,
-            as: "user",
+            as: "author",
           },
         ],
       },

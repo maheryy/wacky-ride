@@ -19,13 +19,12 @@ export class MessageModel extends Model {
   declare readonly createdAt?: Date;
   declare readonly updatedAt?: Date;
 
-  declare user?: NonAttribute<UserModel>;
+  declare author?: NonAttribute<UserModel>;
   declare room?: NonAttribute<RoomModel>;
   declare conversation?: NonAttribute<ConversationModel>;
 
-  declare getUser: HasOneGetAssociationMixin<UserModel>;
-  declare setUser: HasOneSetAssociationMixin<UserModel, number>;
-  // declare createUser: HasOneCreateAssociationMixin<UserModel>;
+  declare getAuthor: HasOneGetAssociationMixin<UserModel>;
+  declare setAuthor: HasOneSetAssociationMixin<UserModel, number>;
 
   declare getRoom: HasOneGetAssociationMixin<RoomModel>;
   declare setRoom: HasOneSetAssociationMixin<RoomModel, number>;
@@ -58,8 +57,8 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
 
   MessageModel.associate = (models: IListModel) => {
     MessageModel.belongsTo(models.User, {
-      as: "user",
-      foreignKey: "userId",
+      as: "author",
+      foreignKey: "authorId",
     });
     MessageModel.belongsTo(models.Room, {
       as: "room",
@@ -89,7 +88,7 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
           const newMessage = await models.Message.create(message);
 
           return Promise.all([
-            newMessage.setUser(users[Math.floor(Math.random() * users.length)]),
+            newMessage.setAuthor(users[Math.floor(Math.random() * users.length)]),
             newMessage.setRoom(room),
           ]);
         })
@@ -114,7 +113,7 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
             const newMessage = await models.Message.create(message);
 
             return Promise.all([
-              newMessage.setUser(
+              newMessage.setAuthor(
                 users[Math.floor(Math.random() * users.length)]
               ),
               newMessage.setConversation(conversation),

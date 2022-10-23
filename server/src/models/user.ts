@@ -140,7 +140,7 @@ const User = (sequelize: Sequelize): typeof UserModel => {
   UserModel.associate = (models: IListModel) => {
     UserModel.hasMany(models.Message, {
       as: "messages",
-      foreignKey: "userId",
+      foreignKey: "authorId",
     });
     UserModel.hasMany(models.Conversation, {
       as: "senderConversations",

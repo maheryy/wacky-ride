@@ -22,7 +22,7 @@ const formatDate = (dateString: string) => {
       {{ message.content }}
     </div>
     <div class="message__meta">
-      <span class="message__meta__user">{{ message.user.username }}</span>
+      <span class="message__meta__user">{{ message.author.username }}</span>
       <span class="message__meta__date" v-if="message.createdAt">
         {{ formatDate(message.createdAt as unknown as string) }}
       </span>

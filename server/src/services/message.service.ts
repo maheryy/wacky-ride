@@ -8,7 +8,7 @@ export const createMessageWithinConversation = async (
 ): Promise<IFullMessage> => {
   return db.Message.create({
     content: message,
-    userId: authorId,
+    authorId: authorId,
     conversationId: conversationId,
   }) as Promise<IFullMessage>;
 };
@@ -20,7 +20,7 @@ export const createMessageWithinRoom = async (
 ): Promise<IFullMessage> => {
   return db.Message.create({
     content: message,
-    userId: authorId,
+    authorId: authorId,
     roomId: roomId,
   }) as Promise<IFullMessage>;
 };
@@ -36,7 +36,7 @@ export const getMessagesByConversation = async (
     include: [
       {
         model: db.User,
-        as: "user",
+        as: "author",
       },
     ],
   }) as Promise<IFullMessage[]>;
@@ -53,7 +53,7 @@ export const getMessagesByRoom = async (
     include: [
       {
         model: db.User,
-        as: "user",
+        as: "author",
       },
     ],
   }) as Promise<IFullMessage[]>;

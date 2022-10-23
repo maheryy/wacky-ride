@@ -35,7 +35,7 @@ const sendMessage = () => {
 
   const messageData: Omit<IMessage, "id"> = {
     content: message.value,
-    user: sender,
+    author: sender,
     room: room,
   };
 

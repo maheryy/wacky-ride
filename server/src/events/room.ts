@@ -32,13 +32,13 @@ const getRoomHandlers = (
 
     const newMessage = await createMessageWithinRoom(
       message.content,
-      message.user.id,
+      message.author.id,
       message.room!.id
     );
 
     io.to(`R-${message.room!.id}`).emit("room:message:received", {
       ...(newMessage as MessageModel).toJSON(),
-      user: message.user,
+      author: message.author,
     });
   };
 

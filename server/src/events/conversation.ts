@@ -37,7 +37,7 @@ const getConversationHandlers = (
 
     const newMessage = await createMessageWithinConversation(
       message.content,
-      message.user.id,
+      message.author.id,
       message.conversation!.id
     );
 
@@ -45,7 +45,7 @@ const getConversationHandlers = (
       "conversation:message:received",
       {
         ...(newMessage as MessageModel).toJSON(),
-        user: message.user,
+        author: message.author,
       }
     );
   };
