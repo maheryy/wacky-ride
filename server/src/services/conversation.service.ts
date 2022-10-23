@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { db } from "../database/sequelize";
-import { IConversation } from "../types/conversation";
+import { IConversation, IFullConversation } from "../types/conversation";
 
 export const createConversation = async (
   senderId: number,
@@ -16,7 +16,7 @@ export const createConversation = async (
 export const getConversationBetweenUsers = async (
   userId1: number,
   userId2: number
-): Promise<IConversation | null> => {
+): Promise<IFullConversation | null> => {
   return db.Conversation.findOne({
     where: {
       [Op.or]: [
@@ -39,6 +39,17 @@ export const getConversationBetweenUsers = async (
         model: db.User,
         as: "receiver",
       },
+      {
+        model: db.Message,
+        as: "messages",
+        order: [["createdAt", "DESC"]],
+        include: [
+          {
+            model: db.User,
+            as: "user",
+          },
+        ],
+      },
     ],
-  });
+  }) as Promise<IFullConversation | null>;
 };

@@ -13,10 +13,10 @@ export interface ListenEvents {
 }
 
 export interface EmitEvents {
-  "conversation:open": (userId: number) => void;
-  "conversation:close": (userId: number) => void;
+  "conversation:open": (receiverId: number) => void;
+  "conversation:close": (conversationId: number) => void;
   "conversation:message:send": (message: Omit<IMessage, "id">) => void;
-  "room:join": (roomId?: number) => void;
+  "room:join": (roomId: number) => void;
   "room:leave": (roomId: number) => void;
   "room:message:send": (message: Omit<IMessage, "id">) => void;
 }

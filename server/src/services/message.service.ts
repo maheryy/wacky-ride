@@ -44,7 +44,7 @@ export const getMessagesByConversation = async (
 
 export const getMessagesByRoom = async (
   roomId: number
-): Promise<IMessage[]> => {
+): Promise<IFullMessage[]> => {
   return db.Message.findAll({
     where: {
       roomId: roomId,
@@ -56,5 +56,5 @@ export const getMessagesByRoom = async (
         as: "user",
       },
     ],
-  });
+  }) as Promise<IFullMessage[]>;
 };

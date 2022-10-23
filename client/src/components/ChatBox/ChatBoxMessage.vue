@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { IMessage } from "../../types/message";
 
-interface Props {
+interface MessageProps {
   message: IMessage;
 }
 
-defineProps<Props>();
+defineProps<MessageProps>();
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);

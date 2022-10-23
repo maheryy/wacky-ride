@@ -1,17 +1,8 @@
 import { Server as HttpServer } from "http";
 import { Server } from "socket.io";
-import { db } from "./database/sequelize";
+import getConversationHandlers from "./events/conversation";
+import getRoomHandlers from "./events/room";
 import { ioAuthentication } from "./middlewares/auth";
-import { MessageModel } from "./models/message";
-import {
-  createConversation,
-  getConversationBetweenUsers,
-} from "./services/conversation.service";
-import {
-  createMessageWithinConversation,
-  getMessagesByConversation,
-} from "./services/message.service";
-import { IFullMessage, IMessage } from "./types/message";
 import {
   ListenEvents,
   InterServerEvents,
@@ -33,75 +24,29 @@ const createSocketIOServer = (baseServer: HttpServer): Server => {
       methods: ["GET", "POST"],
     },
   });
-
-  const currentUser: IUser = {
-    id: 1,
-    username: "admin",
-    email: "admin@wacky.com",
-    password: "password",
-    status: 1,
-    isAdmin: true,
-  };
-
   // io.use(ioAuthentication);
 
   io.on("connection", (socket: Socket) => {
-    console.log("[socket.io]: New client connected");
+    const {
+      onConversationMessageSend,
+      onConversationOpen,
+      onConversationClose,
+    } = getConversationHandlers(io, socket);
 
-    socket.on(
-      "conversation:message:send",
-      async (message: Omit<IFullMessage, "id">) => {
-        console.log("[socket.io]: conversation:message:send");
-
-        const newMessage = await createMessageWithinConversation(
-          message.content,
-          message.user.id,
-          message.conversation!.id
-        );
-
-        io.to(`C-${message.conversation!.id}`).emit(
-          "conversation:message:received",
-          {
-            ...(newMessage as MessageModel).toJSON(),
-            user: message.user,
-          }
-        );
-      }
+    const { onRoomMessageSend, onRoomJoin, onRoomLeave } = getRoomHandlers(
+      io,
+      socket
     );
 
-    socket.on("conversation:open", async (userId: number) => {
-      console.log("[socket.io]: conversation:open", userId);
-      try {
-        let conversation = await getConversationBetweenUsers(
-          currentUser.id,
-          userId
-        );
-        if (!conversation) {
-          conversation = await createConversation(currentUser.id, userId);
-        }
+    console.log("[socket.io]: New client connected");
 
-        const messages: IFullMessage[] = await getMessagesByConversation(
-          conversation.id
-        );
+    socket.on("conversation:message:send", onConversationMessageSend);
+    socket.on("conversation:open", onConversationOpen);
+    socket.on("conversation:close", onConversationClose);
 
-        socket.join(`C-${conversation.id}`);
-        socket.emit("conversation:load", conversation, messages);
-      } catch (e: any) {
-        console.error(e.message);
-      }
-    });
-
-    socket.on("conversation:close", async (userId: number) => {
-      console.log("[socket.io]: conversation:close", userId);
-    });
-
-    socket.on("room:join", (roomId?: number) => {
-      console.log("[socket.io]: room:join", roomId);
-    });
-
-    socket.on("room:leave", (roomId: number) => {
-      console.log("[socket.io]: room:leave", roomId);
-    });
+    socket.on("room:message:send", onRoomMessageSend);
+    socket.on("room:join", onRoomJoin);
+    socket.on("room:leave", onRoomLeave);
 
     socket.on("disconnect", () => {
       console.log("[socket.io]: Client disconnected");

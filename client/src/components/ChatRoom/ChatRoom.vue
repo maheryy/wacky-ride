@@ -2,10 +2,17 @@
 import { ref, watch, onMounted, nextTick } from "vue";
 import { IUser } from "../../types/user";
 import { IMessage } from "../../types/message";
-import { IConversation } from "../../types/conversation";
 import { EmitEvents, ListenEvents } from "../../types/socket.io";
 import { io, Socket } from "socket.io-client";
-import Message from "./ChatBoxMessage.vue";
+import Message from "./RoomMessage.vue";
+import { IRoom } from "../../types/room";
+
+interface ChatBoxProps {
+  roomId: number;
+  title: string;
+}
+
+const { roomId, title } = defineProps<ChatBoxProps>();
 
 const sender: IUser = {
   id: 1,
@@ -19,8 +26,7 @@ const messages = ref<IMessage[]>([]);
 const message = ref<string>("");
 
 let socket: Socket<ListenEvents, EmitEvents>;
-let conversation: IConversation;
-let targetUser: number = 7;
+let room: IRoom;
 
 const sendMessage = () => {
   if (!message.value.trim()) {
@@ -30,10 +36,10 @@ const sendMessage = () => {
   const messageData: Omit<IMessage, "id"> = {
     content: message.value,
     user: sender,
-    conversation: conversation,
+    room: room,
   };
 
-  socket.emit("conversation:message:send", messageData);
+  socket.emit("room:message:send", messageData);
 
   // TODO ? : add directly messageData to messages
   // Implying that we cannot edit the inserted message without the newly created id from the database
@@ -48,7 +54,7 @@ watch(
     await nextTick();
     if (newMessages.length > oldMessages.length) {
       document
-        .getElementById("chat-box-messages")
+        .getElementById("chat-room-messages")
         ?.scrollIntoView({ block: "end" });
     }
   }
@@ -56,17 +62,14 @@ watch(
 
 onMounted(() => {
   socket = io("http://localhost:3000");
-  socket.emit("conversation:open", targetUser);
+  socket.emit("room:join", roomId);
 
-  socket.on(
-    "conversation:load",
-    (conversationRef: IConversation, messageList: IMessage[]) => {
-      messages.value = messageList;
-      conversation = conversationRef;
-    }
-  );
+  socket.on("room:load", (roomRef: IRoom, messageList: IMessage[]) => {
+    messages.value = messageList;
+    room = roomRef;
+  });
 
-  socket.on("conversation:message:received", (message: IMessage) => {
+  socket.on("room:message:received", (message: IMessage) => {
     messages.value.push(message);
   });
 
@@ -81,10 +84,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="chat-box" class="chat-box">
-    <h3>{{ "Johnny" }}</h3>
-    <div class="chat-box__messages">
-      <ul id="chat-box-messages" class="chat-box__messages__container">
+  <div id="chat-room" class="chat-room">
+    <h3>{{ title }}</h3>
+    <div class="chat-room__messages">
+      <ul id="chat-room-messages" class="chat-room__messages__container">
         <Message
           v-if="messages.length"
           v-for="message in messages"
@@ -93,7 +96,7 @@ onMounted(() => {
         />
       </ul>
     </div>
-    <div class="chat-box__input">
+    <div class="chat-room__input">
       <input type="text" v-model="message" @keyup.enter="sendMessage" />
       <button @click="sendMessage">Send</button>
     </div>
@@ -101,7 +104,7 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
-.chat-box {
+.chat-room {
   display: flex;
   flex-direction: column;
   height: 500px;
@@ -119,7 +122,7 @@ onMounted(() => {
   }
 }
 
-.chat-box__messages {
+.chat-room__messages {
   flex: 1;
   overflow-y: auto;
 
@@ -140,7 +143,7 @@ onMounted(() => {
   }
 }
 
-.chat-box__input {
+.chat-room__input {
   display: flex;
   align-items: center;
 
