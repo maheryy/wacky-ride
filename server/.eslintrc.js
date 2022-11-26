@@ -1,3 +1,5 @@
+const ERROR = 2;
+
 module.exports = {
   env: {
     node: true,
@@ -12,11 +14,33 @@ module.exports = {
   root: true,
   rules: {
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": "error",
-    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unused-vars": ERROR,
+    "@typescript-eslint/no-explicit-any": ERROR,
+
     // Require or disallow padding lines between statements
+    // Enforce position of line comments
+    "line-comment-position": [ERROR, { position: "above" }],
+
+    // Require empty lines around comments
+    "lines-around-comment": [
+      ERROR,
+      {
+        beforeBlockComment: true,
+        afterBlockComment: false,
+        beforeLineComment: true,
+        afterLineComment: false,
+        allowBlockStart: true,
+        allowBlockEnd: false,
+        allowObjectStart: true,
+        allowObjectEnd: false,
+        allowArrayStart: true,
+        allowArrayEnd: false,
+      },
+    ],
+
     "padding-line-between-statements": [
-      "error",
+      ERROR,
+
       // Require an empty line before return statements
       { blankLine: "always", prev: "*", next: "return" },
 
@@ -50,18 +74,21 @@ module.exports = {
       { blankLine: "always", prev: "*", next: "cjs-export" },
     ],
     "simple-import-sort/imports": [
-      "error",
+      ERROR,
       {
         groups: [
           [
             // Side effect imports.
             "^\\u0000",
+
             // Packages.
             // Things that start with a letter (or digit or underscore), or `@` followed by a letter.
             "^@?\\w",
+
             // Absolute imports and other imports.
             // Anything not matched in another group.
             "^",
+
             // Relative imports.
             // Anything that starts with a dot.
             "^\\.",
@@ -69,6 +96,6 @@ module.exports = {
         ],
       },
     ],
-    "simple-import-sort/exports": "error",
+    "simple-import-sort/exports": ERROR,
   },
 };
