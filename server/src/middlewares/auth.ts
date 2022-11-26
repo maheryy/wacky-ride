@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { checkToken } from "../lib/jwt";
 import { getUserById } from "../services/user.service";
-import { Socket } from "../types/socket.io";
+import { TSocket } from "../types/socket.io";
 import { IUser } from "../types/user";
 
 export const authentication = async (
@@ -37,7 +37,7 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const ioAuthentication = async (
-  socket: Socket,
+  socket: TSocket,
   next: (err?: unknown) => void
 ) => {
   const token = socket.handshake.auth.token as string;

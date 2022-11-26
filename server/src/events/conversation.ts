@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Server } from "socket.io";
 import { MessageModel } from "../models/message";
 import {
   createConversation,
@@ -7,13 +6,7 @@ import {
 } from "../services/conversation.service";
 import { createMessageWithinConversation } from "../services/message.service";
 import { IFullMessage } from "../types/message";
-import {
-  EmitEvents,
-  InterServerEvents,
-  ListenEvents,
-  Socket,
-  SocketData,
-} from "../types/socket.io";
+import { TConversationIO, TConversationSocket } from "../types/socket.io";
 import { IUser } from "../types/user";
 
 const currentUser: IUser = {
@@ -25,13 +18,11 @@ const currentUser: IUser = {
   isAdmin: true,
 };
 
-const getConversationHandlers = (
-  io: Server<ListenEvents, EmitEvents, InterServerEvents, SocketData>,
-  socket: Socket
+const registerConversationHandlers = (
+  io: TConversationIO,
+  socket: TConversationSocket
 ) => {
-  const onConversationMessageSend = async (
-    message: Omit<IFullMessage, "id">
-  ) => {
+  async function onMessage(message: Omit<IFullMessage, "id">) {
     console.log("[socket.io]: conversation:message:send");
 
     const newMessage = await createMessageWithinConversation(
@@ -47,9 +38,9 @@ const getConversationHandlers = (
         author: message.author,
       }
     );
-  };
+  }
 
-  const onConversationOpen = async (receiverId: number) => {
+  async function onOpen(receiverId: number) {
     console.log("[socket.io]: conversation:open", receiverId);
 
     try {
@@ -71,18 +62,17 @@ const getConversationHandlers = (
     } catch (e: unknown) {
       console.error(e);
     }
-  };
+  }
 
-  const onConversationClose = async (conversationId: number) => {
+  async function onClose(conversationId: number) {
     console.log("[socket.io]: conversation:close", conversationId);
-    socket.leave(`C-${conversationId}`);
-  };
 
-  return {
-    onConversationMessageSend,
-    onConversationOpen,
-    onConversationClose,
-  };
+    socket.leave(`C-${conversationId}`);
+  }
+
+  socket.on("conversation:message:send", onMessage);
+  socket.on("conversation:open", onOpen);
+  socket.on("conversation:close", onClose);
 };
 
-export default getConversationHandlers;
+export default registerConversationHandlers;

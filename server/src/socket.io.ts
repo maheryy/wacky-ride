@@ -1,22 +1,11 @@
 import { Server as HttpServer } from "http";
-import { Server } from "socket.io";
-import getConversationHandlers from "./events/conversation";
-import getRoomHandlers from "./events/room";
-import {
-  EmitEvents,
-  InterServerEvents,
-  ListenEvents,
-  Socket,
-  SocketData,
-} from "./types/socket.io";
+import { Server as SocketIOServer } from "socket.io";
+import registerConversationHandlers from "./events/conversation";
+import registerRoomHandlers from "./events/room";
+import { TSocket } from "./types/socket.io";
 
-const createSocketIOServer = (baseServer: HttpServer): Server => {
-  const io: Server = new Server<
-    ListenEvents,
-    EmitEvents,
-    InterServerEvents,
-    SocketData
-  >(baseServer, {
+function initializeSocketIOServer(httpServer: HttpServer) {
+  const io = new SocketIOServer(httpServer, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -25,34 +14,20 @@ const createSocketIOServer = (baseServer: HttpServer): Server => {
 
   // io.use(ioAuthentication);
 
-  io.on("connection", (socket: Socket) => {
-    const {
-      onConversationMessageSend,
-      onConversationOpen,
-      onConversationClose,
-    } = getConversationHandlers(io, socket);
-
-    const { onRoomMessageSend, onRoomJoin, onRoomLeave } = getRoomHandlers(
-      io,
-      socket
-    );
-
+  function onConnection(socket: TSocket) {
     console.log("[socket.io]: New client connected");
 
-    socket.on("conversation:message:send", onConversationMessageSend);
-    socket.on("conversation:open", onConversationOpen);
-    socket.on("conversation:close", onConversationClose);
+    registerConversationHandlers(io, socket);
+    registerRoomHandlers(io, socket);
 
-    socket.on("room:message:send", onRoomMessageSend);
-    socket.on("room:join", onRoomJoin);
-    socket.on("room:leave", onRoomLeave);
-
-    socket.on("disconnect", () => {
+    function onDisconnect() {
       console.log("[socket.io]: Client disconnected");
-    });
-  });
+    }
 
-  return io;
-};
+    socket.on("disconnect", onDisconnect);
+  }
 
-export default createSocketIOServer;
+  io.on("connection", onConnection);
+}
+
+export default initializeSocketIOServer;

@@ -1,17 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Server } from "socket.io";
 import { MessageModel } from "../models/message";
 import { RoomModel } from "../models/room";
 import { createMessageWithinRoom } from "../services/message.service";
 import { getRoomByIdWithUsersAndMessages } from "../services/room.service";
 import { IFullMessage } from "../types/message";
-import {
-  EmitEvents,
-  InterServerEvents,
-  ListenEvents,
-  Socket,
-  SocketData,
-} from "../types/socket.io";
+import { TRoomIO, TRoomSocket } from "../types/socket.io";
 import { IUser } from "../types/user";
 
 const currentUser: IUser = {
@@ -23,11 +16,8 @@ const currentUser: IUser = {
   isAdmin: true,
 };
 
-const getRoomHandlers = (
-  io: Server<ListenEvents, EmitEvents, InterServerEvents, SocketData>,
-  socket: Socket
-) => {
-  const onRoomMessageSend = async (message: Omit<IFullMessage, "id">) => {
+function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
+  async function onMessage(message: Omit<IFullMessage, "id">) {
     console.log("[socket.io]: room:message:send");
 
     const newMessage = await createMessageWithinRoom(
@@ -40,9 +30,9 @@ const getRoomHandlers = (
       ...(newMessage as MessageModel).toJSON(),
       author: message.author,
     });
-  };
+  }
 
-  const onRoomJoin = async (roomId: number) => {
+  async function onJoin(roomId: number) {
     console.log("[socket.io]: room:join", roomId);
 
     try {
@@ -61,18 +51,17 @@ const getRoomHandlers = (
     } catch (e: unknown) {
       console.error(e);
     }
-  };
+  }
 
-  const onRoomLeave = (roomId: number) => {
+  function onLeave(roomId: number) {
     console.log("[socket.io]: room:leave", roomId);
+
     socket.leave(`R-${roomId}`);
-  };
+  }
 
-  return {
-    onRoomJoin,
-    onRoomLeave,
-    onRoomMessageSend,
-  };
-};
+  socket.on("room:message:send", onMessage);
+  socket.on("room:join", onJoin);
+  socket.on("room:leave", onLeave);
+}
 
-export default getRoomHandlers;
+export default registerRoomHandlers;
