@@ -1,27 +1,27 @@
+import { faker } from "@faker-js/faker";
+import bcrypt from "bcrypt";
 import {
-  Sequelize,
   DataTypes,
-  Model,
-  UpdateOptions,
-  NonAttribute,
-  HasManyGetAssociationsMixin,
   HasManyAddAssociationMixin,
-  HasManySetAssociationsMixin,
-  HasManyRemoveAssociationsMixin,
-  HasManyHasAssociationsMixin,
+  HasManyAddAssociationsMixin,
   HasManyCountAssociationsMixin,
   HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin,
   HasManyHasAssociationMixin,
+  HasManyHasAssociationsMixin,
   HasManyRemoveAssociationMixin,
-  HasManyAddAssociationsMixin,
+  HasManyRemoveAssociationsMixin,
+  HasManySetAssociationsMixin,
+  Model,
+  NonAttribute,
+  Sequelize,
+  UpdateOptions,
 } from "sequelize";
-import bcrypt from "bcrypt";
-import { MessageModel } from "./message";
-import { ConversationModel } from "./conversation";
-import { RoomModel } from "./room";
 import { IListModel } from "../types/models";
 import { UserCreationAttributes } from "../types/user";
-import { faker } from "@faker-js/faker";
+import { ConversationModel } from "./conversation";
+import { MessageModel } from "./message";
+import { RoomModel } from "./room";
 
 export class UserModel extends Model {
   declare id: number;
@@ -111,6 +111,7 @@ const User = (sequelize: Sequelize): typeof UserModel => {
 
   UserModel.beforeBulkCreate(async (users: UserModel[]) => {
     const salt = await bcrypt.genSalt(10);
+
     for (const user of users) {
       user.set(
         "password",
@@ -121,6 +122,7 @@ const User = (sequelize: Sequelize): typeof UserModel => {
 
   UserModel.beforeCreate(async (user: UserModel) => {
     const salt = await bcrypt.genSalt(10);
+
     user.set(
       "password",
       await bcrypt.hash(user.get("password") as string, salt)
@@ -129,6 +131,7 @@ const User = (sequelize: Sequelize): typeof UserModel => {
 
   UserModel.beforeUpdate(async (user: UserModel, options: UpdateOptions) => {
     const salt = await bcrypt.genSalt(10);
+
     if (options.fields?.includes("password")) {
       user.set(
         "password",
@@ -157,9 +160,10 @@ const User = (sequelize: Sequelize): typeof UserModel => {
     });
   };
 
-  UserModel.seed = async (models: IListModel) => {
+  UserModel.seed = async () => {
     const users: UserCreationAttributes[] = Array.from({ length: 10 }, () => {
       const username = faker.name.fullName();
+
       return {
         username: username,
         email: `${username

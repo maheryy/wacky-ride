@@ -1,5 +1,5 @@
 import { db } from "../database/sequelize";
-import { IFullMessage, IMessage } from "../types/message";
+import { IFullMessage } from "../types/message";
 
 export const createMessageWithinConversation = async (
   message: string,
