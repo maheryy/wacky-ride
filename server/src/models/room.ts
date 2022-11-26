@@ -1,19 +1,19 @@
 import { faker } from "@faker-js/faker";
 import {
-  Sequelize,
   DataTypes,
-  Model,
-  NonAttribute,
-  HasManyGetAssociationsMixin,
-  HasManyAddAssociationsMixin,
   HasManyAddAssociationMixin,
-  HasManySetAssociationsMixin,
-  HasManyRemoveAssociationsMixin,
-  HasManyRemoveAssociationMixin,
-  HasManyHasAssociationsMixin,
-  HasManyHasAssociationMixin,
+  HasManyAddAssociationsMixin,
   HasManyCountAssociationsMixin,
   HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin,
+  HasManyHasAssociationMixin,
+  HasManyHasAssociationsMixin,
+  HasManyRemoveAssociationMixin,
+  HasManyRemoveAssociationsMixin,
+  HasManySetAssociationsMixin,
+  Model,
+  NonAttribute,
+  Sequelize,
 } from "sequelize";
 import { IListModel } from "../types/models";
 import { RoomCreationAttributes } from "../types/room";
@@ -114,6 +114,7 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
           .shuffle(users)
           .slice(0, Math.floor(Math.random() * users.length));
         const newRoom = await models.Room.create(room);
+
         return newRoom.setUsers(randomUsers);
       })
     );

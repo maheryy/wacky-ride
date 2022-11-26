@@ -1,12 +1,11 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Server } from "socket.io";
 import { MessageModel } from "../models/message";
 import {
   createConversation,
   getConversationBetweenUsers,
 } from "../services/conversation.service";
-import {
-  createMessageWithinConversation,
-} from "../services/message.service";
+import { createMessageWithinConversation } from "../services/message.service";
 import { IFullMessage } from "../types/message";
 import {
   EmitEvents,
@@ -52,11 +51,13 @@ const getConversationHandlers = (
 
   const onConversationOpen = async (receiverId: number) => {
     console.log("[socket.io]: conversation:open", receiverId);
+
     try {
       let conversation = await getConversationBetweenUsers(
         currentUser.id,
         receiverId
       );
+
       if (!conversation) {
         conversation = await createConversation(currentUser.id, receiverId);
       }
@@ -67,8 +68,8 @@ const getConversationHandlers = (
         conversation,
         conversation.messages ? (conversation.messages as IFullMessage[]) : []
       );
-    } catch (e: any) {
-      console.error(e.message);
+    } catch (e: unknown) {
+      console.error(e);
     }
   };
 

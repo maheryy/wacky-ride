@@ -1,18 +1,18 @@
 import { faker } from "@faker-js/faker";
 import {
-  Sequelize,
   DataTypes,
-  Model,
-  NonAttribute,
-  HasOneGetAssociationMixin,
-  HasOneSetAssociationMixin,
-  HasManyGetAssociationsMixin,
   HasManyAddAssociationMixin,
-  HasManyRemoveAssociationMixin,
-  HasManyHasAssociationsMixin,
-  HasManyHasAssociationMixin,
   HasManyCountAssociationsMixin,
   HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin,
+  HasManyHasAssociationMixin,
+  HasManyHasAssociationsMixin,
+  HasManyRemoveAssociationMixin,
+  HasOneGetAssociationMixin,
+  HasOneSetAssociationMixin,
+  Model,
+  NonAttribute,
+  Sequelize,
 } from "sequelize";
 import { IListModel } from "../types/models";
 import { MessageModel } from "./message";
@@ -84,6 +84,7 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
   ConversationModel.seed = async (models: IListModel) => {
     const users = await models.User.findAll();
     const binds: string[] = [];
+
     for (let i = 0; i < 15; i++) {
       const randomUser1 = [
         users[0],
@@ -101,6 +102,7 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
       }
 
       const conversation = await ConversationModel.create({ status: 0 });
+
       await conversation.setSender(randomUser1);
       await conversation.setReceiver(randomUser2);
       binds.push(`${randomUser1.id}-${randomUser2.id}`);

@@ -1,4 +1,3 @@
-import { type } from "os";
 import { ConversationModel } from "../models/conversation";
 import { MessageModel } from "../models/message";
 import { RoomModel } from "../models/room";

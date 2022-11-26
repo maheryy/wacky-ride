@@ -1,17 +1,18 @@
+import { faker } from "@faker-js/faker";
 import { HasOneSetAssociationMixin } from "sequelize";
 import {
-  Sequelize,
   DataTypes,
+  HasOneGetAssociationMixin,
   Model,
   NonAttribute,
-  HasOneGetAssociationMixin,
+  Sequelize,
 } from "sequelize";
 import { MessageCreationAttributes } from "../types/message";
 import { IListModel } from "../types/models";
 import { ConversationModel } from "./conversation";
 import { RoomModel } from "./room";
 import { UserModel } from "./user";
-import { faker } from "@faker-js/faker";
+
 export class MessageModel extends Model {
   declare id: number;
   declare content: string;
@@ -88,7 +89,9 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
           const newMessage = await models.Message.create(message);
 
           return Promise.all([
-            newMessage.setAuthor(users[Math.floor(Math.random() * users.length)]),
+            newMessage.setAuthor(
+              users[Math.floor(Math.random() * users.length)]
+            ),
             newMessage.setRoom(room),
           ]);
         })

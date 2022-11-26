@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 
-let clients: Set<Response> = new Set();
+const clients: Set<Response> = new Set();
 
 const sse = () => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -8,7 +8,7 @@ const sse = () => {
       res.writeHead(200, {
         "Cache-Control": "no-cache",
         "Content-Type": "text/event-stream",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
       });
       clients.add(res);
 
@@ -28,7 +28,7 @@ const sse = () => {
       const dataString =
         `data: ${JSON.stringify(data)}\n` + `event: ${eventType}\n\n`;
 
-      for (let client of clients) {
+      for (const client of clients) {
         client.write(dataString);
       }
     };
