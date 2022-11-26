@@ -55,6 +55,9 @@ module.exports = {
       // Require an empty line before block statements
       { blankLine: "always", prev: "*", next: "block-like" },
 
+      // Require an empty line after if statements
+      { blankLine: "always", prev: "if", next: "*" },
+
       // Require an empty line before directives
       { blankLine: "always", prev: "directive", next: "*" },
 
