@@ -1,6 +1,6 @@
 import { Socket as IOSocket } from "socket.io";
 import { IConversation } from "./conversation";
-import { IFullMessage, IMessage } from "./message";
+import { IFullMessage } from "./message";
 import { IRoom } from "./room";
 
 export interface EmitEvents {

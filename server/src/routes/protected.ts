@@ -1,8 +1,8 @@
-import { Router, Request, Response } from "express";
+import { Request, Response, Router } from "express";
 
 const router: Router = Router();
 
-router.get("/test", (req: Request, res: Response) => {
+router.get("/test", (_req: Request, res: Response) => {
   res.send("Testing /test from private.ts");
 });
 

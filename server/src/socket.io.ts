@@ -2,15 +2,13 @@ import { Server as HttpServer } from "http";
 import { Server } from "socket.io";
 import getConversationHandlers from "./events/conversation";
 import getRoomHandlers from "./events/room";
-import { ioAuthentication } from "./middlewares/auth";
 import {
-  ListenEvents,
-  InterServerEvents,
   EmitEvents,
-  SocketData,
+  InterServerEvents,
+  ListenEvents,
   Socket,
+  SocketData,
 } from "./types/socket.io";
-import { IUser } from "./types/user";
 
 const createSocketIOServer = (baseServer: HttpServer): Server => {
   const io: Server = new Server<
@@ -24,6 +22,7 @@ const createSocketIOServer = (baseServer: HttpServer): Server => {
       methods: ["GET", "POST"],
     },
   });
+
   // io.use(ioAuthentication);
 
   io.on("connection", (socket: Socket) => {

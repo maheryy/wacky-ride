@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Server } from "socket.io";
 import { MessageModel } from "../models/message";
 import { RoomModel } from "../models/room";
-
 import { createMessageWithinRoom } from "../services/message.service";
 import { getRoomByIdWithUsersAndMessages } from "../services/room.service";
 import { IFullMessage } from "../types/message";
@@ -44,6 +44,7 @@ const getRoomHandlers = (
 
   const onRoomJoin = async (roomId: number) => {
     console.log("[socket.io]: room:join", roomId);
+
     try {
       const room = await getRoomByIdWithUsersAndMessages(roomId);
 
@@ -57,8 +58,8 @@ const getRoomHandlers = (
 
       socket.join(`R-${roomId}`);
       socket.emit("room:load", room, room.messages as IFullMessage[]);
-    } catch (e: any) {
-      console.error(e.message);
+    } catch (e: unknown) {
+      console.error(e);
     }
   };
 

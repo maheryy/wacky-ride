@@ -10,10 +10,12 @@ export const authentication = async (
   next: NextFunction
 ) => {
   const header = req.headers.authorization;
+
   if (!header) {
     return res.sendStatus(401);
   }
   const [type, token] = header.split(/\s+/);
+
   if (type !== "Bearer") {
     return res.sendStatus(401);
   }
@@ -36,13 +38,15 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 
 export const ioAuthentication = async (
   socket: Socket,
-  next: (err?: any) => void
+  next: (err?: unknown) => void
 ) => {
   const token = socket.handshake.auth.token as string;
+
   if (!token) {
     return next(new Error("Authentication error: No token provided"));
   }
   const user = await checkToken(token);
+
   if (!user) {
     return next(new Error("Authentication error: Invalid token"));
   }

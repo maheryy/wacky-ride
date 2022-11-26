@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Request, Response, Router } from "express";
 import { getAllUsers } from "../services/user.service";
 
 const router: Router = Router();
@@ -15,9 +15,11 @@ router.get("/sse", (req: Request, res: Response) => {
 router.get("/test", async (req: Request, res: Response) => {
   try {
     res.json(await getAllUsers());
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error);
-    res.send(error.message as string);
+
+    // TODO: handle the error format
+    res.send(error);
   }
 });
 

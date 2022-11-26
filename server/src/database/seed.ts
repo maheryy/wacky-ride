@@ -1,7 +1,6 @@
 import { config } from "dotenv";
-import { Model } from "sequelize";
-import { UserModel } from "../models/user";
-import { DatabaseModel, IListModel } from "../types/models";
+import { DatabaseModel } from "../types/models";
+
 config();
 import sequelize, { db } from "./sequelize";
 
