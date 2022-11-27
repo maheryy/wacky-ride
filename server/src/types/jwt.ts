@@ -1,3 +1,5 @@
-export interface IToken {
-  id: number;
+import { IUser } from "./user";
+
+export interface IPayload {
+  userId: IUser["id"];
 }

@@ -1,28 +1,48 @@
-import { JwtPayload, Secret, sign, verify } from "jsonwebtoken";
-import { IToken } from "../types/jwt";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import { IPayload } from "../types/jwt";
 import { IUser } from "../types/user";
 
-export const createToken = (user: IUser): string => {
-  const payload: IToken = {
-    id: user.id,
-  };
+/**
+ * Signs the `userId` into a JWT.
+ * @param userId The user's id to sign.
+ * @returns The signed JWT.
+ *
+ * @example
+ *
+ * const token = sign(user.id);
+ */
+export function sign(userId: IUser["id"]): string {
+  const payload: IPayload = { userId };
 
-  return sign(payload, process.env.JWT_SECRET as Secret, {
+  return jwt.sign(payload, <Secret>process.env.JWT_SECRET, {
     expiresIn: "1y",
   });
-};
+}
 
-export const checkToken = async (token: string): Promise<IToken | false> => {
+/**
+ * Determines if `token` is of type {@link IPayload}.
+ */
+function isPayload(token: string | JwtPayload): token is IPayload {
+  return typeof token === "object" && "id" in token;
+}
+
+/**
+ * Verifies the `token`.
+ * @param token The token to verify.
+ * @returns The payload if the token is valid, otherwise `null`.
+ *
+ * @example const payload = verify(token);
+ */
+export async function verify(token: string): Promise<IPayload | null> {
   try {
-    const decoded = (await verify(
-      token,
-      process.env.JWT_SECRET as Secret
-    )) as JwtPayload;
+    const payload = jwt.verify(token, <Secret>process.env.JWT_SECRET);
 
-    return {
-      id: decoded.id,
-    } as IToken;
+    if (isPayload(payload)) {
+      return payload;
+    }
+
+    return null;
   } catch (error) {
-    return false;
+    return null;
   }
-};
+}

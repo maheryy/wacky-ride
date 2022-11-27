@@ -1,6 +1,6 @@
 import cors from "cors";
 import express, { Express } from "express";
-import { authentication, isAdmin } from "./middlewares/auth";
+import { authentication, authorization } from "./middlewares/auth";
 import sse from "./middlewares/sse";
 import AdminRouter from "./routes/admin";
 import ProtectedRouter from "./routes/protected";
@@ -13,7 +13,7 @@ app.use(sse());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/", PublicRouter, authentication, ProtectedRouter);
-app.use("/admin", isAdmin, AdminRouter);
+app.use("/", PublicRouter, authentication.express, ProtectedRouter);
+app.use("/admin", authorization.admin, AdminRouter);
 
 export default app;
