@@ -1,11 +1,14 @@
 import { Request, Response, Router } from "express";
 import { getAllUsers } from "../services/user.service";
+import AuthRouter from "./auth";
 
 const router: Router = Router();
 
 router.get("/", (req: Request, res: Response) => {
   res.send("Wacky Ride live");
 });
+
+router.use("/auth", AuthRouter);
 
 router.get("/sse", (req: Request, res: Response) => {
   res.initSSE();

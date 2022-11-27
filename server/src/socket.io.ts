@@ -12,7 +12,8 @@ function initializeSocketIOServer(httpServer: HttpServer) {
     },
   });
 
-  // io.use(ioAuthentication);
+  // TODO: Add an admin namespace
+  // io.use(authentication.socketIO);
 
   function onConnection(socket: TSocket) {
     console.log("[socket.io]: New client connected");
