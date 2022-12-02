@@ -28,3 +28,18 @@ const findOneUserBy = async (fields?: Partial<IUser>): Promise<IUser | null> =>
 
 const findAllUsersBy = async (fields?: Partial<IUser>): Promise<IUser[]> =>
   db.User.findAll({ where: fields });
+
+/**
+ * Update the `fields` of the user with the given `id`.
+ * @param id The id of the user to update.
+ * @param fields The fields to update.
+ * @returns The updated user.
+ */
+export async function updateUser(id: IUser["id"], fields: Partial<IUser>) {
+  const [, [user]] = await db.User.update(fields, {
+    where: { id },
+    returning: true,
+  });
+
+  return user;
+}
