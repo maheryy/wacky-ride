@@ -1,4 +1,4 @@
-import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 import { IPayload } from "../types/jwt";
 import { IUser } from "../types/user";
 
@@ -22,8 +22,8 @@ export function sign(userId: IUser["id"]): string {
 /**
  * Determines if `token` is of type {@link IPayload}.
  */
-function isPayload(token: string | JwtPayload): token is IPayload {
-  return typeof token === "object" && "id" in token;
+function isPayload(payload: unknown): payload is IPayload {
+  return typeof payload === "object" && payload !== null && "userId" in payload;
 }
 
 /**
