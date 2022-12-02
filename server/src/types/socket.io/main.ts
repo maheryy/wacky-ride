@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
-import { IConversation } from "./conversation";
-import { IFullMessage } from "./message";
-import { IRoom } from "./room";
+import { IConversation } from "../conversation";
+import { IFullMessage } from "../message";
+import { IRoom } from "../room";
 
 /**
  * Conversation
@@ -50,11 +50,6 @@ export type TRoomIO = Server<IRoomListenEvents, IRoomEmitEvents>;
 
 export type TRoomSocket = Socket<IRoomListenEvents, IRoomEmitEvents>;
 
-/**
- * Socket
- */
+export type TMainListenEvents = IConversationListenEvents | IRoomListenEvents;
 
-export type TSocket = Socket<
-  IConversationListenEvents | IRoomListenEvents,
-  IConversationEmitEvents | IRoomEmitEvents
->;
+export type TMainEmitEvents = IConversationEmitEvents | IRoomEmitEvents;
