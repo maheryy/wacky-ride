@@ -18,7 +18,7 @@ import {
   UpdateOptions,
 } from "sequelize";
 import { IListModel } from "../types/models";
-import { UserCreationAttributes } from "../types/user";
+import { TUserStatus, UserCreationAttributes } from "../types/user";
 import { ConversationModel } from "./conversation";
 import { MessageModel } from "./message";
 import { RoomModel } from "./room";
@@ -28,7 +28,7 @@ export class UserModel extends Model {
   declare username: string;
   declare email: string;
   declare password: string;
-  declare status: number;
+  declare status: TUserStatus;
   declare isAdmin: boolean;
 
   declare readonly createdAt?: Date;
@@ -93,9 +93,9 @@ const User = (sequelize: Sequelize): typeof UserModel => {
         allowNull: false,
       },
       status: {
-        type: DataTypes.SMALLINT,
-        allowNull: true,
-        defaultValue: 0,
+        type: DataTypes.ENUM("online", "idle", "dnd", "invisible"),
+        allowNull: false,
+        defaultValue: "online",
       },
       isAdmin: {
         type: DataTypes.BOOLEAN,

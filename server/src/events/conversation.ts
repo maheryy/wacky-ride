@@ -14,7 +14,7 @@ const currentUser: IUser = {
   username: "admin",
   email: "admin@wacky.com",
   password: "password",
-  status: 1,
+  status: "online",
   isAdmin: true,
 };
 
