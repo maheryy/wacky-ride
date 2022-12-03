@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { Request, Response, Router } from "express";
-import { sign } from "../lib/jwt";
-import { getUserByEmail } from "../services/user.service";
+import { sign } from "../../lib/jwt";
+import { getUserByEmail } from "../../services/user.service";
 
 const router = Router();
 

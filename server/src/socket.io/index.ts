@@ -1,9 +1,9 @@
 import { Server as HttpServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
-import registerConversationHandlers from "./events/conversation";
-import registerRoomHandlers from "./events/room";
+import { TSocket } from "./@types";
 import registerAdminNamespace from "./namespaces/admin";
-import { TSocket } from "./types/socket.io";
+import registerConversationHandlers from "./namespaces/main/events/conversation";
+import registerRoomHandlers from "./namespaces/main/events/room";
 
 function initializeSocketIOServer(httpServer: HttpServer): void {
   const io = new SocketIOServer(httpServer, {

@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
-import { IConversation } from "../conversation";
-import { IFullMessage } from "../message";
-import { IRoom } from "../room";
+import { IConversation } from "../../types/conversation";
+import { IFullMessage } from "../../types/message";
+import { IRoom } from "../../types/room";
 
 /**
  * Conversation

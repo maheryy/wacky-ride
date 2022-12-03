@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { IUser } from "../user";
+import { IUser } from "../../types/user";
 
 /**
  * User

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { MessageModel } from "../models/message";
+import { MessageModel } from "../../../../models/message";
 import {
   createConversation,
   getConversationBetweenUsers,
-} from "../services/conversation.service";
-import { createMessageWithinConversation } from "../services/message.service";
-import { IFullMessage } from "../types/message";
-import { TConversationIO, TConversationSocket } from "../types/socket.io";
-import { IUser } from "../types/user";
+} from "../../../../services/conversation.service";
+import { createMessageWithinConversation } from "../../../../services/message.service";
+import { IFullMessage } from "../../../../types/message";
+import { IUser } from "../../../../types/user";
+import { TConversationIO, TConversationSocket } from "../../../@types";
 
 const currentUser: IUser = {
   id: 1,

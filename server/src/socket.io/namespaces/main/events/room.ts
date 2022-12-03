@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { MessageModel } from "../models/message";
-import { RoomModel } from "../models/room";
-import { createMessageWithinRoom } from "../services/message.service";
-import { getRoomByIdWithUsersAndMessages } from "../services/room.service";
-import { IFullMessage } from "../types/message";
-import { TRoomIO, TRoomSocket } from "../types/socket.io";
-import { IUser } from "../types/user";
+import { MessageModel } from "../../../../models/message";
+import { RoomModel } from "../../../../models/room";
+import { createMessageWithinRoom } from "../../../../services/message.service";
+import { getRoomByIdWithUsersAndMessages } from "../../../../services/room.service";
+import { IFullMessage } from "../../../../types/message";
+import { IUser } from "../../../../types/user";
+import { TRoomIO, TRoomSocket } from "../../../@types";
 
 const currentUser: IUser = {
   id: 1,
