@@ -93,9 +93,9 @@ const User = (sequelize: Sequelize): typeof UserModel => {
         allowNull: false,
       },
       status: {
-        type: DataTypes.ENUM("online", "idle", "dnd", "invisible"),
+        type: DataTypes.ENUM(...UserStatus),
         allowNull: false,
-        defaultValue: "online",
+        defaultValue: EUserStatus.online,
       },
       isAdmin: {
         type: DataTypes.BOOLEAN,

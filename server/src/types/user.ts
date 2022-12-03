@@ -1,6 +1,11 @@
 import { Optional } from "sequelize";
+import { strEnum } from "../utils/strEnum";
 
-export type TUserStatus = "online" | "idle" | "dnd" | "invisible";
+export const UserStatus = ["online", "idle", "dnd", "invisible"] as const;
+
+export const EUserStatus = strEnum(UserStatus);
+
+export type TUserStatus = keyof typeof EUserStatus;
 
 export interface IUser {
   id: number;
