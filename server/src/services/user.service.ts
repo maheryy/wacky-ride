@@ -1,8 +1,12 @@
 import { db } from "../database/sequelize";
-import { IUser, UserCreationAttributes } from "../types/user";
+import {
+  IUser,
+  TUserCreationAttributes,
+  TUserUpdateAttributes,
+} from "../types/user";
 
 export const createUser = async (
-  user: UserCreationAttributes
+  user: TUserCreationAttributes
 ): Promise<IUser> => db.User.create(user);
 
 export const getUserById = async (id: number): Promise<IUser | null> =>
@@ -35,7 +39,10 @@ const findAllUsersBy = async (fields?: Partial<IUser>): Promise<IUser[]> =>
  * @param fields The fields to update.
  * @returns The updated user.
  */
-export async function updateUser(id: IUser["id"], fields: Partial<IUser>) {
+export async function updateUser(
+  id: IUser["id"],
+  fields: TUserUpdateAttributes
+) {
   const [, [user]] = await db.User.update(fields, {
     where: { id },
     returning: true,

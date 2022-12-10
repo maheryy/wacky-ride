@@ -6,7 +6,7 @@ import { IUser } from "../../types/user";
  */
 
 export interface IUserListenEvents {
-  "user-status:update": (status: IUser["status"]) => void;
+  "user-status:update": (status: IUser["status"]) => Promise<void>;
 }
 
 export interface IUserEmitEvents {
