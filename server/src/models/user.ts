@@ -18,7 +18,12 @@ import {
   UpdateOptions,
 } from "sequelize";
 import { IListModel } from "../types/models";
-import { TUserStatus, UserCreationAttributes } from "../types/user";
+import {
+  EUserStatus,
+  TUserCreationAttributes,
+  TUserStatus,
+  UserStatus,
+} from "../types/user";
 import { ConversationModel } from "./conversation";
 import { MessageModel } from "./message";
 import { RoomModel } from "./room";
@@ -96,6 +101,12 @@ const User = (sequelize: Sequelize): typeof UserModel => {
         type: DataTypes.ENUM(...UserStatus),
         allowNull: false,
         defaultValue: EUserStatus.online,
+        validate: {
+          isIn: {
+            args: [UserStatus],
+            msg: "Invalid status, must be one of: " + UserStatus.join(", "),
+          },
+        },
       },
       isAdmin: {
         type: DataTypes.BOOLEAN,
@@ -161,16 +172,17 @@ const User = (sequelize: Sequelize): typeof UserModel => {
   };
 
   UserModel.seed = async () => {
-    const users: UserCreationAttributes[] = Array.from({ length: 10 }, () => {
+    const users: TUserCreationAttributes[] = Array.from({ length: 10 }, () => {
       const username = faker.name.fullName();
 
       return {
-        username: username,
+        username,
         email: `${username
           .toLowerCase()
           .replace(".", "")
           .replace(/ /g, ".")}@wacky.com`,
         password: "password",
+        status: EUserStatus.online,
         isAdmin: faker.datatype.boolean(),
       };
     });

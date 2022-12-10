@@ -18,7 +18,6 @@ export interface IUser {
   updatedAt?: Date;
 }
 
-export type UserCreationAttributes = Optional<
-  IUser,
-  "id" | "isAdmin" | "status"
->;
+export type TUserCreationAttributes = Optional<IUser, "id" | "isAdmin">;
+
+export type TUserUpdateAttributes = Partial<Omit<IUser, "id" | "isAdmin">>;
