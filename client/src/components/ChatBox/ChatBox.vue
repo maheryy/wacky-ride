@@ -3,7 +3,7 @@ import { ref, watch, onMounted, nextTick } from "vue";
 import { IUser } from "../../types/user";
 import { IMessage } from "../../types/message";
 import { IConversation } from "../../types/conversation";
-import { EmitEvents, ListenEvents } from "../../types/socket.io";
+import { IEmitEvents, IListenEvents } from "../../types/socket.io";
 import { io, Socket } from "socket.io-client";
 import Message from "./ChatBoxMessage.vue";
 
@@ -18,7 +18,7 @@ const sender: IUser = {
 const messages = ref<IMessage[]>([]);
 const message = ref<string>("");
 
-let socket: Socket<ListenEvents, EmitEvents>;
+let socket: Socket<IListenEvents, IEmitEvents>;
 let conversation: IConversation;
 let targetUser: number = 2;
 
@@ -58,15 +58,28 @@ onMounted(() => {
   socket = io("http://localhost:3000");
   socket.emit("conversation:open", targetUser);
 
-  socket.on(
-    "conversation:load",
-    (conversationRef: IConversation, messageList: IMessage[]) => {
-      messages.value = messageList;
-      conversation = conversationRef;
-    }
-  );
+  socket.on("conversation:load", ({ data, errors }) => {
+    if (errors) {
+      console.error(errors);
 
-  socket.on("conversation:message:received", (message: IMessage) => {
+      return;
+    }
+
+    const { conversation: conversationRef, messages: messageList } = data;
+
+    messages.value = messageList;
+    conversation = conversationRef;
+  });
+
+  socket.on("conversation:message:received", ({ data, errors }) => {
+    if (errors) {
+      console.error(errors);
+
+      return;
+    }
+
+    const { message } = data;
+
     messages.value.push(message);
   });
 
