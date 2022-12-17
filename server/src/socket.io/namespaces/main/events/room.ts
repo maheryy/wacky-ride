@@ -5,7 +5,9 @@ import { createMessageWithinRoom } from "../../../../services/message.service";
 import { getRoomByIdWithUsersAndMessages } from "../../../../services/room.service";
 import { IFullMessage } from "../../../../types/message";
 import { IUser } from "../../../../types/user";
-import { TRoomIO, TRoomSocket } from "../../../@types";
+import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types";
+import { WackyRideError } from "../../../errors/WackyRideError";
+import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 const currentUser: IUser = {
   id: 1,
@@ -17,6 +19,8 @@ const currentUser: IUser = {
 };
 
 function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
+  const handle = withErrorHandling<IRoomEmitEvents>(socket);
+
   async function onMessage(message: Omit<IFullMessage, "id">) {
     console.log("[socket.io]: room:message:send");
 
@@ -27,30 +31,36 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
     );
 
     io.to(`R-${message.room!.id}`).emit("room:message:received", {
-      ...(newMessage as MessageModel).toJSON(),
-      author: message.author,
+      data: {
+        message: {
+          ...(newMessage as MessageModel).toJSON(),
+          author: message.author,
+        },
+      },
     });
   }
 
   async function onJoin(roomId: number) {
     console.log("[socket.io]: room:join", roomId);
 
-    try {
-      const room = await getRoomByIdWithUsersAndMessages(roomId);
+    const room = await getRoomByIdWithUsersAndMessages(roomId);
 
-      if (!room) {
-        throw new Error("Room not found");
-      }
-
-      if (!room.users!.find((user) => user.id === currentUser.id)) {
-        await (room as RoomModel).addUser(currentUser.id);
-      }
-
-      socket.join(`R-${roomId}`);
-      socket.emit("room:load", room, room.messages as IFullMessage[]);
-    } catch (e: unknown) {
-      console.error(e);
+    if (!room) {
+      throw new WackyRideError("Room not found");
     }
+
+    if (!room.users!.find((user) => user.id === currentUser.id)) {
+      await (room as RoomModel).addUser(currentUser.id);
+    }
+
+    socket.join(`R-${roomId}`);
+
+    socket.emit("room:load", {
+      data: {
+        room,
+        messages: room.messages as IFullMessage[],
+      },
+    });
   }
 
   function onLeave(roomId: number) {
@@ -59,8 +69,8 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
     socket.leave(`R-${roomId}`);
   }
 
-  socket.on("room:message:send", onMessage);
-  socket.on("room:join", onJoin);
+  socket.on("room:message:send", handle(onMessage, "room:message:received"));
+  socket.on("room:join", handle(onJoin, "room:load"));
   socket.on("room:leave", onLeave);
 }
 

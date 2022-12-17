@@ -1,6 +1,7 @@
 import { ValidationError } from "sequelize";
 import { Socket } from "socket.io";
 import { EventsMap } from "socket.io/dist/typed-events";
+import { EErrorCode } from "../../types/error";
 import { WackyRideError } from "../errors/WackyRideError";
 
 type TEventNames<T> = keyof T & string;
@@ -18,10 +19,9 @@ type TEventNames<T> = keyof T & string;
  *
  * socket.on("user-status:update", handle(onStatusUpdate, "user-status:updated"));
  */
-export function withErrorHandling<
-  TEmitEvents extends EventsMap,
-  TSocket extends Socket
->(socket: TSocket) {
+export function withErrorHandling<TEmitEvents extends EventsMap>(
+  socket: Socket
+) {
   /**
    * Handles any errors that occur in the `callback` by emitting an `event`
    * with a WackyRideError to the {@link socket} in the closure.
@@ -39,6 +39,8 @@ export function withErrorHandling<
        * Handles the `error` by emitting an {@link event} with a WackyRideError to the {@link socket}.
        */
       function handleError(error: unknown): boolean {
+        console.error(error);
+
         if (error instanceof ValidationError) {
           return socket.emit(event, WackyRideError.fromValidationError(error));
         }
@@ -49,7 +51,14 @@ export function withErrorHandling<
 
         return socket.emit(
           event,
-          new WackyRideError("An unknown error occurred")
+          new WackyRideError("Internal Server Error", [
+            {
+              message: "Internal Server Error",
+              extensions: {
+                code: EErrorCode.INTERNAL_SERVER_ERROR,
+              },
+            },
+          ])
         );
       }
 

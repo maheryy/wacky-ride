@@ -7,7 +7,12 @@ import {
 import { createMessageWithinConversation } from "../../../../services/message.service";
 import { IFullMessage } from "../../../../types/message";
 import { IUser } from "../../../../types/user";
-import { TConversationIO, TConversationSocket } from "../../../@types";
+import {
+  IConversationEmitEvents,
+  TConversationIO,
+  TConversationSocket,
+} from "../../../@types";
+import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 const currentUser: IUser = {
   id: 1,
@@ -22,6 +27,8 @@ const registerConversationHandlers = (
   io: TConversationIO,
   socket: TConversationSocket
 ) => {
+  const handle = withErrorHandling<IConversationEmitEvents>(socket);
+
   async function onMessage(message: Omit<IFullMessage, "id">) {
     console.log("[socket.io]: conversation:message:send");
 
@@ -34,8 +41,12 @@ const registerConversationHandlers = (
     io.to(`C-${message.conversation!.id}`).emit(
       "conversation:message:received",
       {
-        ...(newMessage as MessageModel).toJSON(),
-        author: message.author,
+        data: {
+          message: {
+            ...(newMessage as MessageModel).toJSON(),
+            author: message.author,
+          },
+        },
       }
     );
   }
@@ -43,25 +54,25 @@ const registerConversationHandlers = (
   async function onOpen(receiverId: number) {
     console.log("[socket.io]: conversation:open", receiverId);
 
-    try {
-      let conversation = await getConversationBetweenUsers(
-        currentUser.id,
-        receiverId
-      );
+    let conversation = await getConversationBetweenUsers(
+      currentUser.id,
+      receiverId
+    );
 
-      if (!conversation) {
-        conversation = await createConversation(currentUser.id, receiverId);
-      }
-
-      socket.join(`C-${conversation.id}`);
-      socket.emit(
-        "conversation:load",
-        conversation,
-        conversation.messages ? (conversation.messages as IFullMessage[]) : []
-      );
-    } catch (e: unknown) {
-      console.error(e);
+    if (!conversation) {
+      conversation = await createConversation(currentUser.id, receiverId);
     }
+
+    socket.join(`C-${conversation.id}`);
+
+    socket.emit("conversation:load", {
+      data: {
+        conversation,
+        messages: conversation.messages
+          ? (conversation.messages as IFullMessage[])
+          : [],
+      },
+    });
   }
 
   async function onClose(conversationId: number) {
@@ -70,8 +81,11 @@ const registerConversationHandlers = (
     socket.leave(`C-${conversationId}`);
   }
 
-  socket.on("conversation:message:send", onMessage);
-  socket.on("conversation:open", onOpen);
+  socket.on(
+    "conversation:message:send",
+    handle(onMessage, "conversation:message:received")
+  );
+  socket.on("conversation:open", handle(onOpen, "conversation:load"));
   socket.on("conversation:close", onClose);
 };
 
