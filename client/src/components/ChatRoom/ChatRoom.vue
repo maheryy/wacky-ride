@@ -2,7 +2,7 @@
 import { ref, watch, onMounted, nextTick } from "vue";
 import { IUser } from "../../types/user";
 import { IMessage } from "../../types/message";
-import { EmitEvents, ListenEvents } from "../../types/socket.io";
+import { IEmitEvents, IListenEvents } from "../../types/socket.io";
 import { io, Socket } from "socket.io-client";
 import Message from "./RoomMessage.vue";
 import { IRoom } from "../../types/room";
@@ -25,7 +25,7 @@ const sender: IUser = {
 const messages = ref<IMessage[]>([]);
 const message = ref<string>("");
 
-let socket: Socket<ListenEvents, EmitEvents>;
+let socket: Socket<IListenEvents, IEmitEvents>;
 let room: IRoom;
 
 const sendMessage = () => {
@@ -64,12 +64,28 @@ onMounted(() => {
   socket = io("http://localhost:3000");
   socket.emit("room:join", roomId);
 
-  socket.on("room:load", (roomRef: IRoom, messageList: IMessage[]) => {
+  socket.on("room:load", ({ data, errors }) => {
+    if (errors) {
+      console.log(errors);
+
+      return;
+    }
+
+    const { room: roomRef, messages: messageList } = data;
+
     messages.value = messageList;
     room = roomRef;
   });
 
-  socket.on("room:message:received", (message: IMessage) => {
+  socket.on("room:message:received", ({ data, errors }) => {
+    if (errors) {
+      console.log(errors);
+
+      return;
+    }
+
+    const { message } = data;
+
     messages.value.push(message);
   });
 
