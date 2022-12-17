@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { IUser } from "../../types/user";
+import { TEmitEvent } from "./result";
 
 /**
  * User
@@ -10,7 +11,7 @@ export interface IUserListenEvents {
 }
 
 export interface IUserEmitEvents {
-  "user-status:updated": (status: IUser["status"]) => void;
+  "user-status:updated": TEmitEvent<{ status: IUser["status"] }>;
 }
 
 export type TUserIO = Server<IUserListenEvents, IUserEmitEvents>;

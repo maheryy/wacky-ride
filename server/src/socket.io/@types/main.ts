@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 import { IConversation } from "../../types/conversation";
 import { IFullMessage } from "../../types/message";
 import { IRoom } from "../../types/room";
+import { TEmitEvent } from "./result";
 
 /**
  * Conversation
@@ -14,11 +15,11 @@ export interface IConversationListenEvents {
 }
 
 export interface IConversationEmitEvents {
-  "conversation:message:received": (message: IFullMessage) => void;
-  "conversation:load": (
-    conversation: IConversation,
-    messages: IFullMessage[]
-  ) => void;
+  "conversation:message:received": TEmitEvent<{ message: IFullMessage }>;
+  "conversation:load": TEmitEvent<{
+    conversation: IConversation;
+    messages: IFullMessage[];
+  }>;
 }
 
 export type TConversationIO = Server<
@@ -42,8 +43,8 @@ export interface IRoomListenEvents {
 }
 
 export interface IRoomEmitEvents {
-  "room:message:received": (message: IFullMessage) => void;
-  "room:load": (room: IRoom, messages: IFullMessage[]) => void;
+  "room:message:received": TEmitEvent<{ message: IFullMessage }>;
+  "room:load": TEmitEvent<{ room: IRoom; messages: IFullMessage[] }>;
 }
 
 export type TRoomIO = Server<IRoomListenEvents, IRoomEmitEvents>;
