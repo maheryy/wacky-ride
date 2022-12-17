@@ -18,10 +18,9 @@ type TEventNames<T> = keyof T & string;
  *
  * socket.on("user-status:update", handle(onStatusUpdate, "user-status:updated"));
  */
-export function withErrorHandling<
-  TEmitEvents extends EventsMap,
-  TSocket extends Socket
->(socket: TSocket) {
+export function withErrorHandling<TEmitEvents extends EventsMap>(
+  socket: Socket
+) {
   /**
    * Handles any errors that occur in the `callback` by emitting an `event`
    * with a WackyRideError to the {@link socket} in the closure.
