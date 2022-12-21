@@ -4,7 +4,6 @@ import { IUser } from "./user";
 
 export interface IConversation {
   id: number;
-  status: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -15,7 +14,4 @@ export interface IFullConversation extends IConversation {
   messages?: IMessage[];
 }
 
-export type ConversationCreationAttributes = Optional<
-  IConversation,
-  "id" | "status"
->;
+export type ConversationCreationAttributes = Optional<IConversation, "id">;

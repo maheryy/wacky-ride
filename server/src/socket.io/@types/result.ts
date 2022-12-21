@@ -1,6 +1,6 @@
 import { TError } from "../../types/error";
 
-type TResultWithData<T> = {
+export type TResultWithData<T> = {
   data: T;
   errors?: never;
 };
@@ -11,5 +11,7 @@ type TResultWithErrors = {
 };
 
 export type TResult<T> = TResultWithData<T> | TResultWithErrors;
+
+export type TListenEvent<T> = (data: TResultWithData<T>) => void;
 
 export type TEmitEvent<T> = (result: TResult<T>) => void;

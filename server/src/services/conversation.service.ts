@@ -1,15 +1,14 @@
 import { Op } from "sequelize";
 import { db } from "../database/sequelize";
-import { IConversation, IFullConversation } from "../types/conversation";
+import { IFullConversation } from "../types/conversation";
 
 export const createConversation = async (
   senderId: number,
   receiverId: number
-): Promise<IConversation> => {
+) => {
   return db.Conversation.create({
-    senderId: senderId,
-    receiverId: receiverId,
-    status: 0,
+    senderId,
+    receiverId,
   });
 };
 

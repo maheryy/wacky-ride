@@ -1,4 +1,5 @@
 import { Server, Socket } from "socket.io";
+import { IContact } from "../../types/contact";
 import { IConversation } from "../../types/conversation";
 import { IFullMessage } from "../../types/message";
 import { IRoom } from "../../types/room";
@@ -51,6 +52,28 @@ export type TRoomIO = Server<IRoomListenEvents, IRoomEmitEvents>;
 
 export type TRoomSocket = Socket<IRoomListenEvents, IRoomEmitEvents>;
 
-export type TMainListenEvents = IConversationListenEvents | IRoomListenEvents;
+/**
+ * Contact
+ */
 
-export type TMainEmitEvents = IConversationEmitEvents | IRoomEmitEvents;
+export interface IContactListenEvents {
+  "contact:create": () => void;
+}
+
+export interface IContactEmitEvents {
+  "contact:created": TEmitEvent<{ contact: IContact }>;
+}
+
+export type TContactIO = Server<IContactListenEvents, IContactEmitEvents>;
+
+export type TContactSocket = Socket<IContactListenEvents, IContactEmitEvents>;
+
+export type TMainListenEvents =
+  | IConversationListenEvents
+  | IRoomListenEvents
+  | IContactListenEvents;
+
+export type TMainEmitEvents =
+  | IConversationEmitEvents
+  | IRoomEmitEvents
+  | IContactEmitEvents;

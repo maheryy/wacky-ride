@@ -11,9 +11,8 @@ export async function authenticate(
   socket: TSocket,
   next: (error?: Error) => void
 ) {
-  const { token } = socket.handshake.auth;
-
-  console.log("auth", socket.handshake.auth);
+  // TODO: use socket.handshake.auth.token instead
+  const token = socket.request.headers.authorization;
 
   if (!token) {
     return next(new Error("Authentication error: No token provided"));
@@ -39,21 +38,22 @@ export async function authenticate(
 /**
  * Authorizes the admin to access the next middlewares.
  *
- * @example io.use(authorize);
+ * @param isAdmin Whether the user must be an admin or not.
+ *
+ * @example io.use(authorize());
  */
-export async function authorize(
-  socket: TSocket,
-  next: (error?: Error) => void
-) {
-  const { user } = socket.request;
+export function authorize(isAdmin = false) {
+  return async (socket: TSocket, next: (error?: Error) => void) => {
+    const { user } = socket.request;
 
-  if (!user) {
-    return next(new Error("Authorization error: No user found"));
-  }
+    if (!user) {
+      return next(new Error("Authorization error: No user found"));
+    }
 
-  if (!user.isAdmin) {
-    return next(new Error("Authorization error: User is not an admin"));
-  }
+    if (isAdmin && !user.isAdmin) {
+      return next(new Error("Authorization error: User is not an admin"));
+    }
 
-  return next();
+    return next();
+  };
 }

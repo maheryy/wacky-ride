@@ -14,13 +14,13 @@ import {
   NonAttribute,
   Sequelize,
 } from "sequelize";
+import { IConversation } from "../types/conversation";
 import { IListModel } from "../types/models";
 import { MessageModel } from "./message";
 import { UserModel } from "./user";
 
-export class ConversationModel extends Model {
+export class ConversationModel extends Model implements IConversation {
   declare id: number;
-  declare status: number;
 
   declare readonly createdAt?: Date;
   declare readonly updatedAt?: Date;
@@ -54,10 +54,6 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
-      },
-      status: {
-        type: DataTypes.SMALLINT,
-        allowNull: false,
       },
     },
     {
@@ -101,7 +97,7 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
         continue;
       }
 
-      const conversation = await ConversationModel.create({ status: 0 });
+      const conversation = await ConversationModel.create();
 
       await conversation.setSender(randomUser1);
       await conversation.setReceiver(randomUser2);
