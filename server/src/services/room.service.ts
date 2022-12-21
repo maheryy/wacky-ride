@@ -1,6 +1,12 @@
 import { db } from "../database/sequelize";
 import { IFullRoom, IRoom } from "../types/room";
 
+export function createRoom(roomName: string) {
+  return db.Room.create({
+    name: roomName,
+  });
+}
+
 export const getRoomById = async (roomId: number): Promise<IRoom | null> => {
   return db.Room.findByPk(roomId);
 };
