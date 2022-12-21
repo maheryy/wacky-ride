@@ -7,12 +7,14 @@ import {
   TContactSocket,
 } from "../../../@types/admin";
 import { TResultWithData } from "../../../@types/result";
-import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
   const handle = withErrorHandling<IContactEmitEvents>(socket);
 
+  /**
+   * Broadcasts the created contact to all connected clients.
+   */
   async function onContactCreated({
     data,
   }: TResultWithData<{ contact: IContact }>) {
@@ -28,10 +30,6 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
    * conversation to the client and the user that created the contact.
    */
   async function onContactAccept(contactId: IContact["id"]) {
-    if (!socket.request.user) {
-      throw new WackyRideError("User not found");
-    }
-
     const contact = await updateContactStatus(
       contactId,
       EContactStatus.accepted
