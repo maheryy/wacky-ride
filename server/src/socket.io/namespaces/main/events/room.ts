@@ -5,7 +5,7 @@ import { createMessageWithinRoom } from "../../../../services/message.service";
 import { getRoomByIdWithUsersAndMessages } from "../../../../services/room.service";
 import { IFullMessage } from "../../../../types/message";
 import { IUser } from "../../../../types/user";
-import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types";
+import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types/main";
 import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 

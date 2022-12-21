@@ -22,6 +22,22 @@ export type TUserIO = Server<IUserListenEvents, IUserEmitEvents>;
 export type TUserSocket = Socket<IUserListenEvents, IUserEmitEvents>;
 
 /**
+ * Room
+ */
+
+export interface IRoomListenEvents {
+  "room:create": (roomName: string) => void;
+}
+
+export interface IRoomEmitEvents {
+  "room:created": TEmitEvent<{ room: IRoom }>;
+}
+
+export type TRoomIO = Server<IRoomListenEvents, IRoomEmitEvents>;
+
+export type TRoomSocket = Socket<IRoomListenEvents, IRoomEmitEvents>;
+
+/**
  * Contact
  */
 
@@ -44,6 +60,12 @@ export type TContactIO = Server<IContactListenEvents, IContactEmitEvents>;
 
 export type TContactSocket = Socket<IContactListenEvents, IContactEmitEvents>;
 
-export type TAdminListenEvents = IUserListenEvents | IContactListenEvents;
+export type TAdminListenEvents =
+  | IUserListenEvents
+  | IRoomListenEvents
+  | IContactListenEvents;
 
-export type TAdminEmitEvents = IUserEmitEvents | IContactEmitEvents;
+export type TAdminEmitEvents =
+  | IUserEmitEvents
+  | IRoomEmitEvents
+  | IContactEmitEvents;
