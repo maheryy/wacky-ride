@@ -11,7 +11,7 @@ import {
   IConversationEmitEvents,
   TConversationIO,
   TConversationSocket,
-} from "../../../@types";
+} from "../../../@types/main";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 const currentUser: IUser = {

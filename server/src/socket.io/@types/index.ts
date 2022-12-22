@@ -1,13 +1,15 @@
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { TAdminEmitEvents, TAdminListenEvents } from "./admin";
 import { TMainEmitEvents, TMainListenEvents } from "./main";
 
-export * from "./admin";
-export * from "./main";
+export type TListenEvents = TMainListenEvents | TAdminListenEvents;
 
-type TListenEvents = TMainListenEvents | TAdminListenEvents;
+export type TEmitEvents = TMainEmitEvents | TAdminEmitEvents;
 
-type TEmitEvents = TMainEmitEvents | TAdminEmitEvents;
+/**
+ * IO Server
+ */
+export type TServer = Server<TListenEvents, TEmitEvents>;
 
 /**
  * Socket

@@ -17,7 +17,7 @@ type TEventNames<T> = keyof T & string;
  *
  * const handle = withErrorHandling(socket);
  *
- * socket.on("user-status:update", handle(onStatusUpdate, "user-status:updated"));
+ * socket.on("admin:status:update", handle(onStatusUpdate, "admin:status:updated"));
  */
 export function withErrorHandling<TEmitEvents extends EventsMap>(
   socket: Socket
