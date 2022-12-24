@@ -14,7 +14,7 @@ function registerAdminNamespace(io: TAdminIO) {
   admin.use(authorize(true));
 
   function onConnection(socket: TAdminSocket) {
-    const { status: userStatus, id: userId } = socket.request.user;
+    const { status: userStatus, id: userId } = socket.data.user;
 
     console.log("[socket.io]: Admin connected", userId);
 

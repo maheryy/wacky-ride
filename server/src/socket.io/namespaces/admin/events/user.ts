@@ -10,7 +10,7 @@ function registerUserHandlers(io: TUserIO, socket: TUserSocket) {
   async function onStatusUpdate(status: IUser["status"]) {
     console.log("[socket.io]: Status update", status);
 
-    const user = await getUserById(socket.request.user.id);
+    const user = await getUserById(socket.data.user.id);
 
     if (!user) {
       throw new WackyRideError("User not found");
@@ -18,15 +18,17 @@ function registerUserHandlers(io: TUserIO, socket: TUserSocket) {
 
     const { id: userId, status: currentUserStatus } = user;
 
-    await updateUser(userId, { status });
-
-    socket.emit("admin:status:updated", { data: { status } });
-
     const isStatusChanged = currentUserStatus !== status;
 
     if (!isStatusChanged) {
-      return;
+      return socket.emit("admin:status:updated", { data: { status } });
     }
+
+    const updatedUser = await updateUser(userId, { status });
+
+    socket.data.user = updatedUser;
+
+    socket.emit("admin:status:updated", { data: { status } });
 
     if (status === EUserStatus.invisible) {
       return io.of("/").emit("admin:disconnected", {

@@ -26,7 +26,7 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
     );
 
     const conversation = await createConversation(
-      socket.request.user.id,
+      socket.data.user.id,
       contact.userId
     );
 

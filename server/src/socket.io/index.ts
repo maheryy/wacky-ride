@@ -6,6 +6,7 @@ import registerAdminNamespace from "./namespaces/admin";
 import registerContactHandlers from "./namespaces/main/events/contact";
 import registerConversationHandlers from "./namespaces/main/events/conversation";
 import registerRoomHandlers from "./namespaces/main/events/room";
+import registerUserHandlers from "./namespaces/main/events/user";
 
 function initializeSocketIOServer(httpServer: HttpServer): void {
   const io: TServer = new SocketIOServer(httpServer, {
@@ -24,11 +25,12 @@ function initializeSocketIOServer(httpServer: HttpServer): void {
   function onConnection(socket: TSocket) {
     console.log("[socket.io]: New client connected");
 
-    socket.join(`U-${socket.request.user.id}`);
+    socket.join(`U-${socket.data.user.id}`);
 
     registerConversationHandlers(io, socket);
     registerRoomHandlers(io, socket);
     registerContactHandlers(io, socket);
+    registerUserHandlers(io, socket);
 
     function onDisconnect() {
       console.log("[socket.io]: Client disconnected");
