@@ -3,7 +3,7 @@ import { createRoom } from "../../../../services/room.service";
 import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types/admin";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
-function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
+function registerRoomHandlers(_io: TRoomIO, socket: TRoomSocket) {
   const handle = withErrorHandling<IRoomEmitEvents>(socket);
 
   async function onCreate(roomName: string) {

@@ -16,6 +16,7 @@ export interface IUser {
   status: TUserStatus;
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export type TUserCreationAttributes = Optional<IUser, "id" | "isAdmin">;

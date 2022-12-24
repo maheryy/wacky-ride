@@ -6,6 +6,7 @@ export interface IConversation {
   id: number;
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export interface IFullConversation extends IConversation {

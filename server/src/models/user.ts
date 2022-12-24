@@ -116,6 +116,7 @@ const User = (sequelize: Sequelize): typeof UserModel => {
     },
     {
       tableName: "user",
+      paranoid: true,
       sequelize,
     }
   );

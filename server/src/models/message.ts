@@ -19,6 +19,7 @@ export class MessageModel extends Model {
 
   declare readonly createdAt?: Date;
   declare readonly updatedAt?: Date;
+  declare readonly deletedAt?: Date;
 
   declare author?: NonAttribute<UserModel>;
   declare room?: NonAttribute<RoomModel>;
@@ -52,6 +53,7 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
     },
     {
       tableName: "message",
+      paranoid: true,
       sequelize,
     }
   );
