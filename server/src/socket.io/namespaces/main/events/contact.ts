@@ -21,7 +21,9 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
    * client and to the admin namespace.
    */
   async function onContactCreate() {
-    const existingContact = await getContactByUserId(socket.request.user.id);
+    const { id: userId } = socket.data.user;
+
+    const existingContact = await getContactByUserId(userId);
 
     if (existingContact?.status === EContactStatus.pending) {
       return socket.emit("contact:created", {
@@ -29,7 +31,7 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
       });
     }
 
-    const newContact = await createContact(socket.request.user.id);
+    const newContact = await createContact(userId);
 
     socket.emit("contact:created", { data: { contact: newContact } });
 

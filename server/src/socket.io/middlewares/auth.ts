@@ -30,7 +30,7 @@ export async function authenticate(
     return next(new Error("Authentication error: User not found"));
   }
 
-  socket.request.user = user;
+  socket.data.user = user;
 
   return next();
 }
@@ -44,7 +44,7 @@ export async function authenticate(
  */
 export function authorize(isAdmin = false) {
   return async (socket: TSocket, next: (error?: Error) => void) => {
-    const { user } = socket.request;
+    const { user } = socket.data;
 
     if (!user) {
       return next(new Error("Authorization error: No user found"));

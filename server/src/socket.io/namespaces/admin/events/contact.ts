@@ -6,20 +6,10 @@ import {
   TContactIO,
   TContactSocket,
 } from "../../../@types/admin";
-import { TResultWithData } from "../../../@types/result";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
   const handle = withErrorHandling<IContactEmitEvents>(socket);
-
-  /**
-   * Broadcasts the created contact to all connected clients.
-   */
-  async function onContactCreated({
-    data,
-  }: TResultWithData<{ contact: IContact }>) {
-    socket.broadcast.emit("contact:created", { data });
-  }
 
   /**
    * Updates the status of the contact with the given `contactId` to `accepted`
@@ -36,7 +26,7 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
     );
 
     const conversation = await createConversation(
-      socket.request.user.id,
+      socket.data.user.id,
       contact.userId
     );
 
@@ -66,7 +56,6 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
       .emit("contact:refused", { data: { contact } });
   }
 
-  socket.on("contact:created", handle(onContactCreated, "contact:created"));
   socket.on("contact:accept", handle(onContactAccept, "contact:accepted"));
   socket.on("contact:refuse", handle(onContactRefuse, "contact:refused"));
 }

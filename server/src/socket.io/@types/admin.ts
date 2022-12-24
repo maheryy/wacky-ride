@@ -3,23 +3,32 @@ import { IContact } from "../../types/contact";
 import { IConversation } from "../../types/conversation";
 import { IRoom } from "../../types/room";
 import { IUser } from "../../types/user";
-import { TEmitEvent, TListenEvent } from "./result";
+import { TEmitEvent } from "./result";
+
+/**
+ * Namespace
+ */
+
+export interface IEmitEvents {
+  "admin:connected": TEmitEvent<{ userId: IUser["id"] }>;
+  "admin:disconnected": TEmitEvent<{ userId: IUser["id"] }>;
+}
 
 /**
  * User
  */
 
 export interface IUserListenEvents {
-  "user-status:update": (status: IUser["status"]) => Promise<void>;
+  "admin:status:update": (status: IUser["status"]) => Promise<void>;
 }
 
-export interface IUserEmitEvents {
-  "user-status:updated": TEmitEvent<{ status: IUser["status"] }>;
-}
+export type TUserEmitEvents = IEmitEvents & {
+  "admin:status:updated": TEmitEvent<{ status: IUser["status"] }>;
+};
 
-export type TUserIO = Server<IUserListenEvents, IUserEmitEvents>;
+export type TUserIO = Server<IUserListenEvents, TUserEmitEvents>;
 
-export type TUserSocket = Socket<IUserListenEvents, IUserEmitEvents>;
+export type TUserSocket = Socket<IUserListenEvents, TUserEmitEvents>;
 
 /**
  * Room
@@ -42,7 +51,6 @@ export type TRoomSocket = Socket<IRoomListenEvents, IRoomEmitEvents>;
  */
 
 export interface IContactListenEvents {
-  "contact:created": TListenEvent<{ contact: IContact }>;
   "contact:accept": (contactId: IContact["id"]) => void;
   "contact:refuse": (contactId: IContact["id"]) => void;
 }
@@ -65,7 +73,9 @@ export type TAdminListenEvents =
   | IRoomListenEvents
   | IContactListenEvents;
 
-export type TAdminEmitEvents =
-  | IUserEmitEvents
-  | IRoomEmitEvents
-  | IContactEmitEvents;
+export type TAdminEmitEvents = IEmitEvents &
+  (TUserEmitEvents | IRoomEmitEvents | IContactEmitEvents);
+
+export type TAdminIO = Server<TAdminListenEvents, TAdminEmitEvents>;
+
+export type TAdminSocket = Socket<TAdminListenEvents, TAdminEmitEvents>;

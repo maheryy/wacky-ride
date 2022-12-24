@@ -3,6 +3,7 @@ import { IContact } from "../../types/contact";
 import { IConversation } from "../../types/conversation";
 import { IFullMessage } from "../../types/message";
 import { IRoom } from "../../types/room";
+import { IUser } from "../../types/user";
 import { TEmitEvent } from "./result";
 
 /**
@@ -68,12 +69,30 @@ export type TContactIO = Server<IContactListenEvents, IContactEmitEvents>;
 
 export type TContactSocket = Socket<IContactListenEvents, IContactEmitEvents>;
 
+/**
+ * User
+ */
+
+export interface IUserListenEvents {
+  "admin:status": () => void;
+}
+
+export interface IUserEmitEvents {
+  "admin:status": TEmitEvent<boolean>;
+}
+
+export type TUserIO = Server<IUserListenEvents, IUserEmitEvents>;
+
+export type TUserSocket = Socket<IUserListenEvents, IUserEmitEvents>;
+
 export type TMainListenEvents =
   | IConversationListenEvents
   | IRoomListenEvents
-  | IContactListenEvents;
+  | IContactListenEvents
+  | IUserListenEvents;
 
 export type TMainEmitEvents =
   | IConversationEmitEvents
   | IRoomEmitEvents
-  | IContactEmitEvents;
+  | IContactEmitEvents
+  | IUserEmitEvents;
