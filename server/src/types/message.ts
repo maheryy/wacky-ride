@@ -8,6 +8,7 @@ export interface IMessage {
   content: string;
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export interface IFullMessage extends IMessage {

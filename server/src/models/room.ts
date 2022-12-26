@@ -24,10 +24,10 @@ export class RoomModel extends Model {
   declare id: number;
   declare name: string;
   declare limit: number;
-  declare status: number;
 
   declare readonly createdAt?: Date;
   declare readonly updatedAt?: Date;
+  declare readonly deletedAt?: Date;
 
   declare users?: NonAttribute<UserModel>;
   declare messages?: NonAttribute<MessageModel>;
@@ -78,13 +78,10 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
         allowNull: false,
         defaultValue: 50,
       },
-      status: {
-        type: DataTypes.SMALLINT,
-        defaultValue: 0,
-      },
     },
     {
       tableName: "room",
+      paranoid: true,
       sequelize,
     }
   );

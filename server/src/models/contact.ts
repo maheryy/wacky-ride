@@ -18,6 +18,7 @@ export class ContactModel extends Model implements IContact {
 
   declare readonly createdAt?: Date;
   declare readonly updatedAt?: Date;
+  declare readonly deletedAt?: Date;
 
   declare static associate?: (models: IListModel) => void;
   declare static seed?: (models: IListModel) => Promise<void>;
@@ -39,6 +40,7 @@ const Contact = (sequelize: Sequelize): typeof ContactModel => {
     },
     {
       tableName: "contact",
+      paranoid: true,
       sequelize,
     }
   );

@@ -24,6 +24,7 @@ export class ConversationModel extends Model implements IConversation {
 
   declare readonly createdAt?: Date;
   declare readonly updatedAt?: Date;
+  declare readonly deletedAt?: Date;
 
   declare sender?: NonAttribute<UserModel>;
   declare receiver?: NonAttribute<UserModel>;
@@ -58,6 +59,7 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
     },
     {
       tableName: "conversation",
+      paranoid: true,
       sequelize,
     }
   );
