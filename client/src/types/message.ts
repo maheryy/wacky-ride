@@ -10,3 +10,9 @@ export interface IMessage {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+
+export interface IChatbotMessage {
+  isBotMessage: boolean;
+  content: string;
+}

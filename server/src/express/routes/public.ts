@@ -1,12 +1,15 @@
 import { Request, Response, Router } from "express";
 import { getAllUsers } from "../../services/user.service";
 import AuthRouter from "./auth";
+import ChatbotRouter from "./chatbot";
 
 const router: Router = Router();
 
 router.get("/", (req: Request, res: Response) => {
   res.send("Wacky Ride live");
 });
+
+router.use("/workflow", ChatbotRouter);
 
 router.use("/auth", AuthRouter);
 
