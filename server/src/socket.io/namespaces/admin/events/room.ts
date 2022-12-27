@@ -18,7 +18,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
    *
    * Emits `room:name:updated` to the client and the main namespace
    */
-  async function onRoomNameUpdate(id: IRoom["id"], name: IRoom["name"]) {
+  async function onNameUpdate(id: IRoom["id"], name: IRoom["name"]) {
     await updateRoomName(id, name);
 
     const data = { id, name };
@@ -29,7 +29,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   }
 
   socket.on("room:create", handle(onCreate, "room:created"));
-  socket.on("room:name:update", handle(onRoomNameUpdate, "room:name:updated"));
+  socket.on("room:name:update", handle(onNameUpdate, "room:name:updated"));
 }
 
 export default registerRoomHandlers;
