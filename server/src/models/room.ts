@@ -69,8 +69,12 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
         validate: {
-          len: [2, 50],
+          len: {
+            args: [2, 50],
+            msg: "Invalid name, length must be between 2 and 50",
+          },
         },
       },
       limit: {

@@ -34,3 +34,16 @@ export const getRoomByIdWithUsersAndMessages = async (
     ],
   }) as Promise<IFullRoom | null>;
 };
+
+export function updateRoomName(roomId: IRoom["id"], name: IRoom["name"]) {
+  return db.Room.update(
+    {
+      name,
+    },
+    {
+      where: {
+        id: roomId,
+      },
+    }
+  );
+}

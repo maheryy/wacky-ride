@@ -36,10 +36,12 @@ export type TUserSocket = Socket<IUserListenEvents, TUserEmitEvents>;
 
 export interface IRoomListenEvents {
   "room:create": (roomName: string) => void;
+  "room:name:update": (id: IRoom["id"], name: IRoom["name"]) => void;
 }
 
 export interface IRoomEmitEvents {
   "room:created": TEmitEvent<{ room: IRoom }>;
+  "room:name:updated": TEmitEvent<Pick<IRoom, "id" | "name">>;
 }
 
 export type TRoomIO = Server<IRoomListenEvents, IRoomEmitEvents>;
