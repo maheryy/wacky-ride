@@ -81,6 +81,16 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 50,
+        validate: {
+          min: {
+            args: [2],
+            msg: "Invalid limit, must at least 2",
+          },
+          max: {
+            args: [50],
+            msg: "Invalid limit, must be less than 50",
+          },
+        },
       },
     },
     {
