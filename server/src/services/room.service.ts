@@ -11,6 +11,10 @@ export const getRoomById = async (roomId: number): Promise<IRoom | null> => {
   return Room.findByPk(roomId);
 };
 
+export function getRooms() {
+  return Room.findAll();
+}
+
 export const getRoomByIdWithUsersAndMessages = async (
   roomId: number
 ): Promise<IFullRoom | null> => {

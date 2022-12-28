@@ -2,7 +2,10 @@
 import { MessageModel } from "../../../../models/message";
 import { RoomModel } from "../../../../models/room";
 import { createMessageWithinRoom } from "../../../../services/message.service";
-import { getRoomByIdWithUsersAndMessages } from "../../../../services/room.service";
+import {
+  getRoomByIdWithUsersAndMessages,
+  getRooms,
+} from "../../../../services/room.service";
 import { IFullMessage } from "../../../../types/message";
 import { IUser } from "../../../../types/user";
 import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types/main";
@@ -69,9 +72,16 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
     socket.leave(`R-${roomId}`);
   }
 
+  async function onRooms() {
+    const rooms = await getRooms();
+
+    socket.emit("rooms", { data: { rooms } });
+  }
+
   socket.on("room:message:send", handle(onMessage, "room:message:received"));
   socket.on("room:join", handle(onJoin, "room:load"));
   socket.on("room:leave", onLeave);
+  socket.on("rooms", handle(onRooms, "rooms"));
 }
 
 export default registerRoomHandlers;

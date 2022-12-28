@@ -3,7 +3,6 @@ import { IContact } from "../../types/contact";
 import { IConversation } from "../../types/conversation";
 import { IFullMessage } from "../../types/message";
 import { IRoom } from "../../types/room";
-import { IUser } from "../../types/user";
 import { TEmitEvent } from "./result";
 
 /**
@@ -42,11 +41,13 @@ export interface IRoomListenEvents {
   "room:message:send": (message: Omit<IFullMessage, "id">) => void;
   "room:join": (roomId: number) => void;
   "room:leave": (roomId: number) => void;
+  rooms: () => void;
 }
 
 export interface IRoomEmitEvents {
   "room:message:received": TEmitEvent<{ message: IFullMessage }>;
   "room:load": TEmitEvent<{ room: IRoom; messages: IFullMessage[] }>;
+  rooms: TEmitEvent<{ rooms: IRoom[] }>;
 }
 
 export type TRoomIO = Server<IRoomListenEvents, IRoomEmitEvents>;
