@@ -1,32 +1,32 @@
 import { db } from "../database/sequelize";
-import { IFullRoom, IRoom } from "../types/room";
+import { IFullRoom, IRoom, TRoomUpdateAttributes } from "../types/room";
+
+const { Message, Room, User } = db;
 
 export function createRoom(roomName: string) {
-  return db.Room.create({
-    name: roomName,
-  });
+  return Room.create({ name: roomName });
 }
 
 export const getRoomById = async (roomId: number): Promise<IRoom | null> => {
-  return db.Room.findByPk(roomId);
+  return Room.findByPk(roomId);
 };
 
 export const getRoomByIdWithUsersAndMessages = async (
   roomId: number
 ): Promise<IFullRoom | null> => {
-  return db.Room.findByPk(roomId, {
+  return Room.findByPk(roomId, {
     include: [
       {
-        model: db.User,
+        model: User,
         as: "users",
       },
       {
-        model: db.Message,
+        model: Message,
         as: "messages",
         order: [["createdAt", "DESC"]],
         include: [
           {
-            model: db.User,
+            model: User,
             as: "author",
           },
         ],
@@ -34,3 +34,11 @@ export const getRoomByIdWithUsersAndMessages = async (
     ],
   }) as Promise<IFullRoom | null>;
 };
+
+export function updateRoom(roomId: IRoom["id"], fields: TRoomUpdateAttributes) {
+  return Room.update(fields, { where: { id: roomId } });
+}
+
+export function deleteRoom(roomId: IRoom["id"]) {
+  return Room.destroy({ where: { id: roomId } });
+}

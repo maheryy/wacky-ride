@@ -16,7 +16,7 @@ import {
   Sequelize,
 } from "sequelize";
 import { IListModel } from "../types/models";
-import { RoomCreationAttributes } from "../types/room";
+import { TRoomCreationAttributes } from "../types/room";
 import { MessageModel } from "./message";
 import { UserModel } from "./user";
 
@@ -69,14 +69,28 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
         validate: {
-          len: [2, 50],
+          len: {
+            args: [2, 50],
+            msg: "Invalid name, length must be between 2 and 50",
+          },
         },
       },
       limit: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 50,
+        validate: {
+          min: {
+            args: [2],
+            msg: "Invalid limit, must at least 2",
+          },
+          max: {
+            args: [50],
+            msg: "Invalid limit, must be less than 50",
+          },
+        },
       },
     },
     {
@@ -100,7 +114,7 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
 
   RoomModel.seed = async (models: IListModel) => {
     const users = await models.User.findAll();
-    const rooms: RoomCreationAttributes[] = Array.from({ length: 5 }, () => ({
+    const rooms: TRoomCreationAttributes[] = Array.from({ length: 5 }, () => ({
       name: `${faker.word.adjective()} ${faker.word.noun()}`,
       limit: faker.datatype.number({ min: 10, max: 50 }),
     }));
