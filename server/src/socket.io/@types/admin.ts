@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { IContact } from "../../types/contact";
 import { IConversation } from "../../types/conversation";
-import { IRoom } from "../../types/room";
+import { IRoom, TRoomUpdateAttributes } from "../../types/room";
 import { IUser } from "../../types/user";
 import { TEmitEvent } from "./result";
 
@@ -36,12 +36,17 @@ export type TUserSocket = Socket<IUserListenEvents, TUserEmitEvents>;
 
 export interface IRoomListenEvents {
   "room:create": (roomName: string) => void;
-  "room:name:update": (id: IRoom["id"], name: IRoom["name"]) => void;
+  "room:delete": (id: IRoom["id"]) => void;
+  "room:update": (id: IRoom["id"], fields: TRoomUpdateAttributes) => void;
 }
 
 export interface IRoomEmitEvents {
   "room:created": TEmitEvent<{ room: IRoom }>;
-  "room:name:updated": TEmitEvent<Pick<IRoom, "id" | "name">>;
+  "room:deleted": TEmitEvent<{ id: IRoom["id"] }>;
+  "room:updated": TEmitEvent<{
+    id: IRoom["id"];
+    fields: TRoomUpdateAttributes;
+  }>;
 }
 
 export type TRoomIO = Server<IRoomListenEvents, IRoomEmitEvents>;

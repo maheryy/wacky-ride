@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { createRoom, updateRoomName } from "../../../../services/room.service";
-import { IRoom } from "../../../../types/room";
+import {
+  createRoom,
+  deleteRoom,
+  updateRoom,
+} from "../../../../services/room.service";
+import { IRoom, TRoomUpdateAttributes } from "../../../../types/room";
 import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types/admin";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
@@ -14,22 +18,41 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   }
 
   /**
-   * Updates the name of the room with the given `id`.
+   * Updates the the room with the given `id`.
    *
-   * Emits `room:name:updated` to the client and the main namespace
+   * Emits `room:updated` to the client and the main namespace
    */
-  async function onNameUpdate(id: IRoom["id"], name: IRoom["name"]) {
-    await updateRoomName(id, name);
+  async function onUpdate(
+    id: IRoom["id"],
+    { limit, name }: TRoomUpdateAttributes
+  ) {
+    const fields = { limit, name };
 
-    const data = { id, name };
+    await updateRoom(id, fields);
 
-    socket.emit("room:name:updated", { data });
+    const data = { id, fields };
 
-    io.of("/").emit("room:name:updated", { data });
+    socket.emit("room:updated", { data });
+
+    io.of("/").emit("room:updated", { data });
+  }
+
+  /**
+   * Deletes the room with the given `id`.
+   *
+   * Emits `room:deleted` to the client and the main namespace
+   */
+  async function onDelete(id: IRoom["id"]) {
+    await deleteRoom(id);
+
+    socket.emit("room:deleted", { data: { id } });
+
+    io.of("/").emit("room:deleted", { data: { id } });
   }
 
   socket.on("room:create", handle(onCreate, "room:created"));
-  socket.on("room:name:update", handle(onNameUpdate, "room:name:updated"));
+  socket.on("room:update", handle(onUpdate, "room:updated"));
+  socket.on("room:delete", handle(onDelete, "room:deleted"));
 }
 
 export default registerRoomHandlers;

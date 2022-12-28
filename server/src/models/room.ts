@@ -16,7 +16,7 @@ import {
   Sequelize,
 } from "sequelize";
 import { IListModel } from "../types/models";
-import { RoomCreationAttributes } from "../types/room";
+import { TRoomCreationAttributes } from "../types/room";
 import { MessageModel } from "./message";
 import { UserModel } from "./user";
 
@@ -104,7 +104,7 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
 
   RoomModel.seed = async (models: IListModel) => {
     const users = await models.User.findAll();
-    const rooms: RoomCreationAttributes[] = Array.from({ length: 5 }, () => ({
+    const rooms: TRoomCreationAttributes[] = Array.from({ length: 5 }, () => ({
       name: `${faker.word.adjective()} ${faker.word.noun()}`,
       limit: faker.datatype.number({ min: 10, max: 50 }),
     }));

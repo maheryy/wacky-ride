@@ -16,4 +16,6 @@ export interface IFullRoom extends IRoom {
   messages?: IMessage[];
 }
 
-export type RoomCreationAttributes = Optional<IRoom, "id" | "limit" | "status">;
+export type TRoomCreationAttributes = Optional<IRoom, "id">;
+
+export type TRoomUpdateAttributes = Partial<Pick<IRoom, "limit" | "name">>;
