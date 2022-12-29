@@ -5,7 +5,7 @@ export type TResultWithData<T> = {
   errors?: never;
 };
 
-type TResultWithErrors = {
+export type TResultWithErrors = {
   data?: never;
   errors: TError[];
 };

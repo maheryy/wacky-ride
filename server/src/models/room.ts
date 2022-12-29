@@ -29,8 +29,8 @@ export class RoomModel extends Model {
   declare readonly updatedAt?: Date;
   declare readonly deletedAt?: Date;
 
-  declare users?: NonAttribute<UserModel>;
-  declare messages?: NonAttribute<MessageModel>;
+  declare users?: NonAttribute<UserModel[]>;
+  declare messages?: NonAttribute<MessageModel[]>;
 
   declare getUsers: HasManyGetAssociationsMixin<UserModel>;
   declare addUsers: HasManyAddAssociationsMixin<UserModel, number>;

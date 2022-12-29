@@ -7,13 +7,13 @@ import {
   NonAttribute,
   Sequelize,
 } from "sequelize";
-import { MessageCreationAttributes } from "../types/message";
+import { IMessage, MessageCreationAttributes } from "../types/message";
 import { IListModel } from "../types/models";
 import { ConversationModel } from "./conversation";
 import { RoomModel } from "./room";
 import { UserModel } from "./user";
 
-export class MessageModel extends Model {
+export class MessageModel extends Model implements IMessage {
   declare id: number;
   declare content: string;
 

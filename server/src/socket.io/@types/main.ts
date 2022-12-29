@@ -2,7 +2,7 @@ import { Server, Socket } from "socket.io";
 import { IContact } from "../../types/contact";
 import { IConversation } from "../../types/conversation";
 import { IFullMessage } from "../../types/message";
-import { IRoom } from "../../types/room";
+import { IRoom, TRoomWithUsersAndMessages } from "../../types/room";
 import { TEmitEvent } from "./result";
 
 /**
@@ -46,7 +46,8 @@ export interface IRoomListenEvents {
 
 export interface IRoomEmitEvents {
   "room:message:received": TEmitEvent<{ message: IFullMessage }>;
-  "room:load": TEmitEvent<{ room: IRoom; messages: IFullMessage[] }>;
+  "room:joined": TEmitEvent<{ room: TRoomWithUsersAndMessages }>;
+  "room:left": TEmitEvent<{ roomId: number }>;
   rooms: TEmitEvent<{ rooms: IRoom[] }>;
 }
 
