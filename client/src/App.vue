@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import ChatBot from "./components/ChatBot/ChatBot.vue";
-// import ChatBox from "./components/ChatBox/ChatBox.vue";
-// import ChatRoom from "./components/ChatRoom/ChatRoom.vue";
-
+import Nav from "./components/common/Nav.vue";
 </script>
 
 <template>
+  <Nav />
   <div class="chat-container">
-    <ChatBot />
-    <!-- <ChatBox /> -->
-    <!-- <ChatRoom :roomId="1" title="My Super Room 1" /> -->
+    <RouterView />
   </div>
 </template>
 
