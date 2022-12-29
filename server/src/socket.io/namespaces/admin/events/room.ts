@@ -2,6 +2,7 @@
 import {
   createRoom,
   deleteRoom,
+  restoreRoom,
   updateRoom,
 } from "../../../../services/room.service";
 import { IRoom, TRoomUpdateAttributes } from "../../../../types/room";
@@ -50,9 +51,23 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
     io.of("/").emit("room:deleted", { data: { id } });
   }
 
+  /**
+   * Restores the room with the given `id`.
+   *
+   * Emits `room:restored` to the client and the main namespace
+   */
+  async function onRestore(id: IRoom["id"]) {
+    const room = await restoreRoom(id);
+
+    socket.emit("room:restored", { data: { room } });
+
+    io.of("/").emit("room:restored", { data: { room } });
+  }
+
   socket.on("room:create", handle(onCreate, "room:created"));
   socket.on("room:update", handle(onUpdate, "room:updated"));
   socket.on("room:delete", handle(onDelete, "room:deleted"));
+  socket.on("room:restore", handle(onRestore, "room:restored"));
 }
 
 export default registerRoomHandlers;

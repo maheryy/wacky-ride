@@ -121,3 +121,29 @@ export function updateRoom(roomId: IRoom["id"], fields: TRoomUpdateAttributes) {
 export function deleteRoom(roomId: IRoom["id"]) {
   return Room.destroy({ where: { id: roomId } });
 }
+
+export async function restoreRoom(roomId: IRoom["id"]) {
+  const transaction = await sequelize.transaction();
+
+  try {
+    const room = await Room.findByPk(roomId, { transaction, paranoid: false });
+
+    if (!room) {
+      throw new WackyRideError("The room does not exist");
+    }
+
+    if (!room.deletedAt) {
+      throw new WackyRideError("The room is not deleted");
+    }
+
+    await room.restore({ transaction });
+
+    await transaction.commit();
+
+    return room;
+  } catch (error) {
+    await transaction.rollback();
+
+    throw error;
+  }
+}
