@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../components/Home/Home.vue";
 import ChatBox from "../components/ChatBox/ChatBox.vue";
 import ChatBot from "../components/ChatBot/ChatBot.vue";
-import ChatRoom from "../components/ChatRoom/ChatRoom.vue";
+// import ChatRoom from "../components/ChatRoom/ChatRoom.vue";
+import NotFound from "../components/Errors/NotFound.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,11 @@ const router = createRouter({
       props: (route) => ({ roomId: route.params.id }),
     },
     */
+    {
+      path: "/:pathMatch(.*)",
+      name: "not-found",
+      component: NotFound,
+    },
   ],
 });
 

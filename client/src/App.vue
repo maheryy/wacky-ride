@@ -4,18 +4,15 @@ import Nav from "./components/common/Nav.vue";
 
 <template>
   <Nav />
-  <div class="chat-container">
+  <main>
     <RouterView />
-  </div>
+  </main>
 </template>
 
-<style lang="scss">
-.chat-container {
-  width: 100%;
-  margin: auto;
+<style scoped>
+main {
+  flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  flex-direction: column;
 }
 </style>

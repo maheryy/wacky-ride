@@ -62,18 +62,20 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div id="chat-bot" class="chat-bot">
-    <h3>{{ "WackyBot" }}</h3>
-    <div class="chat-bot__messages">
-      <ul id="chat-bot-messages" class="chat-bot__messages__container">
-        <ChatBotMessage
-          v-for="(message, index) in messages"
-          :key="index"
-          :message="message"
-        />
-      </ul>
+  <div class="main-container">
+    <div id="chat-bot" class="chat-bot">
+      <h3>{{ "WackyBot" }}</h3>
+      <div class="chat-bot__messages">
+        <ul id="chat-bot-messages" class="chat-bot__messages__container">
+          <ChatBotMessage
+            v-for="(message, index) in messages"
+            :key="index"
+            :message="message"
+          />
+        </ul>
+      </div>
+      <ChatBotAction :action="action" :dispatch="registerAnswer" />
     </div>
-    <ChatBotAction :action="action" :dispatch="registerAnswer" />
   </div>
 </template>
 

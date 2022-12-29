@@ -100,21 +100,23 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="chat-room" class="chat-room">
-    <h3>{{ title }}</h3>
-    <div class="chat-room__messages">
-      <ul id="chat-room-messages" class="chat-room__messages__container">
-        <Message
-          v-if="messages.length"
-          v-for="message in messages"
-          :key="message.id"
-          :message="message"
-        />
-      </ul>
-    </div>
-    <div class="chat-room__input">
-      <input type="text" v-model="message" @keyup.enter="sendMessage" />
-      <button @click="sendMessage">Send</button>
+  <div class="main-container">
+    <div id="chat-room" class="chat-room">
+      <h3>{{ title }}</h3>
+      <div class="chat-room__messages">
+        <ul id="chat-room-messages" class="chat-room__messages__container">
+          <Message
+            v-if="messages.length"
+            v-for="message in messages"
+            :key="message.id"
+            :message="message"
+          />
+        </ul>
+      </div>
+      <div class="chat-room__input">
+        <input type="text" v-model="message" @keyup.enter="sendMessage" />
+        <button @click="sendMessage">Send</button>
+      </div>
     </div>
   </div>
 </template>
