@@ -1,12 +1,12 @@
 <template>
-  <nav class="bg-gray-50 dark:bg-gray-700">
+  <nav class="bg-gray-700">
     <div class="max-w-screen-xl px-4 py-3 mx-auto md:px-6">
       <div class="flex items-center">
         <ul class="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
           <li>
             <RouterLink
               :to="{ name: 'home' }"
-              class="text-gray-900 dark:text-white hover:underline"
+              class="text-white hover:underline"
             >
               Home
             </RouterLink>
@@ -14,7 +14,7 @@
           <li>
             <RouterLink
               :to="{ name: 'chat' }"
-              class="text-gray-900 dark:text-white hover:underline"
+              class="text-white hover:underline"
             >
               Chat
             </RouterLink>
@@ -22,7 +22,7 @@
           <li>
             <RouterLink
               :to="{ name: 'chatbot' }"
-              class="text-gray-900 dark:text-white hover:underline"
+              class="text-white hover:underline"
             >
               Chatbot
             </RouterLink>
