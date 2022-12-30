@@ -22,6 +22,7 @@ const showAlertQuery = () =>
     <div class="playground">
       <h2 class="text-2xl text-center font-extrabold dark:text-white mb-4">
         This is a playground section using vue routing
+        TEST
       </h2>
       <button
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-1 rounded"
