@@ -1,60 +1,57 @@
 import { db } from "../database/sequelize";
-import { IFullMessage } from "../types/message";
+import { TFullMessage } from "../types/message";
 
-export const createMessageWithinConversation = async (
-  message: string,
-  authorId: number,
-  conversationId: number
-): Promise<IFullMessage> => {
-  return db.Message.create({
-    content: message,
-    authorId: authorId,
-    conversationId: conversationId,
-  }) as Promise<IFullMessage>;
-};
+const { Message, User } = db;
 
-export const createMessageWithinRoom = async (
-  message: string,
-  authorId: number,
-  roomId: number
-): Promise<IFullMessage> => {
-  return db.Message.create({
-    content: message,
-    authorId: authorId,
-    roomId: roomId,
-  }) as Promise<IFullMessage>;
-};
+export type TMessage =
+  | {
+      content: string;
+      authorId: number;
+    } & (
+      | {
+          roomId: number;
+          conversationId?: never;
+        }
+      | {
+          roomId?: never;
+          conversationId: number;
+        }
+    );
+
+export function createMessage(fields: TMessage) {
+  return Message.create(fields);
+}
 
 export const getMessagesByConversation = async (
   conversationId: number
-): Promise<IFullMessage[]> => {
-  return db.Message.findAll({
+): Promise<TFullMessage[]> => {
+  return Message.findAll({
     where: {
       conversationId: conversationId,
     },
     order: [["createdAt", "ASC"]],
     include: [
       {
-        model: db.User,
+        model: User,
         as: "author",
       },
     ],
-  }) as Promise<IFullMessage[]>;
+  }) as Promise<TFullMessage[]>;
 };
 
 export const getMessagesByRoom = async (
   roomId: number
-): Promise<IFullMessage[]> => {
-  return db.Message.findAll({
+): Promise<TFullMessage[]> => {
+  return Message.findAll({
     where: {
       roomId: roomId,
     },
     order: [["createdAt", "ASC"]],
     include: [
       {
-        model: db.User,
+        model: User,
         as: "author",
       },
     ],
-  }) as Promise<IFullMessage[]>;
+  }) as Promise<TFullMessage[]>;
 };

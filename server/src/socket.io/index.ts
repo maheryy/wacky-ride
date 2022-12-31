@@ -25,7 +25,20 @@ function initializeSocketIOServer(httpServer: HttpServer): void {
   function onConnection(socket: TSocket) {
     console.log("[socket.io]: New client connected");
 
-    socket.join(`U-${socket.data.user.id}`);
+    const { user } = socket.data;
+
+    // The user should be authenticated and authorized but TypeScript does not know this.
+    if (!user) {
+      return;
+    }
+
+    user.rooms.forEach((room) => {
+      socket.join(`R-${room.id}`);
+    });
+
+    socket.join(`U-${user.id}`);
+
+    socket.emit("user:connected", { data: { user } });
 
     registerConversationHandlers(io, socket);
     registerRoomHandlers(io, socket);

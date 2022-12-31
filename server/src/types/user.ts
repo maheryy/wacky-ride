@@ -1,4 +1,7 @@
 import { Optional } from "sequelize";
+import { ConversationModel } from "../models/conversation";
+import { RoomModel } from "../models/room";
+import { UserModel } from "../models/user";
 import { strEnum } from "../utils/strEnum";
 
 export const UserStatus = ["online", "idle", "dnd", "invisible"] as const;
@@ -18,6 +21,12 @@ export interface IUser {
   updatedAt?: Date;
   deletedAt?: Date;
 }
+
+export type TUserWithConversationsAndRooms = UserModel & {
+  senderConversations: ConversationModel[];
+  receiverConversations: ConversationModel[];
+  rooms: RoomModel[];
+};
 
 export type TUserCreationAttributes = Optional<IUser, "id" | "isAdmin">;
 

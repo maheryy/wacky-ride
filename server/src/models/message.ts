@@ -55,18 +55,36 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
       tableName: "message",
       paranoid: true,
       sequelize,
+      validate: {
+        bothRoomAndConversation() {
+          if (this.roomId && this.conversationId) {
+            throw new Error("Message cannot be in both room and conversation");
+          }
+        },
+
+        eitherRoomOrConversation() {
+          if (!this.roomId && !this.conversationId) {
+            throw new Error("Message must be in either room or conversation");
+          }
+        },
+      },
     }
   );
 
   MessageModel.associate = (models: IListModel) => {
     MessageModel.belongsTo(models.User, {
       as: "author",
-      foreignKey: "authorId",
+      foreignKey: {
+        name: "authorId",
+        allowNull: false,
+      },
     });
+
     MessageModel.belongsTo(models.Room, {
       as: "room",
       foreignKey: "roomId",
     });
+
     MessageModel.belongsTo(models.Conversation, {
       as: "conversation",
       foreignKey: "conversationId",

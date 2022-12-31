@@ -1,34 +1,35 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { MessageModel } from "../../../../models/message";
-import { createMessageWithinRoom } from "../../../../services/message.service";
+import { createMessage } from "../../../../services/message.service";
 import {
   getRooms,
   joinRoom,
   leaveRoom,
 } from "../../../../services/room.service";
-import { IFullMessage } from "../../../../types/message";
+import { IMessage } from "../../../../types/message";
+import { IRoom } from "../../../../types/room";
 import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types/main";
+import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   const handle = withErrorHandling<IRoomEmitEvents>(socket);
 
-  async function onMessage(message: Omit<IFullMessage, "id">) {
+  async function onMessage(roomId: IRoom["id"], content: IMessage["content"]) {
     console.log("[socket.io]: room:message:send");
 
-    const newMessage = await createMessageWithinRoom(
-      message.content,
-      message.author.id,
-      message.room!.id
-    );
+    const isUserInRoom = socket.rooms.has(`R-${roomId}`);
 
-    io.to(`R-${message.room!.id}`).emit("room:message:received", {
-      data: {
-        message: {
-          ...(newMessage as MessageModel).toJSON(),
-          author: message.author,
-        },
-      },
+    if (!isUserInRoom) {
+      throw new WackyRideError("You are not in this room");
+    }
+
+    const message = await createMessage({
+      roomId,
+      authorId: socket.data.user.id,
+      content,
+    });
+
+    io.to(`R-${roomId}`).emit("room:message:received", {
+      data: { message },
     });
   }
 

@@ -61,18 +61,37 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
       tableName: "conversation",
       paranoid: true,
       sequelize,
+      validate: {
+        senderAndReceiverMustBeDifferent() {
+          if (!this.senderId || !this.receiverId) {
+            return;
+          }
+
+          if (+this.senderId === +this.receiverId) {
+            throw new Error("Sender and receiver must be different");
+          }
+        },
+      },
     }
   );
 
   ConversationModel.associate = (models: IListModel) => {
     ConversationModel.belongsTo(models.User, {
       as: "sender",
-      foreignKey: "senderId",
+      foreignKey: {
+        name: "senderId",
+        allowNull: false,
+      },
     });
+
     ConversationModel.belongsTo(models.User, {
       as: "receiver",
-      foreignKey: "receiverId",
+      foreignKey: {
+        name: "receiverId",
+        allowNull: false,
+      },
     });
+
     ConversationModel.hasMany(models.Message, {
       as: "messages",
       foreignKey: "conversationId",
