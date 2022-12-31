@@ -45,7 +45,7 @@ export interface IRoomListenEvents {
 }
 
 export interface IRoomEmitEvents {
-  "room:message:received": TEmitEvent<{ message: TMessageWithAuthor }>;
+  "room:message:received": TEmitEvent<{ message: IMessage }>;
   "room:joined": TEmitEvent<{ room: TRoomWithUsersAndMessages }>;
   "room:left": TEmitEvent<{ roomId: IRoom["id"] }>;
   rooms: TEmitEvent<{ rooms: IRoom[] }>;

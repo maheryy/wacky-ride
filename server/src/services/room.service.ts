@@ -4,6 +4,7 @@ import { WackyRideError } from "../socket.io/errors/WackyRideError";
 import {
   IRoom,
   TRoomUpdateAttributes,
+  TRoomWithUsers,
   TRoomWithUsersAndMessages,
 } from "../types/room";
 import { IUser } from "../types/user";
@@ -22,6 +23,16 @@ export function getRooms() {
   return Room.findAll();
 }
 
+export function getRoomWithUsers(
+  roomId: IRoom["id"],
+  transaction?: Transaction
+) {
+  return Room.findByPk(roomId, {
+    include: [{ model: User, as: "users" }],
+    transaction,
+  }) as Promise<TRoomWithUsers | null>;
+}
+
 export async function joinRoom(roomId: IRoom["id"], userId: IUser["id"]) {
   const transaction = await sequelize.transaction();
 
@@ -30,10 +41,6 @@ export async function joinRoom(roomId: IRoom["id"], userId: IUser["id"]) {
 
     if (!room) {
       throw new WackyRideError("The room does not exist");
-    }
-
-    if (!room.users) {
-      throw new WackyRideError("This room cannot be joined");
     }
 
     const isUserInRoom = room.users.some((user) => user.id === userId);
@@ -64,17 +71,10 @@ export async function leaveRoom(roomId: IRoom["id"], userId: IUser["id"]) {
   const transaction = await sequelize.transaction();
 
   try {
-    const room = await Room.findByPk(roomId, {
-      include: [{ model: User, as: "users" }],
-      transaction,
-    });
+    const room = await getRoomWithUsers(roomId, transaction);
 
     if (!room) {
       throw new WackyRideError("The room does not exist");
-    }
-
-    if (!room.users) {
-      throw new WackyRideError("This room cannot be left");
     }
 
     const isUserInRoom = room.users.some((user) => user.id === userId);
