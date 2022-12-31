@@ -39,17 +39,10 @@ const registerConversationHandlers = (
     io.to(`user:${receiverId}`).emit("conversation:message:received", result);
   }
 
-  async function onClose(conversationId: number) {
-    console.log("[socket.io]: conversation:close", conversationId);
-
-    socket.leave(`C-${conversationId}`);
-  }
-
   socket.on(
     "conversation:message:send",
     handle(onMessage, "conversation:message:received")
   );
-  socket.on("conversation:close", onClose);
 };
 
 export default registerConversationHandlers;

@@ -10,7 +10,6 @@ import { TEmitEvent } from "./result";
  */
 
 export interface IConversationListenEvents {
-  "conversation:close": (conversationId: number) => void;
   "conversation:message:send": (
     received: IUser["id"],
     content: IMessage["content"]
