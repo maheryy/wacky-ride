@@ -31,7 +31,7 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
     );
 
     io.of("/")
-      .to(`U-${contact.userId}`)
+      .to(`user:${contact.userId}`)
       .emit("contact:accepted", { data: { contact, conversation } });
 
     socket.emit("contact:accepted", { data: { contact, conversation } });
@@ -52,7 +52,7 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
     socket.emit("contact:refused", { data: { contact } });
 
     io.of("/")
-      .to(`U-${contact.userId}`)
+      .to(`user:${contact.userId}`)
       .emit("contact:refused", { data: { contact } });
   }
 

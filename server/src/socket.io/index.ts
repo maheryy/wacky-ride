@@ -33,10 +33,10 @@ function initializeSocketIOServer(httpServer: HttpServer): void {
     }
 
     user.rooms.forEach((room) => {
-      socket.join(`R-${room.id}`);
+      socket.join(`room:${room.id}`);
     });
 
-    socket.join(`U-${user.id}`);
+    socket.join(`user:${user.id}`);
 
     socket.emit("user:connected", { data: { user } });
 

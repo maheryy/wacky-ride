@@ -36,7 +36,7 @@ const registerConversationHandlers = (
 
     socket.emit("conversation:message:received", result);
 
-    io.to(`U-${receiverId}`).emit("conversation:message:received", result);
+    io.to(`user:${receiverId}`).emit("conversation:message:received", result);
   }
 
   async function onClose(conversationId: number) {

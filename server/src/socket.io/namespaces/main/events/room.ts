@@ -16,7 +16,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   async function onMessage(roomId: IRoom["id"], content: IMessage["content"]) {
     console.log("[socket.io]: room:message:send");
 
-    const isUserInRoom = socket.rooms.has(`R-${roomId}`);
+    const isUserInRoom = socket.rooms.has(`room:${roomId}`);
 
     if (!isUserInRoom) {
       throw new WackyRideError("You are not in this room");
@@ -28,7 +28,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
       content,
     });
 
-    io.to(`R-${roomId}`).emit("room:message:received", {
+    io.to(`room:${roomId}`).emit("room:message:received", {
       data: { message },
     });
   }
@@ -38,7 +38,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 
     const room = await joinRoom(roomId, socket.data.user.id);
 
-    socket.join(`R-${roomId}`);
+    socket.join(`room:${roomId}`);
 
     socket.emit("room:joined", { data: { room } });
   }
@@ -48,7 +48,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 
     await leaveRoom(roomId, socket.data.user.id);
 
-    socket.leave(`R-${roomId}`);
+    socket.leave(`room:${roomId}`);
 
     socket.emit("room:left", { data: { roomId } });
   }
