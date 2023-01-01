@@ -12,8 +12,16 @@ export interface IMessage {
   deletedAt?: Date;
 }
 
-export type TFullMessage = MessageModel & {
+export type TMessageWithAuthor = MessageModel & {
   author: UserModel;
+};
+
+export type TMessageWithConversation = TMessageWithAuthor & {
+  room: RoomModel;
+  conversation: ConversationModel;
+};
+
+export type TMessageWithRoom = TMessageWithAuthor & {
   room: RoomModel;
   conversation: ConversationModel;
 };

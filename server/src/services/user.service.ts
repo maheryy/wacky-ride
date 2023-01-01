@@ -6,7 +6,7 @@ import {
   TUserWithConversationsAndRooms,
 } from "../types/user";
 
-const { Conversation, Room, User } = db;
+const { User } = db;
 
 export const createUser = async (
   user: TUserCreationAttributes
@@ -16,22 +16,9 @@ export const getUserById = async (id: number): Promise<IUser | null> =>
   User.findByPk(id);
 
 export function getUserWithConversationsAndRooms(id: IUser["id"]) {
-  return User.findByPk(id, {
-    include: [
-      {
-        model: Room,
-        as: "rooms",
-      },
-      {
-        model: Conversation,
-        as: "senderConversations",
-      },
-      {
-        model: Conversation,
-        as: "receiverConversations",
-      },
-    ],
-  }) as Promise<TUserWithConversationsAndRooms | null>;
+  return User.scope(["withConversations", "withRooms"]).findByPk(
+    id
+  ) as Promise<TUserWithConversationsAndRooms | null>;
 }
 
 export const getUserByEmail = async (email: string): Promise<IUser | null> =>

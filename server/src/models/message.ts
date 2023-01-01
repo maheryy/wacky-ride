@@ -68,6 +68,13 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
           }
         },
       },
+      defaultScope: {
+        attributes: {
+          exclude: ["deletedAt"],
+        },
+        include: "author",
+        order: [["createdAt", "ASC"]],
+      },
     }
   );
 

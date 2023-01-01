@@ -72,6 +72,11 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
           }
         },
       },
+      defaultScope: {
+        attributes: {
+          exclude: ["deletedAt", "updatedAt"],
+        },
+      },
     }
   );
 

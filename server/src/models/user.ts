@@ -118,8 +118,31 @@ const User = (sequelize: Sequelize): typeof UserModel => {
       tableName: "user",
       paranoid: true,
       sequelize,
+      defaultScope: {
+        attributes: ["id", "username"],
+      },
     }
   );
+
+  UserModel.addScope("withMessages", {
+    attributes: ["id", "username"],
+    include: "messages",
+  });
+
+  UserModel.addScope("withConversations", {
+    attributes: ["id", "username"],
+    include: ["senderConversations", "receiverConversations"],
+  });
+
+  UserModel.addScope("withRooms", {
+    attributes: ["id", "username"],
+    include: { association: "rooms", through: { attributes: [] } },
+  });
+
+  UserModel.addScope("withAll", {
+    attributes: ["id", "username"],
+    include: { all: true },
+  });
 
   UserModel.beforeBulkCreate(async (users: UserModel[]) => {
     const salt = await bcrypt.genSalt(10);
@@ -157,14 +180,17 @@ const User = (sequelize: Sequelize): typeof UserModel => {
       as: "messages",
       foreignKey: "authorId",
     });
+
     UserModel.hasMany(models.Conversation, {
       as: "senderConversations",
       foreignKey: "senderId",
     });
+
     UserModel.hasMany(models.Conversation, {
       as: "receiverConversations",
       foreignKey: "receiverId",
     });
+
     UserModel.belongsToMany(models.Room, {
       through: "user_room",
       as: "rooms",

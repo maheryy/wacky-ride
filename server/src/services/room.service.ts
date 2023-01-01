@@ -9,7 +9,7 @@ import {
 } from "../types/room";
 import { IUser } from "../types/user";
 
-const { Message, Room, User } = db;
+const { Room } = db;
 
 export function createRoom(roomName: string) {
   return Room.create({ name: roomName });
@@ -27,8 +27,7 @@ export function getRoomWithUsers(
   roomId: IRoom["id"],
   transaction?: Transaction
 ) {
-  return Room.findByPk(roomId, {
-    include: [{ model: User, as: "users" }],
+  return Room.scope("withUsers").findByPk(roomId, {
     transaction,
   }) as Promise<TRoomWithUsers | null>;
 }
@@ -97,19 +96,7 @@ export function getRoomWithUsersAndMessages(
   roomId: IRoom["id"],
   transaction?: Transaction
 ) {
-  return Room.findByPk(roomId, {
-    include: [
-      {
-        model: User,
-        as: "users",
-      },
-      {
-        model: Message,
-        as: "messages",
-        order: [["createdAt", "DESC"]],
-        include: [{ model: User, as: "author" }],
-      },
-    ],
+  return Room.scope(["withUsers", "withMessages"]).findByPk(roomId, {
     transaction,
   }) as Promise<TRoomWithUsersAndMessages | null>;
 }

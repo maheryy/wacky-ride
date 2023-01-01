@@ -1,7 +1,6 @@
 import { db } from "../database/sequelize";
-import { TFullMessage } from "../types/message";
 
-const { Message, User } = db;
+const { Message } = db;
 
 export type TMessage =
   | {
@@ -22,36 +21,10 @@ export function createMessage(fields: TMessage) {
   return Message.create(fields);
 }
 
-export const getMessagesByConversation = async (
-  conversationId: number
-): Promise<TFullMessage[]> => {
-  return Message.findAll({
-    where: {
-      conversationId: conversationId,
-    },
-    order: [["createdAt", "ASC"]],
-    include: [
-      {
-        model: User,
-        as: "author",
-      },
-    ],
-  }) as Promise<TFullMessage[]>;
+export const getMessagesByConversation = async (conversationId: number) => {
+  return Message.findAll({ where: { conversationId } });
 };
 
-export const getMessagesByRoom = async (
-  roomId: number
-): Promise<TFullMessage[]> => {
-  return Message.findAll({
-    where: {
-      roomId: roomId,
-    },
-    order: [["createdAt", "ASC"]],
-    include: [
-      {
-        model: User,
-        as: "author",
-      },
-    ],
-  }) as Promise<TFullMessage[]>;
+export const getMessagesByRoom = async (roomId: number) => {
+  return Message.findAll({ where: { roomId } });
 };
