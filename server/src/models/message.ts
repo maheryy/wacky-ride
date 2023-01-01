@@ -7,13 +7,13 @@ import {
   NonAttribute,
   Sequelize,
 } from "sequelize";
-import { MessageCreationAttributes } from "../types/message";
+import { IMessage, MessageCreationAttributes } from "../types/message";
 import { IListModel } from "../types/models";
 import { ConversationModel } from "./conversation";
 import { RoomModel } from "./room";
 import { UserModel } from "./user";
 
-export class MessageModel extends Model {
+export class MessageModel extends Model implements IMessage {
   declare id: number;
   declare content: string;
 
@@ -55,18 +55,43 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
       tableName: "message",
       paranoid: true,
       sequelize,
+      validate: {
+        bothRoomAndConversation() {
+          if (this.roomId && this.conversationId) {
+            throw new Error("Message cannot be in both room and conversation");
+          }
+        },
+
+        eitherRoomOrConversation() {
+          if (!this.roomId && !this.conversationId) {
+            throw new Error("Message must be in either room or conversation");
+          }
+        },
+      },
+      defaultScope: {
+        attributes: {
+          exclude: ["deletedAt"],
+        },
+        include: "author",
+        order: [["createdAt", "ASC"]],
+      },
     }
   );
 
   MessageModel.associate = (models: IListModel) => {
     MessageModel.belongsTo(models.User, {
       as: "author",
-      foreignKey: "authorId",
+      foreignKey: {
+        name: "authorId",
+        allowNull: false,
+      },
     });
+
     MessageModel.belongsTo(models.Room, {
       as: "room",
       foreignKey: "roomId",
     });
+
     MessageModel.belongsTo(models.Conversation, {
       as: "conversation",
       foreignKey: "conversationId",

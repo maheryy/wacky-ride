@@ -1,22 +1,28 @@
 import { Op } from "sequelize";
 import { db } from "../database/sequelize";
-import { IFullConversation } from "../types/conversation";
+import { IUser } from "../types/user";
+
+const { Conversation } = db;
 
 export const createConversation = async (
-  senderId: number,
-  receiverId: number
+  senderId: IUser["id"],
+  receiverId: IUser["id"]
 ) => {
-  return db.Conversation.create({
+  return Conversation.create({
     senderId,
     receiverId,
   });
 };
 
-export const getConversationBetweenUsers = async (
-  userId1: number,
-  userId2: number
-): Promise<IFullConversation | null> => {
-  return db.Conversation.findOne({
+export function getOrCreateConversation(
+  userId1: IUser["id"],
+  userId2: IUser["id"]
+) {
+  return Conversation.findOrCreate({
+    defaults: {
+      senderId: userId1,
+      receiverId: userId2,
+    },
     where: {
       [Op.or]: [
         {
@@ -29,26 +35,5 @@ export const getConversationBetweenUsers = async (
         },
       ],
     },
-    include: [
-      {
-        model: db.User,
-        as: "sender",
-      },
-      {
-        model: db.User,
-        as: "receiver",
-      },
-      {
-        model: db.Message,
-        as: "messages",
-        order: [["createdAt", "DESC"]],
-        include: [
-          {
-            model: db.User,
-            as: "author",
-          },
-        ],
-      },
-    ],
-  }) as Promise<IFullConversation | null>;
-};
+  });
+}

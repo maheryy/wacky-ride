@@ -1,7 +1,8 @@
 import { Optional } from "sequelize";
-import { IConversation } from "./conversation";
-import { IRoom } from "./room";
-import { IUser } from "./user";
+import { ConversationModel } from "../models/conversation";
+import { MessageModel } from "../models/message";
+import { RoomModel } from "../models/room";
+import { UserModel } from "../models/user";
 
 export interface IMessage {
   id: number;
@@ -11,10 +12,18 @@ export interface IMessage {
   deletedAt?: Date;
 }
 
-export interface IFullMessage extends IMessage {
-  author: IUser;
-  room?: IRoom;
-  conversation?: IConversation;
-}
+export type TMessageWithAuthor = MessageModel & {
+  author: UserModel;
+};
+
+export type TMessageWithConversation = TMessageWithAuthor & {
+  room: RoomModel;
+  conversation: ConversationModel;
+};
+
+export type TMessageWithRoom = TMessageWithAuthor & {
+  room: RoomModel;
+  conversation: ConversationModel;
+};
 
 export type MessageCreationAttributes = Optional<IMessage, "id">;

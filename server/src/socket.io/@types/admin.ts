@@ -38,6 +38,7 @@ export interface IRoomListenEvents {
   "room:create": (roomName: string) => void;
   "room:delete": (id: IRoom["id"]) => void;
   "room:update": (id: IRoom["id"], fields: TRoomUpdateAttributes) => void;
+  "room:restore": (id: IRoom["id"]) => void;
 }
 
 export interface IRoomEmitEvents {
@@ -47,6 +48,7 @@ export interface IRoomEmitEvents {
     id: IRoom["id"];
     fields: TRoomUpdateAttributes;
   }>;
+  "room:restored": TEmitEvent<{ room: IRoom }>;
 }
 
 export type TRoomIO = Server<IRoomListenEvents, IRoomEmitEvents>;

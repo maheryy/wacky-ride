@@ -29,8 +29,8 @@ export class RoomModel extends Model {
   declare readonly updatedAt?: Date;
   declare readonly deletedAt?: Date;
 
-  declare users?: NonAttribute<UserModel>;
-  declare messages?: NonAttribute<MessageModel>;
+  declare users?: NonAttribute<UserModel[]>;
+  declare messages?: NonAttribute<MessageModel[]>;
 
   declare getUsers: HasManyGetAssociationsMixin<UserModel>;
   declare addUsers: HasManyAddAssociationsMixin<UserModel, number>;
@@ -97,8 +97,37 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
       tableName: "room",
       paranoid: true,
       sequelize,
+      defaultScope: {
+        attributes: {
+          exclude: ["deletedAt", "updatedAt"],
+        },
+      },
     }
   );
+
+  RoomModel.addScope("withUsers", {
+    attributes: {
+      exclude: ["deletedAt", "updatedAt"],
+    },
+    include: "users",
+  });
+
+  RoomModel.addScope("withMessages", {
+    attributes: {
+      exclude: ["deletedAt", "updatedAt"],
+    },
+    include: {
+      association: "messages",
+      order: [["createdAt", "DESC"]],
+    },
+  });
+
+  RoomModel.addScope("withAll", {
+    attributes: {
+      exclude: ["deletedAt", "updatedAt"],
+    },
+    include: { all: true },
+  });
 
   RoomModel.associate = (models: IListModel) => {
     RoomModel.belongsToMany(models.User, {
@@ -106,6 +135,7 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
       as: "users",
       foreignKey: "roomId",
     });
+
     RoomModel.hasMany(models.Message, {
       as: "messages",
       foreignKey: "roomId",

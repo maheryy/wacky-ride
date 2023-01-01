@@ -1,5 +1,5 @@
 import { verify } from "../../lib/jwt";
-import { getUserById } from "../../services/user.service";
+import { getUserWithConversationsAndRooms } from "../../services/user.service";
 import { TSocket } from "../@types";
 
 /**
@@ -24,7 +24,7 @@ export async function authenticate(
     return next(new Error("Authentication error: Invalid token"));
   }
 
-  const user = await getUserById(payload.userId);
+  const user = await getUserWithConversationsAndRooms(payload.userId);
 
   if (!user) {
     return next(new Error("Authentication error: User not found"));

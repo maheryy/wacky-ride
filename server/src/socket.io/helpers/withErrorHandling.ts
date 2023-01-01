@@ -46,7 +46,7 @@ export function withErrorHandling<TEmitEvents extends EventsMap>(
         }
 
         if (error instanceof WackyRideError) {
-          return socket.emit(event, error);
+          return socket.emit(event, error.toResult());
         }
 
         return socket.emit(

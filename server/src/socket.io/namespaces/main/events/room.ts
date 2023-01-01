@@ -1,77 +1,68 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { MessageModel } from "../../../../models/message";
-import { RoomModel } from "../../../../models/room";
-import { createMessageWithinRoom } from "../../../../services/message.service";
-import { getRoomByIdWithUsersAndMessages } from "../../../../services/room.service";
-import { IFullMessage } from "../../../../types/message";
-import { IUser } from "../../../../types/user";
+import { createMessage } from "../../../../services/message.service";
+import {
+  getRooms,
+  joinRoom,
+  leaveRoom,
+} from "../../../../services/room.service";
+import { IMessage } from "../../../../types/message";
+import { IRoom } from "../../../../types/room";
 import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types/main";
 import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
-const currentUser: IUser = {
-  id: 1,
-  username: "admin",
-  email: "admin@wacky.com",
-  password: "password",
-  status: "online",
-  isAdmin: true,
-};
-
 function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   const handle = withErrorHandling<IRoomEmitEvents>(socket);
 
-  async function onMessage(message: Omit<IFullMessage, "id">) {
+  async function onMessage(roomId: IRoom["id"], content: IMessage["content"]) {
     console.log("[socket.io]: room:message:send");
 
-    const newMessage = await createMessageWithinRoom(
-      message.content,
-      message.author.id,
-      message.room!.id
-    );
+    const isUserInRoom = socket.rooms.has(`room:${roomId}`);
 
-    io.to(`R-${message.room!.id}`).emit("room:message:received", {
-      data: {
-        message: {
-          ...(newMessage as MessageModel).toJSON(),
-          author: message.author,
-        },
-      },
+    if (!isUserInRoom) {
+      throw new WackyRideError("You are not in this room");
+    }
+
+    const message = await createMessage({
+      roomId,
+      authorId: socket.data.user.id,
+      content,
+    });
+
+    io.to(`room:${roomId}`).emit("room:message:received", {
+      data: { message },
     });
   }
 
   async function onJoin(roomId: number) {
     console.log("[socket.io]: room:join", roomId);
 
-    const room = await getRoomByIdWithUsersAndMessages(roomId);
+    const room = await joinRoom(roomId, socket.data.user.id);
 
-    if (!room) {
-      throw new WackyRideError("Room not found");
-    }
+    socket.join(`room:${roomId}`);
 
-    if (!room.users!.find((user) => user.id === currentUser.id)) {
-      await (room as RoomModel).addUser(currentUser.id);
-    }
-
-    socket.join(`R-${roomId}`);
-
-    socket.emit("room:load", {
-      data: {
-        room,
-        messages: room.messages as IFullMessage[],
-      },
-    });
+    socket.emit("room:joined", { data: { room } });
   }
 
-  function onLeave(roomId: number) {
+  async function onLeave(roomId: number) {
     console.log("[socket.io]: room:leave", roomId);
 
-    socket.leave(`R-${roomId}`);
+    await leaveRoom(roomId, socket.data.user.id);
+
+    socket.leave(`room:${roomId}`);
+
+    socket.emit("room:left", { data: { roomId } });
+  }
+
+  async function onRooms() {
+    const rooms = await getRooms();
+
+    socket.emit("rooms", { data: { rooms } });
   }
 
   socket.on("room:message:send", handle(onMessage, "room:message:received"));
-  socket.on("room:join", handle(onJoin, "room:load"));
-  socket.on("room:leave", onLeave);
+  socket.on("room:join", handle(onJoin, "room:joined"));
+  socket.on("room:leave", handle(onLeave, "room:left"));
+  socket.on("rooms", handle(onRooms, "rooms"));
 }
 
 export default registerRoomHandlers;

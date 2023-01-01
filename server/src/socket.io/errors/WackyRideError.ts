@@ -1,5 +1,6 @@
 import { ValidationError } from "sequelize";
 import { EErrorCode, IWackyRideError, TError } from "../../types/error";
+import { TResultWithErrors } from "../@types/result";
 
 export class WackyRideError extends Error implements IWackyRideError {
   readonly errors?: TError[];
@@ -8,6 +9,14 @@ export class WackyRideError extends Error implements IWackyRideError {
     super(message);
 
     this.errors = errors;
+  }
+
+  public toResult(): TResultWithErrors {
+    if (this.errors) {
+      return { errors: this.errors };
+    }
+
+    return { errors: [{ message: this.message }] };
   }
 
   static fromValidationError(validationError: ValidationError): WackyRideError {

@@ -1,8 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { IContact } from "../../types/contact";
-import { IConversation } from "../../types/conversation";
-import { IFullMessage } from "../../types/message";
-import { IRoom } from "../../types/room";
+import { IMessage } from "../../types/message";
+import { IRoom, TRoomWithUsersAndMessages } from "../../types/room";
 import { IUser } from "../../types/user";
 import { TEmitEvent } from "./result";
 
@@ -11,17 +10,14 @@ import { TEmitEvent } from "./result";
  */
 
 export interface IConversationListenEvents {
-  "conversation:open": (receiverId: number) => void;
-  "conversation:close": (conversationId: number) => void;
-  "conversation:message:send": (message: Omit<IFullMessage, "id">) => void;
+  "conversation:message:send": (
+    received: IUser["id"],
+    content: IMessage["content"]
+  ) => void;
 }
 
 export interface IConversationEmitEvents {
-  "conversation:message:received": TEmitEvent<{ message: IFullMessage }>;
-  "conversation:load": TEmitEvent<{
-    conversation: IConversation;
-    messages: IFullMessage[];
-  }>;
+  "conversation:message:received": TEmitEvent<{ message: IMessage }>;
 }
 
 export type TConversationIO = Server<
@@ -39,14 +35,20 @@ export type TConversationSocket = Socket<
  */
 
 export interface IRoomListenEvents {
-  "room:message:send": (message: Omit<IFullMessage, "id">) => void;
-  "room:join": (roomId: number) => void;
-  "room:leave": (roomId: number) => void;
+  "room:message:send": (
+    roomId: IRoom["id"],
+    content: IMessage["content"]
+  ) => void;
+  "room:join": (roomId: IRoom["id"]) => void;
+  "room:leave": (roomId: IRoom["id"]) => void;
+  rooms: () => void;
 }
 
 export interface IRoomEmitEvents {
-  "room:message:received": TEmitEvent<{ message: IFullMessage }>;
-  "room:load": TEmitEvent<{ room: IRoom; messages: IFullMessage[] }>;
+  "room:message:received": TEmitEvent<{ message: IMessage }>;
+  "room:joined": TEmitEvent<{ room: TRoomWithUsersAndMessages }>;
+  "room:left": TEmitEvent<{ roomId: IRoom["id"] }>;
+  rooms: TEmitEvent<{ rooms: IRoom[] }>;
 }
 
 export type TRoomIO = Server<IRoomListenEvents, IRoomEmitEvents>;

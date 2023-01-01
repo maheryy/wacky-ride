@@ -1,6 +1,7 @@
 import { Optional } from "sequelize";
-import { IMessage } from "./message";
-import { IUser } from "./user";
+import { MessageModel } from "../models/message";
+import { RoomModel } from "../models/room";
+import { UserModel } from "../models/user";
 
 export interface IRoom {
   id: number;
@@ -11,10 +12,13 @@ export interface IRoom {
   deletedAt?: Date;
 }
 
-export interface IFullRoom extends IRoom {
-  users?: IUser[];
-  messages?: IMessage[];
-}
+export type TRoomWithUsers = RoomModel & {
+  users: UserModel[];
+};
+
+export type TRoomWithUsersAndMessages = TRoomWithUsers & {
+  messages: MessageModel[];
+};
 
 export type TRoomCreationAttributes = Optional<IRoom, "id">;
 

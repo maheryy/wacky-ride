@@ -1,6 +1,7 @@
 import { Optional } from "sequelize";
-import { IMessage } from "./message";
-import { IUser } from "./user";
+import { ConversationModel } from "../models/conversation";
+import { MessageModel } from "../models/message";
+import { UserModel } from "../models/user";
 
 export interface IConversation {
   id: number;
@@ -9,10 +10,10 @@ export interface IConversation {
   deletedAt?: Date;
 }
 
-export interface IFullConversation extends IConversation {
-  sender?: IUser;
-  receiver?: IUser;
-  messages?: IMessage[];
-}
+export type TFullConversation = ConversationModel & {
+  sender: UserModel;
+  receiver: UserModel;
+  messages: MessageModel[];
+};
 
 export type ConversationCreationAttributes = Optional<IConversation, "id">;
