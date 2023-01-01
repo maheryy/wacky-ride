@@ -8,6 +8,8 @@ import {
   TContactIO,
   TContactSocket,
 } from "../../../@types/main";
+import { WackyRideError } from "../../../errors/WackyRideError";
+import { isAnyAdminOnline } from "../../../helpers/isAnyAdminOnline";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
@@ -21,6 +23,12 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
    * client and to the admin namespace.
    */
   async function onContactCreate() {
+    const isAdminAvailable = await isAnyAdminOnline(io);
+
+    if (!isAdminAvailable) {
+      throw new WackyRideError("No admin is available");
+    }
+
     const { id: userId } = socket.data.user;
 
     const existingContact = await getContactByUserId(userId);
