@@ -113,14 +113,13 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
 
       return Promise.all(
         messages.map(async (message) => {
-          const newMessage = await models.Message.create(message);
+          const randomUser = users[Math.floor(Math.random() * users.length)];
 
-          return Promise.all([
-            newMessage.setAuthor(
-              users[Math.floor(Math.random() * users.length)]
-            ),
-            newMessage.setRoom(room),
-          ]);
+          return models.Message.create({
+            ...message,
+            roomId: room.id,
+            authorId: randomUser.id,
+          });
         })
       );
     });
@@ -131,6 +130,7 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
           conversation.getReceiver(),
           conversation.getSender(),
         ]);
+
         const messages: MessageCreationAttributes[] = Array.from(
           { length: faker.datatype.number({ min: 1, max: 5 }) },
           () => ({
@@ -140,14 +140,13 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
 
         return Promise.all(
           messages.map(async (message) => {
-            const newMessage = await models.Message.create(message);
+            const randomUser = users[Math.floor(Math.random() * users.length)];
 
-            return Promise.all([
-              newMessage.setAuthor(
-                users[Math.floor(Math.random() * users.length)]
-              ),
-              newMessage.setConversation(conversation),
-            ]);
+            return models.Message.create({
+              ...message,
+              conversationId: conversation.id,
+              authorId: randomUser.id,
+            });
           })
         );
       }
