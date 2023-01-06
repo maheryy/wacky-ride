@@ -35,7 +35,7 @@ export type TUserSocket = Socket<IUserListenEvents, TUserEmitEvents>;
  */
 
 export interface IRoomListenEvents {
-  "room:create": (roomName: string) => void;
+  "room:create": (roomName: IRoom["name"]) => void;
   "room:delete": (id: IRoom["id"]) => void;
   "room:update": (id: IRoom["id"], fields: TRoomUpdateAttributes) => void;
   "room:restore": (id: IRoom["id"]) => void;
