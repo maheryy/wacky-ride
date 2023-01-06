@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../components/Home/Home.vue";
 import ChatBox from "../components/ChatBox/ChatBox.vue";
 import ChatBot from "../components/ChatBot/ChatBot.vue";
-// import ChatRoom from "../components/ChatRoom/ChatRoom.vue";
+import ChatRoom from "../components/ChatRoom/ChatRoom.vue";
 import NotFound from "../components/Errors/NotFound.vue";
 
 const router = createRouter({
@@ -23,14 +23,12 @@ const router = createRouter({
       name: "chatbot",
       component: ChatBot,
     },
-    /*
     {
       path: "/room/:id",
       name: "chatroom",
       component: ChatRoom,
       props: (route) => ({ roomId: route.params.id }),
     },
-    */
     {
       path: "/:pathMatch(.*)",
       name: "not-found",

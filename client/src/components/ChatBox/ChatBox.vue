@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick } from "vue";
+import { inject, ref, watch, onMounted, nextTick } from "vue";
 import { TMessage } from "../../types/message";
-import { IConversation } from "../../types/conversation";
-import { IEmitEvents, IListenEvents } from "../../types/socket.io";
-import { io, Socket } from "socket.io-client";
+import { TSocket } from "../../types/socket.io";
 import Message from "./ChatBoxMessage.vue";
+import { socketKey } from "../../providers/keys";
 
 const messages = ref<TMessage[]>([]);
 const message = ref<string>("");
 
-let socket: Socket<IListenEvents, IEmitEvents>;
-let conversation: IConversation;
+const socket = inject(socketKey) as TSocket;
 let targetUser: number = 2;
 
 const sendMessage = () => {
@@ -41,21 +39,9 @@ watch(
 );
 
 onMounted(() => {
-  socket = io("http://localhost:3000");
-
-  // TODO: fix this
+  // TODO: Add endpoint to get conversation by id
   // @ts-ignore
-  socket.on("conversation:load", ({ data, errors }) => {
-    if (errors) {
-      console.error(errors);
-
-      return;
-    }
-
-    const { conversation: conversationRef, messages: messageList } = data;
-
-    conversation = conversationRef;
-  });
+  socket.on("conversation:load");
 
   socket.on("conversation:message:received", ({ data, errors }) => {
     if (errors) {
@@ -67,14 +53,6 @@ onMounted(() => {
     const { message } = data;
 
     messages.value.push(message);
-  });
-
-  socket.on("connect", () => {
-    console.log("connected");
-  });
-
-  socket.on("disconnect", () => {
-    console.log("disconnected");
   });
 });
 </script>

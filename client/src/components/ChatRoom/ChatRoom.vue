@@ -1,30 +1,27 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick } from "vue";
+import { inject, ref, watch, onMounted, nextTick } from "vue";
 import { TMessage } from "../../types/message";
-import { IEmitEvents, IListenEvents } from "../../types/socket.io";
-import { io, Socket } from "socket.io-client";
+import { TSocket } from "../../types/socket.io";
 import Message from "./RoomMessage.vue";
-import { IRoom } from "../../types/room";
+import { socketKey } from "../../providers/keys";
 
-interface ChatBoxProps {
+interface IChatRoom {
   roomId: number;
   title: string;
 }
 
-const { roomId, title } = defineProps<ChatBoxProps>();
+const { roomId, title } = defineProps<IChatRoom>();
 
 const messages = ref<TMessage[]>([]);
 const message = ref<string>("");
-
-let socket: Socket<IListenEvents, IEmitEvents>;
-let room: IRoom;
+const socket = inject(socketKey) as TSocket;
 
 const sendMessage = () => {
-  if (!message.value.trim()) {
+  if (!message.value) {
     return;
   }
 
-  socket.emit("room:message:send", room.id, message.value);
+  socket.emit("room:message:send", roomId, message.value);
 
   // TODO ? : add directly messageData to messages
   // Implying that we cannot edit the inserted message without the newly created id from the database
@@ -37,6 +34,7 @@ watch(
   () => [...messages.value],
   async (newMessages, oldMessages) => {
     await nextTick();
+
     if (newMessages.length > oldMessages.length) {
       document
         .getElementById("chat-room-messages")
@@ -46,7 +44,6 @@ watch(
 );
 
 onMounted(() => {
-  socket = io("http://localhost:3000");
   socket.emit("room:join", roomId);
 
   socket.on("room:joined", ({ data, errors }) => {
@@ -57,10 +54,7 @@ onMounted(() => {
       return;
     }
 
-    const { room: roomRef } = data;
-
-    messages.value = roomRef.messages;
-    room = roomRef;
+    messages.value = data.room.messages;
   });
 
   socket.on("room:message:received", ({ data, errors }) => {
@@ -71,17 +65,7 @@ onMounted(() => {
       return;
     }
 
-    const { message } = data;
-
-    messages.value.push(message);
-  });
-
-  socket.on("connect", () => {
-    console.log("connected");
-  });
-
-  socket.on("disconnect", () => {
-    console.log("disconnected");
+    messages.value.push(data.message);
   });
 });
 </script>
@@ -101,7 +85,7 @@ onMounted(() => {
         </ul>
       </div>
       <div class="chat-room__input">
-        <input type="text" v-model="message" @keyup.enter="sendMessage" />
+        <input type="text" v-model.trim="message" @keyup.enter="sendMessage" />
         <button @click="sendMessage">Send</button>
       </div>
     </div>
