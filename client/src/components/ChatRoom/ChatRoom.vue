@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from "vue";
-import { IUser } from "../../types/user";
-import { IMessage } from "../../types/message";
+import { TMessage } from "../../types/message";
 import { IEmitEvents, IListenEvents } from "../../types/socket.io";
 import { io, Socket } from "socket.io-client";
 import Message from "./RoomMessage.vue";
@@ -14,15 +13,7 @@ interface ChatBoxProps {
 
 const { roomId, title } = defineProps<ChatBoxProps>();
 
-const sender: IUser = {
-  id: 1,
-  username: "admin",
-  email: "admin@wacky.com",
-  status: 1,
-  isAdmin: true,
-};
-
-const messages = ref<IMessage[]>([]);
+const messages = ref<TMessage[]>([]);
 const message = ref<string>("");
 
 let socket: Socket<IListenEvents, IEmitEvents>;
@@ -33,13 +24,7 @@ const sendMessage = () => {
     return;
   }
 
-  const messageData: Omit<IMessage, "id"> = {
-    content: message.value,
-    author: sender,
-    room: room,
-  };
-
-  socket.emit("room:message:send", messageData);
+  socket.emit("room:message:send", room.id, message.value);
 
   // TODO ? : add directly messageData to messages
   // Implying that we cannot edit the inserted message without the newly created id from the database
@@ -64,23 +49,25 @@ onMounted(() => {
   socket = io("http://localhost:3000");
   socket.emit("room:join", roomId);
 
-  socket.on("room:load", ({ data, errors }) => {
+  socket.on("room:joined", ({ data, errors }) => {
     if (errors) {
-      console.log(errors);
+      console.error(errors);
 
+      // TODO: have better error handling
       return;
     }
 
-    const { room: roomRef, messages: messageList } = data;
+    const { room: roomRef } = data;
 
-    messages.value = messageList;
+    messages.value = roomRef.messages;
     room = roomRef;
   });
 
   socket.on("room:message:received", ({ data, errors }) => {
     if (errors) {
-      console.log(errors);
+      console.error(errors);
 
+      // TODO: have better error handling
       return;
     }
 

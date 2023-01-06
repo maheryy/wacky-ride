@@ -42,6 +42,9 @@ const Contact = (sequelize: Sequelize): typeof ContactModel => {
       tableName: "contact",
       paranoid: true,
       sequelize,
+      defaultScope: {
+        attributes: { exclude: ["deletedAt", "updatedAt"] },
+      },
     }
   );
 

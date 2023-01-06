@@ -1,21 +1,12 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from "vue";
-import { IUser } from "../../types/user";
-import { IMessage } from "../../types/message";
+import { TMessage } from "../../types/message";
 import { IConversation } from "../../types/conversation";
 import { IEmitEvents, IListenEvents } from "../../types/socket.io";
 import { io, Socket } from "socket.io-client";
 import Message from "./ChatBoxMessage.vue";
 
-const sender: IUser = {
-  id: 1,
-  username: "admin",
-  email: "admin@wacky.com",
-  status: 1,
-  isAdmin: true,
-};
-
-const messages = ref<IMessage[]>([]);
+const messages = ref<TMessage[]>([]);
 const message = ref<string>("");
 
 let socket: Socket<IListenEvents, IEmitEvents>;
@@ -27,13 +18,8 @@ const sendMessage = () => {
     return;
   }
 
-  const messageData: Omit<IMessage, "id"> = {
-    content: message.value,
-    author: sender,
-    conversation: conversation,
-  };
-
-  socket.emit("conversation:message:send", messageData);
+  // TODO: remove hard coded receiver id
+  socket.emit("conversation:message:send", targetUser, message.value);
 
   // TODO ? : add directly messageData to messages
   // Implying that we cannot edit the inserted message without the newly created id from the database
@@ -56,8 +42,9 @@ watch(
 
 onMounted(() => {
   socket = io("http://localhost:3000");
-  socket.emit("conversation:open", targetUser);
 
+  // TODO: fix this
+  // @ts-ignore
   socket.on("conversation:load", ({ data, errors }) => {
     if (errors) {
       console.error(errors);
@@ -67,7 +54,6 @@ onMounted(() => {
 
     const { conversation: conversationRef, messages: messageList } = data;
 
-    messages.value = messageList;
     conversation = conversationRef;
   });
 

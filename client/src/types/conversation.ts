@@ -1,6 +1,6 @@
 export interface IConversation {
   id: number;
-  status: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  receiverId: number;
+  senderId: number;
 }

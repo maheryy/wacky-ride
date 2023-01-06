@@ -1,23 +1,62 @@
+import { IContact } from "./contact";
 import { IConversation } from "./conversation";
-import { IMessage } from "./message";
+import { TMessage } from "./message";
 import { TListenEvent } from "./result";
-import { IRoom } from "./room";
+import {
+  IRoom,
+  TRoomUpdateAttributes,
+  TRoomWithUsersAndMessages,
+} from "./room";
+import { IUser, TUserWithConversationsAndRooms } from "./user";
 
 export interface IListenEvents {
-  "conversation:message:received": TListenEvent<{ message: IMessage }>;
-  "conversation:load": TListenEvent<{
-    conversation: IConversation;
-    messages: IMessage[];
-  }>;
-  "room:message:received": TListenEvent<{ message: IMessage }>;
-  "room:load": TListenEvent<{ room: IRoom; messages: IMessage[] }>;
+  "user:connected": TListenEvent<{ user: TUserWithConversationsAndRooms }>;
+  "conversation:message:received": TListenEvent<{ message: TMessage }>;
+  "room:message:received": TListenEvent<{ message: TMessage }>;
+  "room:joined": TListenEvent<{ room: TRoomWithUsersAndMessages }>;
+  "room:left": TListenEvent<{ roomId: IRoom["id"] }>;
+  "contact:created": TListenEvent<{ contact: IContact }>;
+  "admin:status": TListenEvent<boolean>;
 }
 
 export interface IEmitEvents {
-  "conversation:open": (receiverId: number) => void;
-  "conversation:close": (conversationId: number) => void;
-  "conversation:message:send": (message: Omit<IMessage, "id">) => void;
-  "room:join": (roomId: number) => void;
-  "room:leave": (roomId: number) => void;
-  "room:message:send": (message: Omit<IMessage, "id">) => void;
+  "conversation:message:send": (
+    receiverId: IUser["id"],
+    content: TMessage["content"]
+  ) => void;
+  "room:message:send": (
+    roomId: IRoom["id"],
+    content: TMessage["content"]
+  ) => void;
+  "room:join": (roomId: IRoom["id"]) => void;
+  "room:leave": (roomId: IRoom["id"]) => void;
+  "contact:create": () => void;
+  "admin:status": () => void;
+}
+
+export interface IAdminListenEvents {
+  "admin:status:updated": TListenEvent<{ status: IUser["status"] }>;
+  "room:created": TListenEvent<{ room: IRoom }>;
+  "room:deleted": TListenEvent<{ id: IRoom["id"] }>;
+  "room:updated": TListenEvent<{
+    id: IRoom["id"];
+    fields: TRoomUpdateAttributes;
+  }>;
+  "room:restored": TListenEvent<{ room: IRoom }>;
+  "contact:created": TListenEvent<{ contact: IContact }>;
+  "contact:accepted": TListenEvent<{
+    contact: IContact;
+    conversation: IConversation;
+  }>;
+  "contact:refused": TListenEvent<{ contact: IContact }>;
+}
+
+export interface IAdminEmitEvents {
+  "admin:status:update": (status: IUser["status"]) => void;
+  "room:create": (roomName: IRoom["name"]) => void;
+  "room:delete": (id: IRoom["id"]) => void;
+  "room:update": (id: IRoom["id"], fields: TRoomUpdateAttributes) => void;
+  "room:restore": (id: IRoom["id"]) => void;
+  "contact:accept": (contactId: IContact["id"]) => void;
+  "contact:refuse": (contactId: IContact["id"]) => void;
 }
