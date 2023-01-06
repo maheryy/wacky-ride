@@ -22,7 +22,7 @@ export function getUserWithConversationsAndRooms(id: IUser["id"]) {
 }
 
 export const getUserByEmail = async (email: string): Promise<IUser | null> =>
-  findOneUserBy({ email });
+  findOneUserBy({ email }, "withPassword");
 
 export const getUserByUsername = async (
   username: string
@@ -36,8 +36,10 @@ export const getAdvisors = async (): Promise<IUser[]> =>
 export const getCustomers = async (): Promise<IUser[]> =>
   findAllUsersBy({ isAdmin: false });
 
-const findOneUserBy = async (fields?: Partial<IUser>): Promise<IUser | null> =>
-  User.findOne({ where: fields });
+const findOneUserBy = async (
+  fields?: Partial<IUser>,
+  scope?: string
+): Promise<IUser | null> => User.scope(scope).findOne({ where: fields });
 
 const findAllUsersBy = async (fields?: Partial<IUser>): Promise<IUser[]> =>
   User.findAll({ where: fields });

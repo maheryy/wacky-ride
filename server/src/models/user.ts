@@ -124,6 +124,10 @@ const User = (sequelize: Sequelize): typeof UserModel => {
     }
   );
 
+  UserModel.addScope("withPassword", {
+    attributes: ["id", "username", "password"],
+  });
+
   UserModel.addScope("withMessages", {
     attributes: ["id", "username"],
     include: "messages",
