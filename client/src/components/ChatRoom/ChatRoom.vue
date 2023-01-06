@@ -5,12 +5,12 @@ import { TSocket } from "../../types/socket.io";
 import Message from "./RoomMessage.vue";
 import { socketKey } from "../../providers/keys";
 
-interface IChatRoom {
+interface IChatRoomProps {
   roomId: number;
   title: string;
 }
 
-const { roomId, title } = defineProps<IChatRoom>();
+const { roomId, title } = defineProps<IChatRoomProps>();
 
 const messages = ref<TMessage[]>([]);
 const message = ref<string>("");
