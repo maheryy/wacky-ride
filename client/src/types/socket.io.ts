@@ -1,3 +1,4 @@
+import { Socket } from "socket.io-client";
 import { IContact } from "./contact";
 import { IConversation } from "./conversation";
 import { TMessage } from "./message";
@@ -60,3 +61,8 @@ export interface IAdminEmitEvents {
   "contact:accept": (contactId: IContact["id"]) => void;
   "contact:refuse": (contactId: IContact["id"]) => void;
 }
+
+export type TSocket = Socket<
+  IListenEvents & IAdminListenEvents,
+  IEmitEvents & IAdminEmitEvents
+>;

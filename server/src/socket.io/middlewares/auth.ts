@@ -11,8 +11,7 @@ export async function authenticate(
   socket: TSocket,
   next: (error?: Error) => void
 ) {
-  // TODO: use socket.handshake.auth.token instead
-  const token = socket.request.headers.authorization;
+  const { token } = socket.handshake.auth;
 
   if (!token) {
     return next(new Error("Authentication error: No token provided"));
