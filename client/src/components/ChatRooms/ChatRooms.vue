@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import store from "../../store";
+import { useRoomStore } from "../../stores/room";
 
+const store = useRoomStore();
 const hasRooms = computed(() => Object.keys(store.rooms).length > 0);
 </script>
 
@@ -25,3 +26,4 @@ const hasRooms = computed(() => Object.keys(store.rooms).length > 0);
   color: white;
 }
 </style>
+

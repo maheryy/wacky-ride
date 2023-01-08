@@ -2,8 +2,11 @@
 import { onMounted, onUnmounted, provide } from "vue";
 import { io } from "socket.io-client";
 import { TSocket } from "../types/socket.io";
-import store from "../store";
+import { useConversationStore, useRoomStore } from "../stores";
 import { socketKey } from "./keys";
+
+const roomStore = useRoomStore();
+const conversationStore = useConversationStore();
 
 const socket: TSocket = io("http://localhost:3000", {
   auth: {
@@ -24,8 +27,8 @@ onMounted(() => {
 
     const conversations = [...receiverConversations, ...senderConversations];
 
-    store.setConversations(conversations);
-    store.setRooms(rooms);
+    conversationStore.setConversations(conversations);
+    roomStore.setRooms(rooms);
   });
 
   socket.on("connect", () => {

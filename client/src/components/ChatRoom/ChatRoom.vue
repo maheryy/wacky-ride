@@ -3,8 +3,8 @@ import { computed, inject, ref, watch, onMounted, nextTick } from "vue";
 import { TSocket } from "../../types/socket.io";
 import Message from "./RoomMessage.vue";
 import { socketKey } from "../../providers/keys";
-import store from "../../store";
 import { IRoom } from "../../types/room";
+import { useRoomStore } from "../../stores/room";
 
 interface IChatRoomProps {
   roomId: IRoom["id"];
@@ -13,17 +13,11 @@ interface IChatRoomProps {
 const { roomId } = defineProps<IChatRoomProps>();
 
 const message = ref("");
+const store = useRoomStore();
 const socket = inject(socketKey) as TSocket;
 const room = computed(() => store.rooms[roomId]);
+const messages = computed(() => room.value?.messages || []);
 const chatRoomMessages = ref<HTMLUListElement | null>(null);
-
-const messages = computed(() => {
-  if (!room.value) {
-    return [];
-  }
-
-  return room.value.messages;
-});
 
 const sendMessage = () => {
   if (!message.value) {
@@ -39,15 +33,14 @@ const sendMessage = () => {
 };
 
 /* Scroll to the bottom for each new message */
-watch(messages, async (newMessages, oldMessages) => {
-  await nextTick();
+watch(
+  () => messages.value.length,
+  async () => {
+    await nextTick();
 
-  const hasNewMessages = newMessages.length > oldMessages.length;
-
-  if (hasNewMessages) {
     chatRoomMessages.value?.scrollIntoView({ block: "end" });
   }
-});
+);
 
 onMounted(() => {
   socket.emit("room:join", roomId);
@@ -71,7 +64,7 @@ onMounted(() => {
       return;
     }
 
-    messages.value.push(data.message);
+    store.addMessage(roomId, data.message);
   });
 });
 </script>
@@ -87,8 +80,8 @@ onMounted(() => {
           ref="chatRoomMessages"
         >
           <Message
-            v-if="messages.length"
-            v-for="message in messages"
+            v-if="room?.messages.length"
+            v-for="message in room?.messages"
             :key="message.id"
             :message="message"
           />
