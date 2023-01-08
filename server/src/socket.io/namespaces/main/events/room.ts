@@ -41,11 +41,15 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
       throw new WackyRideError("The room does not exist");
     }
 
-    const sockets = io.sockets.adapter.rooms.get(`room:${roomId}`);
+    const sockets = await io.in(`room:${room.id}`).fetchSockets();
 
-    const isRoomFull = (sockets?.size || 0) >= room.limit;
+    const uniqueUserIds = new Set(sockets.map(({ data }) => data.user.id));
 
-    if (isRoomFull) {
+    const isUserInRoom = uniqueUserIds.has(socket.data.user.id);
+
+    const isRoomFull = uniqueUserIds.size >= room.limit;
+
+    if (!isUserInRoom && isRoomFull) {
       throw new WackyRideError("The room is full");
     }
 
@@ -75,3 +79,4 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 }
 
 export default registerRoomHandlers;
+
