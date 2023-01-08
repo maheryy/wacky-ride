@@ -6,10 +6,9 @@ import Message from "./ChatBoxMessage.vue";
 import { socketKey } from "../../providers/keys";
 
 const messages = ref<TMessage[]>([]);
-const message = ref<string>("");
-
+const message = ref("");
 const socket = inject(socketKey) as TSocket;
-let targetUser: number = 2;
+const receiverId = 2;
 
 const sendMessage = () => {
   if (!message.value.trim()) {
@@ -17,7 +16,7 @@ const sendMessage = () => {
   }
 
   // TODO: remove hard coded receiver id
-  socket.emit("conversation:message:send", targetUser, message.value);
+  socket.emit("conversation:message:send", receiverId, message.value);
 
   // TODO ? : add directly messageData to messages
   // Implying that we cannot edit the inserted message without the newly created id from the database

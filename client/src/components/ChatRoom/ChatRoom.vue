@@ -1,20 +1,29 @@
 <script setup lang="ts">
-import { inject, ref, watch, onMounted, nextTick } from "vue";
-import { TMessage } from "../../types/message";
+import { computed, inject, ref, watch, onMounted, nextTick } from "vue";
 import { TSocket } from "../../types/socket.io";
 import Message from "./RoomMessage.vue";
 import { socketKey } from "../../providers/keys";
+import store from "../../store";
+import { IRoom } from "../../types/room";
 
 interface IChatRoomProps {
-  roomId: number;
-  title: string;
+  roomId: IRoom["id"];
 }
 
-const { roomId, title } = defineProps<IChatRoomProps>();
+const { roomId } = defineProps<IChatRoomProps>();
 
-const messages = ref<TMessage[]>([]);
-const message = ref<string>("");
+const message = ref("");
 const socket = inject(socketKey) as TSocket;
+const room = computed(() => store.rooms[roomId]);
+const chatRoomMessages = ref<HTMLUListElement | null>(null);
+
+const messages = computed(() => {
+  if (!room.value) {
+    return [];
+  }
+
+  return room.value.messages;
+});
 
 const sendMessage = () => {
   if (!message.value) {
@@ -30,18 +39,15 @@ const sendMessage = () => {
 };
 
 /* Scroll to the bottom for each new message */
-watch(
-  () => [...messages.value],
-  async (newMessages, oldMessages) => {
-    await nextTick();
+watch(messages, async (newMessages, oldMessages) => {
+  await nextTick();
 
-    if (newMessages.length > oldMessages.length) {
-      document
-        .getElementById("chat-room-messages")
-        ?.scrollIntoView({ block: "end" });
-    }
+  const hasNewMessages = newMessages.length > oldMessages.length;
+
+  if (hasNewMessages) {
+    chatRoomMessages.value?.scrollIntoView({ block: "end" });
   }
-);
+});
 
 onMounted(() => {
   socket.emit("room:join", roomId);
@@ -54,7 +60,7 @@ onMounted(() => {
       return;
     }
 
-    messages.value = data.room.messages;
+    store.setRoom(data.room);
   });
 
   socket.on("room:message:received", ({ data, errors }) => {
@@ -73,9 +79,13 @@ onMounted(() => {
 <template>
   <div class="main-container">
     <div id="chat-room" class="chat-room">
-      <h3>{{ title }}</h3>
+      <h3>{{ room?.name }}</h3>
       <div class="chat-room__messages">
-        <ul id="chat-room-messages" class="chat-room__messages__container">
+        <ul
+          id="chat-room-messages"
+          class="chat-room__messages__container"
+          ref="chatRoomMessages"
+        >
           <Message
             v-if="messages.length"
             v-for="message in messages"

@@ -21,6 +21,14 @@
           </li>
           <li>
             <RouterLink
+              :to="{ name: 'rooms' }"
+              class="text-white hover:underline"
+            >
+              Rooms
+            </RouterLink>
+          </li>
+          <li>
+            <RouterLink
               :to="{ name: 'chatbot' }"
               class="text-white hover:underline"
             >

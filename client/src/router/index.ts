@@ -3,6 +3,7 @@ import Home from "../components/Home/Home.vue";
 import ChatBox from "../components/ChatBox/ChatBox.vue";
 import ChatBot from "../components/ChatBot/ChatBot.vue";
 import ChatRoom from "../components/ChatRoom/ChatRoom.vue";
+import ChatRooms from "../components/ChatRooms/ChatRooms.vue";
 import NotFound from "../components/Errors/NotFound.vue";
 
 const router = createRouter({
@@ -24,10 +25,15 @@ const router = createRouter({
       component: ChatBot,
     },
     {
-      path: "/room/:id",
-      name: "chatroom",
+      path: "/rooms",
+      name: "rooms",
+      component: ChatRooms,
+    },
+    {
+      path: "/room/:roomId",
+      name: "room",
       component: ChatRoom,
-      props: (route) => ({ roomId: route.params.id }),
+      props: (route) => ({ roomId: route.params.roomId }),
     },
     {
       path: "/:pathMatch(.*)",
