@@ -75,6 +75,12 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
         include: "author",
         order: [["createdAt", "ASC"]],
       },
+      hooks: {
+        // @see {@link https://github.com/sequelize/sequelize/issues/3807#issuecomment-438237173}
+        afterCreate: async (message) => {
+          await message.reload();
+        },
+      },
     }
   );
 
