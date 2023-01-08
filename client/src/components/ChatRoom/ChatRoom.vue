@@ -5,6 +5,7 @@ import Message from "./RoomMessage.vue";
 import { socketKey } from "../../providers/keys";
 import { IRoom } from "../../types/room";
 import { useRoomStore } from "../../stores/room";
+import dayjs from "dayjs";
 
 interface IChatRoomProps {
   roomId: IRoom["id"];
@@ -18,6 +19,16 @@ const socket = inject(socketKey) as TSocket;
 const room = computed(() => store.rooms[roomId]);
 const messages = computed(() => room.value?.messages || []);
 const chatRoomMessages = ref<HTMLUListElement | null>(null);
+
+const sortedMessages = computed(() =>
+  messages.value.slice().sort((a, b) => {
+    if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
+      return 1;
+    }
+
+    return -1;
+  })
+);
 
 const sendMessage = () => {
   if (!message.value) {
@@ -80,8 +91,8 @@ onMounted(() => {
           ref="chatRoomMessages"
         >
           <Message
-            v-if="room?.messages.length"
-            v-for="message in room?.messages"
+            v-if="sortedMessages.length"
+            v-for="message in sortedMessages"
             :key="message.id"
             :message="message"
           />
