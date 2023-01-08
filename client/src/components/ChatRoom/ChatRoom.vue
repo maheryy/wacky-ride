@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch, onMounted, nextTick } from "vue";
+import {
+  computed,
+  inject,
+  ref,
+  watch,
+  onMounted,
+  nextTick,
+  onUnmounted,
+} from "vue";
 import { TSocket } from "../../types/socket.io";
 import Message from "./RoomMessage.vue";
 import { socketKey } from "../../providers/keys";
@@ -77,6 +85,10 @@ onMounted(() => {
 
     store.addMessage(roomId, data.message);
   });
+});
+
+onUnmounted(() => {
+  socket.emit("room:leave", roomId);
 });
 </script>
 
