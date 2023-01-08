@@ -1,9 +1,26 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, inject, onMounted } from "vue";
+import { socketKey } from "../../providers/keys";
 import { useRoomStore } from "../../stores/room";
+import { TSocket } from "../../types/socket.io";
 
 const store = useRoomStore();
 const hasRooms = computed(() => Object.keys(store.rooms).length > 0);
+const socket = inject(socketKey) as TSocket;
+
+onMounted(() => {
+  socket.emit("rooms");
+
+  socket.on("rooms", ({ data, errors }) => {
+    if (errors) {
+      console.error(errors);
+
+      return;
+    }
+
+    store.setRooms(data.rooms);
+  });
+});
 </script>
 
 <template>
