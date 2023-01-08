@@ -1,20 +1,42 @@
 <script setup lang="ts">
-import { inject, ref, watch, onMounted, nextTick } from "vue";
-import { TMessage } from "../../types/message";
+import {
+  computed,
+  inject,
+  ref,
+  watch,
+  onMounted,
+  nextTick,
+  onUnmounted,
+} from "vue";
 import { TSocket } from "../../types/socket.io";
 import Message from "./RoomMessage.vue";
 import { socketKey } from "../../providers/keys";
+import { IRoom } from "../../types/room";
+import { useRoomStore } from "../../stores/room";
+import dayjs from "dayjs";
 
 interface IChatRoomProps {
-  roomId: number;
-  title: string;
+  roomId: IRoom["id"];
 }
 
-const { roomId, title } = defineProps<IChatRoomProps>();
+const { roomId } = defineProps<IChatRoomProps>();
 
-const messages = ref<TMessage[]>([]);
-const message = ref<string>("");
+const message = ref("");
+const store = useRoomStore();
 const socket = inject(socketKey) as TSocket;
+const room = computed(() => store.rooms[roomId]);
+const messages = computed(() => room.value?.messages || []);
+const chatRoomMessages = ref<HTMLUListElement | null>(null);
+
+const sortedMessages = computed(() =>
+  messages.value.slice().sort((a, b) => {
+    if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
+      return 1;
+    }
+
+    return -1;
+  })
+);
 
 const sendMessage = () => {
   if (!message.value) {
@@ -31,15 +53,11 @@ const sendMessage = () => {
 
 /* Scroll to the bottom for each new message */
 watch(
-  () => [...messages.value],
-  async (newMessages, oldMessages) => {
+  () => messages.value.length,
+  async () => {
     await nextTick();
 
-    if (newMessages.length > oldMessages.length) {
-      document
-        .getElementById("chat-room-messages")
-        ?.scrollIntoView({ block: "end" });
-    }
+    chatRoomMessages.value?.scrollIntoView({ block: "end" });
   }
 );
 
@@ -54,7 +72,7 @@ onMounted(() => {
       return;
     }
 
-    messages.value = data.room.messages;
+    store.setRoom(data.room);
   });
 
   socket.on("room:message:received", ({ data, errors }) => {
@@ -65,20 +83,28 @@ onMounted(() => {
       return;
     }
 
-    messages.value.push(data.message);
+    store.addMessage(roomId, data.message);
   });
+});
+
+onUnmounted(() => {
+  socket.emit("room:leave", roomId);
 });
 </script>
 
 <template>
   <div class="main-container">
     <div id="chat-room" class="chat-room">
-      <h3>{{ title }}</h3>
+      <h3>{{ room?.name }}</h3>
       <div class="chat-room__messages">
-        <ul id="chat-room-messages" class="chat-room__messages__container">
+        <ul
+          id="chat-room-messages"
+          class="chat-room__messages__container"
+          ref="chatRoomMessages"
+        >
           <Message
-            v-if="messages.length"
-            v-for="message in messages"
+            v-if="sortedMessages.length"
+            v-for="message in sortedMessages"
             :key="message.id"
             :message="message"
           />

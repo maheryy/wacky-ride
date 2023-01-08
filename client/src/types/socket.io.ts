@@ -16,6 +16,7 @@ export interface IListenEvents {
   "room:message:received": TListenEvent<{ message: TMessage }>;
   "room:joined": TListenEvent<{ room: TRoomWithUsersAndMessages }>;
   "room:left": TListenEvent<{ roomId: IRoom["id"] }>;
+  rooms: TListenEvent<{ rooms: IRoom[] }>;
   "contact:created": TListenEvent<{ contact: IContact }>;
   "admin:status": TListenEvent<boolean>;
 }
@@ -31,6 +32,7 @@ export interface IEmitEvents {
   ) => void;
   "room:join": (roomId: IRoom["id"]) => void;
   "room:leave": (roomId: IRoom["id"]) => void;
+  rooms: () => void;
   "contact:create": () => void;
   "admin:status": () => void;
 }

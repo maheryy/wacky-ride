@@ -6,8 +6,8 @@ export type TMessage = {
   id: number;
   content: string;
   author: IUser;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 } & (
   | {
       room: IRoom;

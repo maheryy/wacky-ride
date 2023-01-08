@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "dayjs": "^1.11.7",
+    "pinia": "^2.0.28",
     "socket.io-client": "^4.5.3",
     "vue": "^3.2.41",
     "vue-router": "^4.1.6"

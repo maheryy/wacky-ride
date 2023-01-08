@@ -1,8 +1,7 @@
 import { createMessage } from "../../../../services/message.service";
 import {
   getRooms,
-  joinRoom,
-  leaveRoom,
+  getRoomWithMessages,
 } from "../../../../services/room.service";
 import { IMessage } from "../../../../types/message";
 import { IRoom } from "../../../../types/room";
@@ -36,7 +35,23 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   async function onJoin(roomId: number) {
     console.log("[socket.io]: room:join", roomId);
 
-    const room = await joinRoom(roomId, socket.data.user.id);
+    const room = await getRoomWithMessages(roomId);
+
+    if (!room) {
+      throw new WackyRideError("The room does not exist");
+    }
+
+    const sockets = await io.in(`room:${room.id}`).fetchSockets();
+
+    const uniqueUserIds = new Set(sockets.map(({ data }) => data.user.id));
+
+    const isUserInRoom = uniqueUserIds.has(socket.data.user.id);
+
+    const isRoomFull = uniqueUserIds.size >= room.limit;
+
+    if (!isUserInRoom && isRoomFull) {
+      throw new WackyRideError("The room is full");
+    }
 
     socket.join(`room:${roomId}`);
 
@@ -45,8 +60,6 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 
   async function onLeave(roomId: number) {
     console.log("[socket.io]: room:leave", roomId);
-
-    await leaveRoom(roomId, socket.data.user.id);
 
     socket.leave(`room:${roomId}`);
 
@@ -66,3 +79,4 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 }
 
 export default registerRoomHandlers;
+

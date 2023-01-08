@@ -76,6 +76,12 @@ module.exports = {
       // Require an empty line before commonjs exports statements
       { blankLine: "always", prev: "*", next: "cjs-export" },
     ],
+    "prettier/prettier": [
+      ERROR,
+      {
+        endOfLine: "auto",
+      },
+    ],
     "simple-import-sort/imports": [
       ERROR,
       {

@@ -4,10 +4,10 @@ import { WackyRideError } from "../socket.io/errors/WackyRideError";
 import {
   IRoom,
   TRoomUpdateAttributes,
+  TRoomWithMessages,
   TRoomWithUsers,
   TRoomWithUsersAndMessages,
 } from "../types/room";
-import { IUser } from "../types/user";
 
 const { Room } = db;
 
@@ -15,9 +15,9 @@ export function createRoom(roomName: string) {
   return Room.create({ name: roomName });
 }
 
-export const getRoomById = async (roomId: number): Promise<IRoom | null> => {
-  return Room.findByPk(roomId);
-};
+export function getRoomById(roomId: number, transaction?: Transaction) {
+  return Room.findByPk(roomId, { transaction });
+}
 
 export function getRooms() {
   return Room.findAll();
@@ -32,64 +32,10 @@ export function getRoomWithUsers(
   }) as Promise<TRoomWithUsers | null>;
 }
 
-export async function joinRoom(roomId: IRoom["id"], userId: IUser["id"]) {
-  const transaction = await sequelize.transaction();
-
-  try {
-    const room = await getRoomWithUsersAndMessages(roomId, transaction);
-
-    if (!room) {
-      throw new WackyRideError("The room does not exist");
-    }
-
-    const isUserInRoom = room.users.some((user) => user.id === userId);
-
-    if (isUserInRoom) {
-      throw new WackyRideError("You are already in this room");
-    }
-
-    const isRoomFull = room.users.length >= room.limit;
-
-    if (isRoomFull) {
-      throw new WackyRideError("The room is full");
-    }
-
-    await room.addUser(userId, { transaction });
-
-    await transaction.commit();
-
-    return room;
-  } catch (error) {
-    await transaction.rollback();
-
-    throw error;
-  }
-}
-
-export async function leaveRoom(roomId: IRoom["id"], userId: IUser["id"]) {
-  const transaction = await sequelize.transaction();
-
-  try {
-    const room = await getRoomWithUsers(roomId, transaction);
-
-    if (!room) {
-      throw new WackyRideError("The room does not exist");
-    }
-
-    const isUserInRoom = room.users.some((user) => user.id === userId);
-
-    if (!isUserInRoom) {
-      throw new WackyRideError("You are not in this room");
-    }
-
-    await room.removeUser(userId, { transaction });
-
-    await transaction.commit();
-  } catch (error) {
-    await transaction.rollback();
-
-    throw error;
-  }
+export function getRoomWithMessages(roomId: IRoom["id"]) {
+  return Room.scope("withMessages").findByPk(
+    roomId
+  ) as Promise<TRoomWithMessages | null>;
 }
 
 export function getRoomWithUsersAndMessages(
