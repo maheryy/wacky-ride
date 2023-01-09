@@ -72,7 +72,7 @@ onMounted(() => {
       return;
     }
 
-    store.setRoom(data.room);
+    store.updateRoom(data.room);
   });
 
   socket.on("room:message:received", ({ data, errors }) => {
