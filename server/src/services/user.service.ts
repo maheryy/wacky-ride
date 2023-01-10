@@ -16,7 +16,7 @@ export const getUserById = async (id: number): Promise<IUser | null> =>
   User.findByPk(id);
 
 export function getUserWithConversationsAndRooms(id: IUser["id"]) {
-  return User.scope(["withConversations", "withRooms"]).findByPk(
+  return User.scope(["withConversations", "withRooms", "withRole"]).findByPk(
     id
   ) as Promise<TUserWithConversationsAndRooms | null>;
 }

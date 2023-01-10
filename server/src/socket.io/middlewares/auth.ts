@@ -29,7 +29,7 @@ export async function authenticate(
     return next(new Error("Authentication error: User not found"));
   }
 
-  socket.data.user = user;
+  socket.data.user = user.toJSON();
 
   return next();
 }

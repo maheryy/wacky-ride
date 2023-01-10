@@ -34,7 +34,9 @@ function initializeSocketIOServer(httpServer: HttpServer): void {
 
     socket.join(`user:${user.id}`);
 
-    socket.emit("user:connected", { data: { user } });
+    socket.emit("user:connected", {
+      data: { user: { ...user, isAdmin: undefined } },
+    });
 
     registerConversationHandlers(io, socket);
     registerRoomHandlers(io, socket);
