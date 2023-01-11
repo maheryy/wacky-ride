@@ -35,6 +35,14 @@
               Chatbot
             </RouterLink>
           </li>
+          <li>
+            <RouterLink
+              :to="{ name: 'admin' }"
+              class="text-white hover:underline"
+            >
+              Admin
+            </RouterLink>
+          </li>
         </ul>
       </div>
     </div>

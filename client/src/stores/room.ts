@@ -3,8 +3,10 @@ import { ref } from "vue";
 import { TMessage } from "../types/message";
 import { IRoom, TRoomWithUsersAndMessages } from "../types/room";
 
+export type TStoreRoom = Pick<IRoom, "id"> & Partial<TRoomWithUsersAndMessages>;
+
 type TStoreRooms = {
-  [roomId: IRoom["id"]]: TRoomWithUsersAndMessages | undefined;
+  [roomId: IRoom["id"]]: TStoreRoom | undefined;
 };
 
 export const useRoomStore = defineStore("room", () => {
@@ -18,7 +20,7 @@ export const useRoomStore = defineStore("room", () => {
     }, Object.create(null));
   }
 
-  function setRoom(newRoom: TRoomWithUsersAndMessages) {
+  function setRoom(newRoom: TStoreRoom) {
     rooms.value[newRoom.id] = newRoom;
   }
 
@@ -36,12 +38,16 @@ export const useRoomStore = defineStore("room", () => {
     }, rooms.value);
   }
 
-  function updateRoom(newRoom: TRoomWithUsersAndMessages) {
+  function updateRoom(newRoom: TStoreRoom) {
     rooms.value[newRoom.id] = { ...rooms.value[newRoom.id], ...newRoom };
   }
 
+  function deleteRoom(roomId: IRoom["id"]) {
+    delete rooms.value[roomId];
+  }
+
   function addMessage(roomId: IRoom["id"], message: TMessage) {
-    rooms.value[roomId]?.messages.push(message);
+    rooms.value[roomId]?.messages?.push(message);
   }
 
   return {
@@ -51,6 +57,7 @@ export const useRoomStore = defineStore("room", () => {
     addMessage,
     updateRoom,
     updateRooms,
+    deleteRoom,
   };
 });
 

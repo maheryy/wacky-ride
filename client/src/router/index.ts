@@ -5,6 +5,7 @@ import ChatBot from "../components/ChatBot/ChatBot.vue";
 import ChatRoom from "../components/ChatRoom/ChatRoom.vue";
 import ChatRooms from "../components/ChatRooms/ChatRooms.vue";
 import NotFound from "../components/Errors/NotFound.vue";
+import Admin from "../components/Admin/Admin.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
       name: "room",
       component: ChatRoom,
       props: (route) => ({ roomId: route.params.roomId }),
+    },
+    {
+      path: "/admin",
+      name: "admin",
+      component: Admin,
     },
     {
       path: "/:pathMatch(.*)",

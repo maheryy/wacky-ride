@@ -25,3 +25,8 @@ export type TRoomWithUsersAndMessages = TRoomWithUsers & TRoomWithMessages;
 export type TRoomCreationAttributes = Optional<IRoom, "id">;
 
 export type TRoomUpdateAttributes = Partial<Pick<IRoom, "limit" | "name">>;
+
+export type TRoomCreate = Pick<IRoom, "limit" | "name">;
+
+export type TRoomUpdate = Pick<IRoom, "id"> &
+  Partial<Pick<IRoom, "limit" | "name">>;
