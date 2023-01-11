@@ -6,8 +6,11 @@ import {
 } from "../types/conversation";
 import { TMessage } from "../types/message";
 
+export type TStoreConversation = Pick<IConversation, "id"> &
+  Partial<TConversationWithMessages>;
+
 type TStoreConversations = {
-  [conversationId: IConversation["id"]]: TConversationWithMessages | undefined;
+  [conversationId: IConversation["id"]]: TStoreConversation | undefined;
 };
 
 export const useConversationStore = defineStore("conversation", () => {
@@ -28,8 +31,15 @@ export const useConversationStore = defineStore("conversation", () => {
     );
   }
 
+  function updateConversation(conversation: TStoreConversation) {
+    conversations.value[conversation.id] = {
+      ...conversations.value[conversation.id],
+      ...conversation,
+    };
+  }
+
   function addMessage(conversationId: IConversation["id"], message: TMessage) {
-    conversations.value[conversationId]?.messages.push(message);
+    conversations.value[conversationId]?.messages?.push(message);
   }
 
   return {
@@ -37,6 +47,6 @@ export const useConversationStore = defineStore("conversation", () => {
     setConversation,
     setConversations,
     addMessage,
+    updateConversation,
   };
 });
-

@@ -76,6 +76,7 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
         attributes: {
           exclude: ["deletedAt", "updatedAt"],
         },
+        include: ["messages", "sender", "receiver"],
       },
     }
   );
@@ -135,3 +136,4 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
 };
 
 export default Conversation;
+

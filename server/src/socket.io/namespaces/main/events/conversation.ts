@@ -1,4 +1,7 @@
-import { getOrCreateConversation } from "../../../../services/conversation.service";
+import {
+  getConversation,
+  getOrCreateConversation,
+} from "../../../../services/conversation.service";
 import { createMessage } from "../../../../services/message.service";
 import { IMessage } from "../../../../types/message";
 import { IUser } from "../../../../types/user";
@@ -7,6 +10,7 @@ import {
   TConversationIO,
   TConversationSocket,
 } from "../../../@types/main";
+import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 const registerConversationHandlers = (
@@ -39,10 +43,22 @@ const registerConversationHandlers = (
     io.to(`user:${receiverId}`).emit("conversation:message:received", result);
   }
 
+  async function onConversation(receiverId: IUser["id"]) {
+    const conversation = await getConversation(socket.data.user.id, receiverId);
+
+    if (!conversation) {
+      throw new WackyRideError("Conversation not found");
+    }
+
+    socket.emit("conversation", { data: { conversation } });
+  }
+
   socket.on(
     "conversation:message:send",
     handle(onMessage, "conversation:message:received")
   );
+
+  socket.on("conversation", handle(onConversation, "conversation"));
 };
 
 export default registerConversationHandlers;

@@ -1,17 +1,40 @@
 <script setup lang="ts">
-import { inject, ref, watch, onMounted, nextTick } from "vue";
-import { TMessage } from "../../types/message";
+import { inject, ref, watch, onMounted, nextTick, computed } from "vue";
 import { TSocket } from "../../types/socket.io";
 import Message from "./ChatBoxMessage.vue";
 import { socketKey } from "../../providers/keys";
+import { useConversationStore } from "../../stores";
+import { IConversation } from "../../types/conversation";
+import dayjs from "dayjs";
 
-const messages = ref<TMessage[]>([]);
+const store = useConversationStore();
+const conversationId = ref<IConversation["id"] | null>(null);
+
+const messages = computed(() => {
+  if (conversationId.value) {
+    return store.conversations[conversationId.value]?.messages || [];
+  }
+
+  return [];
+});
+
 const message = ref("");
 const socket = inject(socketKey) as TSocket;
-const receiverId = 2;
+const receiverId = 12;
+const chatBoxMessages = ref<HTMLUListElement | null>(null);
+
+const sortedMessages = computed(() =>
+  messages.value.slice().sort((a, b) => {
+    if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
+      return 1;
+    }
+
+    return -1;
+  })
+);
 
 const sendMessage = () => {
-  if (!message.value.trim()) {
+  if (!message.value) {
     return;
   }
 
@@ -26,21 +49,28 @@ const sendMessage = () => {
 
 /* Scroll to the bottom for each new message */
 watch(
-  () => [...messages.value],
-  async (newMessages, oldMessages) => {
+  () => messages.value.length,
+  async () => {
     await nextTick();
-    if (newMessages.length > oldMessages.length) {
-      document
-        .getElementById("chat-box-messages")
-        ?.scrollIntoView({ block: "end" });
-    }
+
+    chatBoxMessages.value?.scrollIntoView({ block: "end" });
   }
 );
 
 onMounted(() => {
-  // TODO: Add endpoint to get conversation by id
-  // @ts-ignore
-  socket.on("conversation:load");
+  socket.emit("conversation", receiverId);
+
+  socket.on("conversation", ({ data, errors }) => {
+    if (errors) {
+      console.error(errors);
+
+      return;
+    }
+
+    conversationId.value = data.conversation.id;
+
+    store.updateConversation(data.conversation);
+  });
 
   socket.on("conversation:message:received", ({ data, errors }) => {
     if (errors) {
@@ -49,9 +79,11 @@ onMounted(() => {
       return;
     }
 
-    const { message } = data;
+    if (!conversationId.value) {
+      return;
+    }
 
-    messages.value.push(message);
+    store.addMessage(conversationId.value, data.message);
   });
 });
 </script>
@@ -59,19 +91,23 @@ onMounted(() => {
 <template>
   <div class="main-container">
     <div id="chat-box" class="chat-box">
-      <h3>{{ "Johnny" }}</h3>
+      <h3>TODO</h3>
       <div class="chat-box__messages">
-        <ul id="chat-box-messages" class="chat-box__messages__container">
+        <ul
+          id="chat-box-messages"
+          class="chat-box__messages__container"
+          ref="chatBoxMessages"
+        >
           <Message
-            v-if="messages.length"
-            v-for="message in messages"
+            v-if="sortedMessages.length"
+            v-for="message in sortedMessages"
             :key="message.id"
             :message="message"
           />
         </ul>
       </div>
       <div class="chat-box__input">
-        <input type="text" v-model="message" @keyup.enter="sendMessage" />
+        <input type="text" v-model.trim="message" @keyup.enter="sendMessage" />
         <button @click="sendMessage">Send</button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { IContact } from "../../types/contact";
+import { IConversation, TFullConversation } from "../../types/conversation";
 import { IMessage } from "../../types/message";
 import { IRoom, TRoomWithMessages } from "../../types/room";
 import { IUser } from "../../types/user";
@@ -14,10 +15,12 @@ export interface IConversationListenEvents {
     receiverId: IUser["id"],
     content: IMessage["content"]
   ) => void;
+  conversation: (receiverId: IUser["id"]) => void;
 }
 
 export interface IConversationEmitEvents {
   "conversation:message:received": TEmitEvent<{ message: IMessage }>;
+  conversation: TEmitEvent<{ conversation: TFullConversation }>;
 }
 
 export type TConversationIO = Server<
