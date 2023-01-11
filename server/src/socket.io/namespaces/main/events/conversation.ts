@@ -74,6 +74,16 @@ const registerConversationHandlers = (
     });
   }
 
+  async function onConversation(receiverId: IUser["id"]) {
+    const conversation = await getConversation(socket.data.user.id, receiverId);
+
+    if (!conversation) {
+      throw new WackyRideError("Conversation not found");
+    }
+
+    socket.emit("conversation", { data: { conversation } });
+  }
+
   socket.on(
     "conversation:message:send",
     handle(onMessage, "conversation:message:received")
@@ -84,3 +94,4 @@ const registerConversationHandlers = (
 };
 
 export default registerConversationHandlers;
+

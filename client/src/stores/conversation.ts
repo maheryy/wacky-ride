@@ -6,7 +6,7 @@ import {
 } from "../types/conversation";
 import { TMessage } from "../types/message";
 
-export type TStoreConversation = IConversation &
+export type TStoreConversation = Pick<IConversation, "id"> &
   Partial<TConversationWithMessages>;
 
 type TStoreConversations = {
@@ -71,3 +71,4 @@ export const useConversationStore = defineStore("conversation", () => {
     updateConversations,
   };
 });
+

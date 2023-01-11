@@ -20,3 +20,4 @@ export type TConversationWithUsersAndMessages = TConversationWithUsers & {
 };
 
 export type ConversationCreationAttributes = Optional<IConversation, "id">;
+
