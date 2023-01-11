@@ -5,17 +5,21 @@ import {
   restoreRoom,
   updateRoom,
 } from "../../../../services/room.service";
-import { IRoom, TRoomUpdateAttributes } from "../../../../types/room";
+import { IRoom, TRoomCreate, TRoomUpdate } from "../../../../types/room";
 import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types/admin";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   const handle = withErrorHandling<IRoomEmitEvents>(socket);
 
-  async function onCreate(roomName: string) {
-    const room = await createRoom(roomName);
+  async function onCreate(fields: TRoomCreate) {
+    const room = await createRoom(fields);
 
-    socket.emit("room:created", { data: { room } });
+    const data = { room };
+
+    socket.emit("room:created", { data });
+
+    io.of("/").emit("room:created", { data });
   }
 
   /**
@@ -23,15 +27,14 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
    *
    * Emits `room:updated` to the client and the main namespace
    */
-  async function onUpdate(
-    id: IRoom["id"],
-    { limit, name }: TRoomUpdateAttributes
-  ) {
-    const fields = { limit, name };
+  async function onUpdate(fields: TRoomUpdate) {
+    const { id, limit, name } = fields;
 
-    await updateRoom(id, fields);
+    const room = { id, limit, name };
 
-    const data = { id, fields };
+    await updateRoom(room);
+
+    const data = { room };
 
     socket.emit("room:updated", { data });
 

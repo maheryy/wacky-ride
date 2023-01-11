@@ -18,7 +18,7 @@ onMounted(() => {
       return;
     }
 
-    store.setRooms(data.rooms);
+    store.updateRooms(data.rooms);
   });
 });
 </script>

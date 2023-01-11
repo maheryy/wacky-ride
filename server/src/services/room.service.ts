@@ -3,6 +3,8 @@ import sequelize, { db } from "../database/sequelize";
 import { WackyRideError } from "../socket.io/errors/WackyRideError";
 import {
   IRoom,
+  TRoomCreate,
+  TRoomUpdate,
   TRoomUpdateAttributes,
   TRoomWithMessages,
   TRoomWithUsers,
@@ -11,8 +13,8 @@ import {
 
 const { Room } = db;
 
-export function createRoom(roomName: string) {
-  return Room.create({ name: roomName });
+export function createRoom(room: TRoomCreate) {
+  return Room.create(room);
 }
 
 export function getRoomById(roomId: number, transaction?: Transaction) {
@@ -47,8 +49,10 @@ export function getRoomWithUsersAndMessages(
   }) as Promise<TRoomWithUsersAndMessages | null>;
 }
 
-export function updateRoom(roomId: IRoom["id"], fields: TRoomUpdateAttributes) {
-  return Room.update(fields, { where: { id: roomId } });
+export function updateRoom(room: TRoomUpdate) {
+  const { id, ...fields } = room;
+
+  return Room.update(fields, { where: { id } });
 }
 
 export function deleteRoom(roomId: IRoom["id"]) {

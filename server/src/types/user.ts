@@ -22,7 +22,7 @@ export interface IUser {
   deletedAt?: Date;
 }
 
-export type TUserWithConversationsAndRooms = UserModel & {
+export type TUserWithConversationsAndRooms = Optional<UserModel, "isAdmin"> & {
   senderConversations: ConversationModel[];
   receiverConversations: ConversationModel[];
   rooms: RoomModel[];

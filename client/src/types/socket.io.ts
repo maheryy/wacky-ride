@@ -5,7 +5,8 @@ import { TMessage } from "./message";
 import { TListenEvent } from "./result";
 import {
   IRoom,
-  TRoomUpdateAttributes,
+  TRoomCreate,
+  TRoomUpdate,
   TRoomWithUsersAndMessages,
 } from "./room";
 import { IUser, TUserWithConversationsAndRooms } from "./user";
@@ -41,10 +42,7 @@ export interface IAdminListenEvents {
   "admin:status:updated": TListenEvent<{ status: IUser["status"] }>;
   "room:created": TListenEvent<{ room: IRoom }>;
   "room:deleted": TListenEvent<{ id: IRoom["id"] }>;
-  "room:updated": TListenEvent<{
-    id: IRoom["id"];
-    fields: TRoomUpdateAttributes;
-  }>;
+  "room:updated": TListenEvent<{ room: TRoomUpdate }>;
   "room:restored": TListenEvent<{ room: IRoom }>;
   "contact:created": TListenEvent<{ contact: IContact }>;
   "contact:accepted": TListenEvent<{
@@ -56,9 +54,9 @@ export interface IAdminListenEvents {
 
 export interface IAdminEmitEvents {
   "admin:status:update": (status: IUser["status"]) => void;
-  "room:create": (roomName: IRoom["name"]) => void;
+  "room:create": (room: TRoomCreate) => void;
   "room:delete": (id: IRoom["id"]) => void;
-  "room:update": (id: IRoom["id"], fields: TRoomUpdateAttributes) => void;
+  "room:update": (room: TRoomUpdate) => void;
   "room:restore": (id: IRoom["id"]) => void;
   "contact:accept": (contactId: IContact["id"]) => void;
   "contact:refuse": (contactId: IContact["id"]) => void;
