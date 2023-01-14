@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, reactive } from "vue";
-import { adminSocketKey, socketKey } from "../../providers/keys";
-import { useRoomStore } from "../../stores";
+import { computed, onMounted, reactive } from "vue";
+import { useAuthStore, useRoomStore } from "../../stores";
 import { TSocket } from "../../types/socket.io";
 import EditableRoom from "../../components/EditableRoom.vue";
 
-const socket = inject(socketKey) as TSocket;
+const auth = useAuthStore();
+const socket = auth.socket as TSocket;
+
 const roomStore = useRoomStore();
 const rooms = computed(() => roomStore.rooms);
 const room = reactive({ name: "", limit: 50 });
-const adminSocket = inject(adminSocketKey) as TSocket;
 
 function createRoom() {
-  adminSocket.emit("room:create", room);
+  socket.emit("room:create", room);
 }
 
 onMounted(() => {
@@ -28,7 +28,7 @@ onMounted(() => {
     roomStore.updateRooms(data.rooms);
   });
 
-  adminSocket.on("room:created", ({ data, errors }) => {
+  socket.on("room:created", ({ data, errors }) => {
     if (errors) {
       console.error(errors);
 
