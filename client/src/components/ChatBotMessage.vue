@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IChatbotMessage } from "../../types/message";
+import { IChatbotMessage } from "../types/message";
 
 interface MessageProps {
   message: IChatbotMessage;

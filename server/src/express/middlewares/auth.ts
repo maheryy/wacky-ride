@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verify } from "../../lib/jwt";
 import { getUserById } from "../../services/user.service";
+import { getBearerToken } from "../../utils/auth";
 
 /**
  * Authenticates the user and adds it to the request.
@@ -12,15 +13,9 @@ export async function authenticate(
   response: Response,
   next: NextFunction
 ) {
-  const { authorization } = request.headers;
+  const token = getBearerToken(request);
 
-  if (!authorization) {
-    return response.sendStatus(401);
-  }
-
-  const [type, token] = authorization.split(/\s+/);
-
-  if (type !== "Bearer") {
+  if (!token) {
     return response.sendStatus(401);
   }
 

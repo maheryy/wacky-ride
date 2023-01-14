@@ -4,7 +4,7 @@ import {
   WorkflowPayload,
   WorkflowAction,
   WorkflowActionTypes,
-} from "../../types/workflow";
+} from "../types/workflow";
 
 interface ActionProps {
   action: WorkflowAction;

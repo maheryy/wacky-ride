@@ -119,7 +119,7 @@ const User = (sequelize: Sequelize): typeof UserModel => {
       paranoid: true,
       sequelize,
       defaultScope: {
-        attributes: ["id", "username"],
+        attributes: ["id", "username", "email", "status", "isAdmin"],
       },
     }
   );

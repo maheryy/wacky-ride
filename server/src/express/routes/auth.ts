@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import { Request, Response, Router } from "express";
-import { sign } from "../../lib/jwt";
-import { getUserByEmail } from "../../services/user.service";
+import { sign, verify } from "../../lib/jwt";
+import { getUserByEmail, getUserById } from "../../services/user.service";
+import { getBearerToken } from "../../utils/auth";
 
 const router = Router();
 
@@ -23,6 +24,25 @@ router.post("/login", async (request: Request, response: Response) => {
   const token = sign(user.id);
 
   return response.json({ token });
+});
+
+router.get("/me", async (request: Request, response: Response) => {
+  const token = getBearerToken(request);
+  if (!token) {
+    return response.sendStatus(401);
+  }
+
+  const payload = await verify(token);
+  if (!payload) {
+    return response.sendStatus(401);
+  }
+
+  const user = await getUserById(payload.userId);
+  if (!user) {
+    return response.sendStatus(401);
+  }
+
+  return response.json({ user });
 });
 
 export default router;

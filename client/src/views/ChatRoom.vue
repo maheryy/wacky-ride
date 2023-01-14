@@ -8,11 +8,11 @@ import {
   nextTick,
   onUnmounted,
 } from "vue";
-import { TSocket } from "../../types/socket.io";
-import Message from "./RoomMessage.vue";
-import { socketKey } from "../../providers/keys";
-import { IRoom } from "../../types/room";
-import { useRoomStore } from "../../stores/room";
+import { TSocket } from "../types/socket.io";
+import Message from "../components/RoomMessage.vue";
+import { socketKey } from "../providers/keys";
+import { IRoom } from "../types/room";
+import { useRoomStore } from "../stores/room";
 import dayjs from "dayjs";
 
 interface IChatRoomProps {
