@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import Nav from "./components/Nav.vue";
-import SocketProvider from "./providers/SocketProvider.vue";
 </script>
 
 <template>
-  <SocketProvider>
-    <Nav />
-    <main>
-      <RouterView />
-    </main>
-  </SocketProvider>
+  <Nav />
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <style scoped>

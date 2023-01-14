@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { computed, inject, onMounted } from "vue";
-import { socketKey } from "../providers/keys";
+import { computed, onMounted } from "vue";
 import { useRoomStore } from "../stores/room";
 import { TSocket } from "../types/socket.io";
+import { useAuthStore } from "../stores";
 
 const store = useRoomStore();
 const hasRooms = computed(() => Object.keys(store.rooms).length > 0);
-const socket = inject(socketKey) as TSocket;
+const auth = useAuthStore();
+const socket = auth.socket as TSocket;
 
 onMounted(() => {
   socket.emit("rooms");

@@ -1,11 +1,31 @@
 import { defineStore } from "pinia";
-import { ref, readonly } from "vue";
+import { ref, readonly, watch, onUnmounted } from "vue";
 import { IUser, IUserCredentials } from "../types/user";
 import axios from "axios";
+import { TSocket } from "../types/socket.io";
+import { io } from "socket.io-client";
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref<string | null>(null);
   const user = ref<IUser | null>(null);
+  const socket = ref<TSocket | null>(null);
+
+  // Init socket.io client on user authenticated
+  // NB: Depending on the user role, the client socket uses a different namespace (see server-side namespace registration)
+  watch(user, (newUser) => {
+    if (newUser) {
+      socket.value = io(
+        import.meta.env.VITE_API_URL + (newUser.isAdmin ? "/admin" : ""),
+        { auth: { token: token.value } }
+      );
+    } else {
+      socket.value?.disconnect();
+    }
+  });
+
+  onUnmounted(() => {
+    socket.value?.disconnect();
+  });
 
   const isAuthenticated = (): boolean => !!(token.value && user.value);
 
@@ -53,6 +73,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   return {
     user: readonly(user),
+    socket,
     login,
     logout,
     attempt,

@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { inject, ref, watch, onMounted, nextTick } from "vue";
+import { ref, watch, onMounted, nextTick } from "vue";
 import { TMessage } from "../types/message";
 import { TSocket } from "../types/socket.io";
 import Message from "../components/ChatBoxMessage.vue";
-import { socketKey } from "../providers/keys";
+import { useAuthStore } from "../stores";
 
+const auth = useAuthStore();
 const messages = ref<TMessage[]>([]);
 const message = ref("");
-const socket = inject(socketKey) as TSocket;
+const socket = auth.socket as TSocket;
+
 const receiverId = 2;
+
+// FIX THIS FEATURE
 
 const sendMessage = () => {
   if (!message.value.trim()) {
