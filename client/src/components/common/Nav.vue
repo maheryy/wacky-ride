@@ -13,6 +13,14 @@
           </li>
           <li>
             <RouterLink
+              :to="{ name: 'login' }"
+              class="text-white hover:underline"
+            >
+              Login
+            </RouterLink>
+          </li>
+          <li>
+            <RouterLink
               :to="{ name: 'chat' }"
               class="text-white hover:underline"
             >

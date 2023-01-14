@@ -6,6 +6,7 @@ import ChatRoom from "../components/ChatRoom/ChatRoom.vue";
 import ChatRooms from "../components/ChatRooms/ChatRooms.vue";
 import NotFound from "../components/Errors/NotFound.vue";
 import Admin from "../components/Admin/Admin.vue";
+import Login from "../views/Login.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +15,11 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: Home,
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: Login,
     },
     {
       path: "/chat",
