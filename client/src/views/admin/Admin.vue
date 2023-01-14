@@ -3,7 +3,7 @@ import { computed, inject, onMounted, reactive } from "vue";
 import { adminSocketKey, socketKey } from "../../providers/keys";
 import { useRoomStore } from "../../stores";
 import { TSocket } from "../../types/socket.io";
-import EditableRoom from "./EditableRoom.vue";
+import EditableRoom from "../../components/EditableRoom.vue";
 
 const socket = inject(socketKey) as TSocket;
 const roomStore = useRoomStore();

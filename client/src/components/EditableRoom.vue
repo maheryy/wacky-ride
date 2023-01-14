@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { inject, onMounted, reactive } from "vue";
-import { adminSocketKey } from "../../providers/keys";
-import { useRoomStore, TStoreRoom } from "../../stores";
-import { TSocket } from "../../types/socket.io";
+import { adminSocketKey } from "../providers/keys";
+import { useRoomStore, TStoreRoom } from "../stores";
+import { TSocket } from "../types/socket.io";
 
 interface EditableRoomProps {
   initialRoom: TStoreRoom;

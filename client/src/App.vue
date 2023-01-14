@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Nav from "./components/common/Nav.vue";
+import Nav from "./components/Nav.vue";
 import SocketProvider from "./providers/SocketProvider.vue";
 </script>
 

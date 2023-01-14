@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, inject, onMounted } from "vue";
-import { socketKey } from "../../providers/keys";
-import { useRoomStore } from "../../stores/room";
-import { TSocket } from "../../types/socket.io";
+import { socketKey } from "../providers/keys";
+import { useRoomStore } from "../stores/room";
+import { TSocket } from "../types/socket.io";
 
 const store = useRoomStore();
 const hasRooms = computed(() => Object.keys(store.rooms).length > 0);

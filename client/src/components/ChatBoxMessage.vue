@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TMessage } from "../../types/message";
+import { TMessage } from "../types/message";
 
 interface MessageProps {
   message: TMessage;
