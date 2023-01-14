@@ -60,3 +60,5 @@ export const useAuthStore = defineStore("auth", () => {
     isAdmin,
   };
 });
+
+export type TStoreAuth = ReturnType<typeof useAuthStore>;

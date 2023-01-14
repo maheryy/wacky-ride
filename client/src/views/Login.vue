@@ -5,7 +5,7 @@ import { useAuthStore } from "../stores";
 import { AxiosError } from "axios";
 
 const router = useRouter();
-const store = useAuthStore();
+const auth = useAuthStore();
 
 const form = reactive({
   email: "",
@@ -14,8 +14,8 @@ const form = reactive({
 
 const onSubmit = async () => {
   try {
-    await store.login(form);
-    router.push({ name: "dashboard" });
+    await auth.login(form);
+    router.push({ name: auth.isAdmin() ? "admin" : "dashboard" });
   } catch (error: unknown) {
     if ((error as AxiosError).response?.status === 401) {
       alert("Invalid credentials");
