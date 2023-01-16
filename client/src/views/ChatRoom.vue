@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import {
   computed,
-  inject,
   ref,
   watch,
   onMounted,
   nextTick,
   onUnmounted,
 } from "vue";
-import { TSocket } from "../../types/socket.io";
-import Message from "./RoomMessage.vue";
-import { socketKey } from "../../providers/keys";
-import { IRoom } from "../../types/room";
-import { useRoomStore } from "../../stores/room";
+import { TSocket } from "../types/socket.io";
+import Message from "../components/RoomMessage.vue";
+import { IRoom } from "../types/room";
+import { useRoomStore } from "../stores/room";
 import dayjs from "dayjs";
+import { useAuthStore } from "../stores";
 
 interface IChatRoomProps {
   roomId: IRoom["id"];
@@ -23,7 +22,8 @@ const { roomId } = defineProps<IChatRoomProps>();
 
 const message = ref("");
 const store = useRoomStore();
-const socket = inject(socketKey) as TSocket;
+const auth = useAuthStore();
+const socket = auth.socket as TSocket;
 const room = computed(() => store.rooms[roomId]);
 const messages = computed(() => room.value?.messages || []);
 const chatRoomMessages = ref<HTMLUListElement | null>(null);

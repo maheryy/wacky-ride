@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from "vue";
-import { IChatbotMessage } from "../../types/message";
+import { IChatbotMessage } from "../types/message";
 import {
   WorkflowPayload,
   WorkflowAction,
   WorkflowActionTypes,
-} from "../../types/workflow";
-import ChatBotAction from "./ChatBotAction.vue";
-import ChatBotMessage from "./ChatBotMessage.vue";
-import Workflow from "../../lib/Workflow";
+} from "../types/workflow";
+import ChatBotAction from "../components/ChatBotAction.vue";
+import ChatBotMessage from "../components/ChatBotMessage.vue";
+import Workflow from "../lib/Workflow";
 
 const messages = ref<IChatbotMessage[]>([]);
 

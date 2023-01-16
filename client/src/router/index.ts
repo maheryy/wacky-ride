@@ -1,52 +1,38 @@
-import { createRouter, createWebHistory } from "vue-router";
-import Home from "../components/Home/Home.vue";
-import ChatBox from "../components/ChatBox/ChatBox.vue";
-import ChatBot from "../components/ChatBot/ChatBot.vue";
-import ChatRoom from "../components/ChatRoom/ChatRoom.vue";
-import ChatRooms from "../components/ChatRooms/ChatRooms.vue";
-import NotFound from "../components/Errors/NotFound.vue";
-import Admin from "../components/Admin/Admin.vue";
+import {
+  RouteRecordRaw,
+  Router,
+  createRouter,
+  createWebHistory,
+} from "vue-router";
+import { TStoreAuth } from "../stores";
+import getPublicRoutes from "./public";
+import getProtectedRoutes from "./protected";
+import getAdminRoutes from "./admin";
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: "/",
-      name: "home",
-      component: Home,
-    },
-    {
-      path: "/chat",
-      name: "chat",
-      component: ChatBox,
-    },
-    {
-      path: "/chatbot",
-      name: "chatbot",
-      component: ChatBot,
-    },
-    {
-      path: "/rooms",
-      name: "rooms",
-      component: ChatRooms,
-    },
-    {
-      path: "/room/:roomId",
-      name: "room",
-      component: ChatRoom,
-      props: (route) => ({ roomId: route.params.roomId }),
-    },
-    {
-      path: "/admin",
-      name: "admin",
-      component: Admin,
-    },
+const getRoutes = (auth: TStoreAuth): RouteRecordRaw[] => {
+  return [
+    ...getPublicRoutes(auth),
+    ...getProtectedRoutes(auth),
+    ...getAdminRoutes(auth),
     {
       path: "/:pathMatch(.*)",
       name: "not-found",
-      component: NotFound,
+      component: () => import("../views/errors/NotFound.vue"),
     },
-  ],
-});
+  ];
+};
+
+const router = (auth: TStoreAuth): Router => {
+  const router = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: getRoutes(auth),
+  });
+
+  // Implementing middleware individually to avoid useless checks on every route change
+  // router.beforeEach((to, from, next) => beforeEach(to, from, next, auth));
+  // router.beforeResolve((to, from, next) => beforeResolve(to, from, next, auth));
+
+  return router;
+};
 
 export default router;
