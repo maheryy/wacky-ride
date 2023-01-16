@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, inject, onMounted } from "vue";
-import { socketKey } from "../../providers/keys";
-import { useConversationStore } from "../../stores";
-import { TSocket } from "../../types/socket.io";
+import { computed, onMounted } from "vue";
+import { useAuthStore, useConversationStore } from "../stores";
+import { TSocket } from "../types/socket.io";
 
 const store = useConversationStore();
-const socket = inject(socketKey) as TSocket;
+const auth = useAuthStore();
+const socket = auth.socket as TSocket;
 
 const hasConversations = computed(
   () => Object.keys(store.conversations).length > 0
@@ -44,4 +44,3 @@ onMounted(() => {
     </li>
   </ul>
 </template>
-

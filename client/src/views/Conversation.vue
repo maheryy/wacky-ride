@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { inject, ref, watch, onMounted, nextTick, computed } from "vue";
-import { TSocket } from "../../types/socket.io";
-import Message from "./ConversationMessage.vue";
-import { socketKey } from "../../providers/keys";
-import { useConversationStore } from "../../stores";
+import { ref, watch, onMounted, nextTick, computed } from "vue";
+import { TSocket } from "../types/socket.io";
+import Message from "../components/ConversationMessage.vue";
+import { useAuthStore, useConversationStore } from "../stores";
 import dayjs from "dayjs";
-import { IUser } from "../../types/user";
+import { IUser } from "../types/user";
 
 interface IConversationProps {
   conversationId: IUser["id"];
@@ -13,9 +12,10 @@ interface IConversationProps {
 
 const { conversationId } = defineProps<IConversationProps>();
 const store = useConversationStore();
+const auth = useAuthStore();
 const conversation = computed(() => store.conversations[conversationId]);
 const message = ref("");
-const socket = inject(socketKey) as TSocket;
+const socket = auth.socket as TSocket;
 const conversationMessages = ref<HTMLUListElement | null>(null);
 
 const messages = computed(() => {
