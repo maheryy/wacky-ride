@@ -33,10 +33,10 @@ const logout = () => {
           </li>
           <li>
             <RouterLink
-              :to="{ name: 'chat' }"
+              :to="{ name: 'conversations' }"
               class="text-white hover:underline"
             >
-              Chat
+              Conversations
             </RouterLink>
           </li>
           <li>
