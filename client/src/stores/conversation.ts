@@ -6,7 +6,7 @@ import {
 } from "../types/conversation";
 import { TMessage } from "../types/message";
 
-export type TStoreConversation = Pick<IConversation, "id"> &
+export type TStoreConversation = IConversation &
   Partial<TConversationWithMessages>;
 
 type TStoreConversations = {
