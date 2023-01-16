@@ -1,6 +1,5 @@
 import { Optional } from "sequelize";
 import { ConversationModel } from "../models/conversation";
-import { MessageModel } from "../models/message";
 import { UserModel } from "../models/user";
 import { TMessageWithAuthor } from "./message";
 
@@ -11,13 +10,13 @@ export interface IConversation {
   deletedAt?: Date;
 }
 
-export type TConversationWithMessages = ConversationModel & {
-  messages: TMessageWithAuthor;
-};
-
-export type TFullConversation = TConversationWithMessages & {
+export type TConversationWithUsers = ConversationModel & {
   sender: UserModel;
   receiver: UserModel;
+};
+
+export type TConversationWithUsersAndMessages = TConversationWithUsers & {
+  messages: TMessageWithAuthor[];
 };
 
 export type ConversationCreationAttributes = Optional<IConversation, "id">;

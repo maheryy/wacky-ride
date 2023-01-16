@@ -5,7 +5,6 @@ import {
   IRoom,
   TRoomCreate,
   TRoomUpdate,
-  TRoomUpdateAttributes,
   TRoomWithMessages,
   TRoomWithUsers,
   TRoomWithUsersAndMessages,

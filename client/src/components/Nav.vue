@@ -9,7 +9,6 @@ const logout = () => {
   auth.logout();
   router.push({ name: "home" });
 };
-
 </script>
 <template>
   <nav class="bg-gray-700">
@@ -78,7 +77,7 @@ const logout = () => {
               class="text-white hover:underline cursor-pointer"
             >
               Logout
-          </a>
+            </a>
           </li>
         </ul>
       </div>

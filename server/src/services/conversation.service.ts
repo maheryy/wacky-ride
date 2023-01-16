@@ -1,35 +1,74 @@
 import { Op } from "sequelize";
 import { db } from "../database/sequelize";
-import { TFullConversation } from "../types/conversation";
+import {
+  IConversation,
+  TConversationWithUsers,
+  TConversationWithUsersAndMessages,
+} from "../types/conversation";
 import { IUser } from "../types/user";
 
 const { Conversation } = db;
 
-export const createConversation = async (
+export function createConversation(
   senderId: IUser["id"],
   receiverId: IUser["id"]
-) => {
+) {
   return Conversation.create({
     senderId,
     receiverId,
   });
-};
+}
 
-export function getConversation(userId1: IUser["id"], userId2: IUser["id"]) {
-  return Conversation.findOne({
+export async function getConversation(
+  userId: IUser["id"],
+  conversationId: IConversation["id"]
+) {
+  const conversation = (await Conversation.scope("withMessages").findOne({
     where: {
+      id: conversationId,
       [Op.or]: [
         {
-          senderId: userId1,
-          receiverId: userId2,
+          senderId: userId,
         },
         {
-          senderId: userId2,
-          receiverId: userId1,
+          receiverId: userId,
         },
       ],
     },
-  }) as Promise<TFullConversation | null>;
+  })) as TConversationWithUsersAndMessages | null;
+
+  const isReceiver = conversation?.receiver.id === userId;
+
+  if (isReceiver) {
+    return swapSenderAndReceiver(conversation);
+  }
+
+  return conversation;
+}
+
+export async function getConversations(userId: IUser["id"]) {
+  const conversations = (await Conversation.findAll({
+    where: {
+      [Op.or]: [
+        {
+          senderId: userId,
+        },
+        {
+          receiverId: userId,
+        },
+      ],
+    },
+  })) as TConversationWithUsers[];
+
+  return conversations.map((conversation) => {
+    const isReceiver = conversation.receiver.id === userId;
+
+    if (isReceiver) {
+      return swapSenderAndReceiver(conversation);
+    }
+
+    return conversation;
+  });
 }
 
 export function getOrCreateConversation(
@@ -53,5 +92,12 @@ export function getOrCreateConversation(
         },
       ],
     },
+  });
+}
+
+function swapSenderAndReceiver(conversation: TConversationWithUsers) {
+  return conversation.set({
+    sender: conversation.receiver,
+    receiver: conversation.sender,
   });
 }

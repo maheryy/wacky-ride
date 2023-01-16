@@ -15,12 +15,14 @@ export interface IConversationListenEvents {
     receiverId: IUser["id"],
     content: IMessage["content"]
   ) => void;
-  conversation: (receiverId: IUser["id"]) => void;
+  conversation: (conversationId: IConversation["id"]) => void;
+  conversations: () => void;
 }
 
 export interface IConversationEmitEvents {
   "conversation:message:received": TEmitEvent<{ message: IMessage }>;
   conversation: TEmitEvent<{ conversation: TFullConversation }>;
+  conversations: TEmitEvent<{ conversations: TFullConversation[] }>;
 }
 
 export type TConversationIO = Server<

@@ -6,7 +6,7 @@ import {
 } from "../types/conversation";
 import { TMessage } from "../types/message";
 
-export type TStoreConversation = Pick<IConversation, "id"> &
+export type TStoreConversation = IConversation &
   Partial<TConversationWithMessages>;
 
 type TStoreConversations = {
@@ -31,6 +31,26 @@ export const useConversationStore = defineStore("conversation", () => {
     );
   }
 
+  function updateConversations(newConversations: TStoreConversation[]) {
+    conversations.value = newConversations.reduce<TStoreConversations>(
+      (accumulator, conversation) => {
+        const existingConversation = accumulator[conversation.id];
+
+        if (existingConversation) {
+          accumulator[conversation.id] = {
+            ...existingConversation,
+            ...conversation,
+          };
+        } else {
+          accumulator[conversation.id] = { messages: [], ...conversation };
+        }
+
+        return accumulator;
+      },
+      conversations.value
+    );
+  }
+
   function updateConversation(conversation: TStoreConversation) {
     conversations.value[conversation.id] = {
       ...conversations.value[conversation.id],
@@ -48,5 +68,6 @@ export const useConversationStore = defineStore("conversation", () => {
     setConversations,
     addMessage,
     updateConversation,
+    updateConversations,
   };
 });
