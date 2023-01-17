@@ -76,9 +76,17 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
         attributes: {
           exclude: ["deletedAt", "updatedAt"],
         },
+        include: ["sender", "receiver"],
       },
     }
   );
+
+  ConversationModel.addScope("withMessages", {
+    attributes: {
+      exclude: ["deletedAt", "updatedAt"],
+    },
+    include: ["sender", "receiver", "messages"],
+  });
 
   ConversationModel.associate = (models: IListModel) => {
     ConversationModel.belongsTo(models.User, {
@@ -135,3 +143,4 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
 };
 
 export default Conversation;
+

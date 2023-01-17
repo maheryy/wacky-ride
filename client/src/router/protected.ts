@@ -15,9 +15,16 @@ const getRoutes = (auth: TStoreAuth): RouteRecordRaw[] => {
       ...options,
     },
     {
-      path: "/chat",
-      name: "chat",
-      component: () => import("../views/ChatBox.vue"),
+      path: "/conversations",
+      name: "conversations",
+      component: () => import("../views/Conversations.vue"),
+      ...options,
+    },
+    {
+      path: "/conversation/:conversationId",
+      name: "conversation",
+      component: () => import("../views/Conversation.vue"),
+      props: (route) => ({ conversationId: route.params.conversationId }),
       ...options,
     },
     {

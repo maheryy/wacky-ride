@@ -20,6 +20,8 @@ export interface IListenEvents {
   rooms: TListenEvent<{ rooms: IRoom[] }>;
   "contact:created": TListenEvent<{ contact: IContact }>;
   "admin:status": TListenEvent<boolean>;
+  conversation: TListenEvent<{ conversation: IConversation }>;
+  conversations: TListenEvent<{ conversations: IConversation[] }>;
 }
 
 export interface IEmitEvents {
@@ -36,6 +38,8 @@ export interface IEmitEvents {
   rooms: () => void;
   "contact:create": () => void;
   "admin:status": () => void;
+  conversation: (receiverId: IUser["id"]) => void;
+  conversations: () => void;
 }
 
 export interface IAdminListenEvents {

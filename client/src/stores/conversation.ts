@@ -6,8 +6,11 @@ import {
 } from "../types/conversation";
 import { TMessage } from "../types/message";
 
+export type TStoreConversation = IConversation &
+  Partial<TConversationWithMessages>;
+
 type TStoreConversations = {
-  [conversationId: IConversation["id"]]: TConversationWithMessages | undefined;
+  [conversationId: IConversation["id"]]: TStoreConversation | undefined;
 };
 
 export const useConversationStore = defineStore("conversation", () => {
@@ -28,8 +31,35 @@ export const useConversationStore = defineStore("conversation", () => {
     );
   }
 
+  function updateConversations(newConversations: TStoreConversation[]) {
+    conversations.value = newConversations.reduce<TStoreConversations>(
+      (accumulator, conversation) => {
+        const existingConversation = accumulator[conversation.id];
+
+        if (existingConversation) {
+          accumulator[conversation.id] = {
+            ...existingConversation,
+            ...conversation,
+          };
+        } else {
+          accumulator[conversation.id] = { messages: [], ...conversation };
+        }
+
+        return accumulator;
+      },
+      conversations.value
+    );
+  }
+
+  function updateConversation(conversation: TStoreConversation) {
+    conversations.value[conversation.id] = {
+      ...conversations.value[conversation.id],
+      ...conversation,
+    };
+  }
+
   function addMessage(conversationId: IConversation["id"], message: TMessage) {
-    conversations.value[conversationId]?.messages.push(message);
+    conversations.value[conversationId]?.messages?.push(message);
   }
 
   return {
@@ -37,6 +67,7 @@ export const useConversationStore = defineStore("conversation", () => {
     setConversation,
     setConversations,
     addMessage,
+    updateConversation,
+    updateConversations,
   };
 });
-

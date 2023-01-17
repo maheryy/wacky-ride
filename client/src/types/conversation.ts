@@ -1,10 +1,11 @@
 import { TMessage } from "./message";
+import { IUser } from "./user";
 
 export interface IConversation {
   id: number;
   createdAt: Date;
-  receiverId: number;
-  senderId: number;
+  receiver: Pick<IUser, "id" | "username">;
+  sender: Pick<IUser, "id" | "username">;
 }
 
 export type TConversationWithMessages = IConversation & {
