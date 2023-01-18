@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick, computed } from "vue";
+import { ref, watch, onMounted, onUnmounted, nextTick, computed } from "vue";
 import { TSocket } from "../types/socket.io";
 import Message from "../components/ConversationMessage.vue";
 import { useAuthStore, useConversationStore } from "../stores";
@@ -77,6 +77,11 @@ onMounted(() => {
 
     store.addMessage(conversationId, data.message);
   });
+});
+
+onUnmounted(() => {
+  socket.off("conversation");
+  socket.off("conversation:message:received");
 });
 </script>
 
