@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  ref,
-  watch,
-  onMounted,
-  nextTick,
-  onUnmounted,
-} from "vue";
+import { computed, ref, watch, onMounted, nextTick, onUnmounted } from "vue";
 import { TSocket } from "../types/socket.io";
 import Message from "../components/RoomMessage.vue";
 import { IRoom } from "../types/room";
@@ -89,6 +82,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   socket.emit("room:leave", roomId);
+  socket.off("room:joined");
+  socket.off("room:message:received");
 });
 </script>
 
