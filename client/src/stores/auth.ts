@@ -29,10 +29,6 @@ export const useAuthStore = defineStore("auth", () => {
     }
   });
 
-  onUnmounted(() => {
-    socket.value?.disconnect();
-  });
-
   const isAuthenticated = (): boolean => !!(token.value && user.value);
 
   const isAdmin = (): boolean => user.value?.isAdmin || false;
@@ -90,3 +86,4 @@ export const useAuthStore = defineStore("auth", () => {
 });
 
 export type TStoreAuth = ReturnType<typeof useAuthStore>;
+
