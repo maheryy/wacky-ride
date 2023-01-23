@@ -74,31 +74,6 @@ const registerConversationHandlers = (
     });
   }
 
-  async function onConversation(conversationId: IConversation["id"]) {
-    const conversation = await getConversation(
-      socket.data.user.id,
-      conversationId
-    );
-
-    if (!conversation) {
-      throw new WackyRideError("Conversation not found");
-    }
-
-    socket.emit("conversation", { data: { conversation } });
-  }
-
-  async function onConversations() {
-    const conversations = await getConversations(socket.data.user.id);
-
-    socket.emit("conversations", {
-      data: {
-        conversations: conversations.map((conversation) =>
-          conversation.toJSON()
-        ),
-      },
-    });
-  }
-
   socket.on(
     "conversation:message:send",
     handle(onMessage, "conversation:message:received")
