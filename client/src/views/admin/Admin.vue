@@ -10,7 +10,8 @@ const adminSocket = auth.adminSocket as TSocket;
 
 const roomStore = useRoomStore();
 const rooms = computed(() => roomStore.rooms);
-const room = reactive({ name: "", limit: 50 });
+const initialRoom = { name: "", limit: 50 };
+const room = reactive({ ...initialRoom });
 
 function createRoom() {
   adminSocket.emit("room:create", room);
@@ -37,6 +38,8 @@ onMounted(() => {
     }
 
     roomStore.setRoom(data.room);
+
+    Object.assign(room, initialRoom);
   });
 });
 
