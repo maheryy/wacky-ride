@@ -6,13 +6,14 @@ import EditableRoom from "../../components/EditableRoom.vue";
 
 const auth = useAuthStore();
 const socket = auth.socket as TSocket;
+const adminSocket = auth.adminSocket as TSocket;
 
 const roomStore = useRoomStore();
 const rooms = computed(() => roomStore.rooms);
 const room = reactive({ name: "", limit: 50 });
 
 function createRoom() {
-  socket.emit("room:create", room);
+  adminSocket.emit("room:create", room);
 }
 
 onMounted(() => {
@@ -28,7 +29,7 @@ onMounted(() => {
     roomStore.updateRooms(data.rooms);
   });
 
-  socket.on("room:created", ({ data, errors }) => {
+  adminSocket.on("room:created", ({ data, errors }) => {
     if (errors) {
       console.error(errors);
 
