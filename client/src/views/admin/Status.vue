@@ -9,8 +9,6 @@ const status = ref(auth.user?.status);
 const adminSocket = auth.adminSocket as TSocket;
 
 watch(status, (status) => {
-  debugger;
-
   if (status) {
     adminSocket.emit("admin:status:update", status);
   }
