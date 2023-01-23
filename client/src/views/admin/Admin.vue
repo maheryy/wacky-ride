@@ -62,8 +62,6 @@ onMounted(() => {
   });
 
   adminSocket.on("room:deleted", ({ data, errors }) => {
-    debugger;
-
     if (errors) {
       console.error(errors);
 
