@@ -73,6 +73,12 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.removeItem("token");
   };
 
+  function setStatus(status: IUser["status"]) {
+    if (user.value) {
+      user.value.status = status;
+    }
+  }
+
   return {
     user: readonly(user),
     socket,
@@ -82,6 +88,7 @@ export const useAuthStore = defineStore("auth", () => {
     attempt,
     isAuthenticated,
     isAdmin,
+    setStatus,
   };
 });
 
