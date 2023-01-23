@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive } from "vue";
+import { computed, onMounted, onUnmounted, reactive } from "vue";
 import { useAuthStore, useRoomStore } from "../../stores";
 import { TSocket } from "../../types/socket.io";
 import EditableRoom from "../../components/EditableRoom.vue";
@@ -38,6 +38,11 @@ onMounted(() => {
 
     roomStore.setRoom(data.room);
   });
+});
+
+onUnmounted(() => {
+  socket.off("rooms");
+  adminSocket.off("room:created");
 });
 </script>
 
