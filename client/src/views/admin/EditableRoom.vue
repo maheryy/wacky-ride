@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { TStoreRoom } from "../stores";
-import { IRoom, TRoomUpdate } from "../types/room";
+import { TStoreRoom } from "../../stores";
+import { IRoom, TRoomUpdate } from "../../types/room";
 
 interface EditableRoomProps {
   initialRoom: TStoreRoom;
