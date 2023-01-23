@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, reactive } from "vue";
 import { useAuthStore, useRoomStore } from "../../stores";
 import { TSocket } from "../../types/socket.io";
-import EditableRoom from "../../components/EditableRoom.vue";
+import EditableRoom from "./EditableRoom.vue";
 import { IRoom, TRoomUpdate } from "../../types/room";
 
 const auth = useAuthStore();
