@@ -101,3 +101,4 @@ function swapSenderAndReceiver(conversation: TConversationWithUsers) {
     receiver: conversation.sender,
   });
 }
+

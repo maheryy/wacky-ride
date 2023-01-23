@@ -70,3 +70,4 @@ export type TSocket = Socket<
   IListenEvents & IAdminListenEvents,
   IEmitEvents & IAdminEmitEvents
 >;
+

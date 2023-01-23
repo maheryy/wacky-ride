@@ -9,15 +9,21 @@ export const useAuthStore = defineStore("auth", () => {
   const token = ref<string | null>(null);
   const user = ref<IUser | null>(null);
   const socket = ref<TSocket | null>(null);
+  const adminSocket = ref<TSocket | null>(null);
 
   // Init socket.io client on user authenticated
   // NB: Depending on the user role, the client socket uses a different namespace (see server-side namespace registration)
   watch(user, (newUser) => {
     if (newUser) {
-      socket.value = io(
-        import.meta.env.VITE_API_URL + (newUser.isAdmin ? "/admin" : ""),
-        { auth: { token: token.value } }
-      );
+      socket.value = io(import.meta.env.VITE_API_URL, {
+        auth: { token: token.value },
+      });
+
+      if (newUser.isAdmin) {
+        adminSocket.value = io(import.meta.env.VITE_API_URL + "/admin", {
+          auth: { token: token.value },
+        });
+      }
     } else {
       socket.value?.disconnect();
     }
@@ -74,6 +80,7 @@ export const useAuthStore = defineStore("auth", () => {
   return {
     user: readonly(user),
     socket,
+    adminSocket,
     login,
     logout,
     attempt,
