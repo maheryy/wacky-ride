@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive } from "vue";
+import { onMounted, onUnmounted, reactive } from "vue";
 import { useRoomStore, TStoreRoom, useAuthStore } from "../stores";
 import { TSocket } from "../types/socket.io";
 
@@ -10,19 +10,19 @@ interface EditableRoomProps {
 const { initialRoom } = defineProps<EditableRoomProps>();
 const roomStore = useRoomStore();
 const auth = useAuthStore();
-const socket = auth.socket as TSocket;
+const adminSocket = auth.adminSocket as TSocket;
 const room = reactive(initialRoom);
 
 function updateRoom() {
-  socket.emit("room:update", room);
+  adminSocket.emit("room:update", room);
 }
 
 function deleteRoom() {
-  socket.emit("room:delete", room.id);
+  adminSocket.emit("room:delete", room.id);
 }
 
 onMounted(() => {
-  socket.on("room:updated", ({ data, errors }) => {
+  adminSocket.on("room:updated", ({ data, errors }) => {
     if (errors) {
       console.error(errors);
 
@@ -32,7 +32,7 @@ onMounted(() => {
     roomStore.updateRoom(data.room);
   });
 
-  socket.on("room:deleted", ({ data, errors }) => {
+  adminSocket.on("room:deleted", ({ data, errors }) => {
     if (errors) {
       console.error(errors);
 
@@ -41,6 +41,11 @@ onMounted(() => {
 
     roomStore.deleteRoom(data.id);
   });
+});
+
+onUnmounted(() => {
+  adminSocket.off("room:updated");
+  adminSocket.off("room:deleted");
 });
 </script>
 
@@ -52,3 +57,4 @@ onMounted(() => {
     <button type="button" @click="deleteRoom">Delete</button>
   </div>
 </template>
+
