@@ -1,3 +1,4 @@
+import { ContactModel } from "../models/contact";
 import { strEnum } from "../utils/strEnum";
 import { IUser } from "./user";
 
@@ -16,6 +17,7 @@ export interface IContact {
   deletedAt?: Date;
 }
 
-export interface IFullContact extends IContact {
+export type TContactWithUser = ContactModel & {
   user: IUser;
-}
+};
+

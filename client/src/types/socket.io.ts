@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { IContact } from "./contact";
+import { IContact, TContactWithUser } from "./contact";
 import { IConversation } from "./conversation";
 import { TMessage } from "./message";
 import { TListenEvent } from "./result";
@@ -40,6 +40,7 @@ export interface IEmitEvents {
   "admin:status": () => void;
   conversation: (receiverId: IUser["id"]) => void;
   conversations: () => void;
+  contacts: (page: number) => void;
 }
 
 export interface IAdminListenEvents {
@@ -54,6 +55,11 @@ export interface IAdminListenEvents {
     conversation: IConversation;
   }>;
   "contact:refused": TListenEvent<{ contact: IContact }>;
+  contacts: TListenEvent<{
+    contacts: TContactWithUser[];
+    count: number;
+    maxPage: number;
+  }>;
 }
 
 export interface IAdminEmitEvents {

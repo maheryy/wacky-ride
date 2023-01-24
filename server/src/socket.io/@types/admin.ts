@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { IContact } from "../../types/contact";
+import { IContact, TContactWithUser } from "../../types/contact";
 import { IConversation } from "../../types/conversation";
 import { IRoom, TRoomCreate, TRoomUpdate } from "../../types/room";
 import { IUser } from "../../types/user";
@@ -57,17 +57,25 @@ export type TRoomSocket = Socket<IRoomListenEvents, IRoomEmitEvents>;
  */
 
 export interface IContactListenEvents {
+  contacts: (page: number) => void;
   "contact:accept": (contactId: IContact["id"]) => void;
   "contact:refuse": (contactId: IContact["id"]) => void;
+  "contacts:count": () => void;
 }
 
 export interface IContactEmitEvents {
+  contacts: TEmitEvent<{
+    contacts: TContactWithUser[];
+    count: number;
+    maxPage: number;
+  }>;
   "contact:created": TEmitEvent<{ contact: IContact }>;
   "contact:accepted": TEmitEvent<{
     contact: IContact;
     conversation: IConversation;
   }>;
   "contact:refused": TEmitEvent<{ contact: IContact }>;
+  "contacts:count": TEmitEvent<{ count: number }>;
 }
 
 export type TContactIO = Server<IContactListenEvents, IContactEmitEvents>;
@@ -85,3 +93,4 @@ export type TAdminEmitEvents = IEmitEvents &
 export type TAdminIO = Server<TAdminListenEvents, TAdminEmitEvents>;
 
 export type TAdminSocket = Socket<TAdminListenEvents, TAdminEmitEvents>;
+

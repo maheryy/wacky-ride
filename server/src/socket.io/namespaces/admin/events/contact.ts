@@ -1,4 +1,7 @@
-import { updateContactStatus } from "../../../../services/contact.service";
+import {
+  getContacts,
+  updateContactStatus,
+} from "../../../../services/contact.service";
 import { createConversation } from "../../../../services/conversation.service";
 import { EContactStatus, IContact } from "../../../../types/contact";
 import {
@@ -56,8 +59,16 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
       .emit("contact:refused", { data: { contact } });
   }
 
+  async function onContacts(page: number) {
+    const data = await getContacts(page);
+
+    socket.emit("contacts", { data });
+  }
+
   socket.on("contact:accept", handle(onContactAccept, "contact:accepted"));
   socket.on("contact:refuse", handle(onContactRefuse, "contact:refused"));
+  socket.on("contacts", handle(onContacts, "contacts"));
 }
 
 export default registerContactHandlers;
+

@@ -1,5 +1,5 @@
 import { db } from "../database/sequelize";
-import { IContact } from "../types/contact";
+import { IContact, TContactWithUser } from "../types/contact";
 import { IUser } from "../types/user";
 
 const { Contact } = db;
@@ -45,8 +45,20 @@ export function getContactById(contactId: number) {
  * Returns all contacts
  * @returns The contacts
  */
-export function getContacts() {
-  return Contact.findAll();
+export async function getContacts(page: number) {
+  const { rows, count } = await Contact.scope("withUser").findAndCountAll({
+    offset: (page - 1) * Contact.limit,
+  });
+
+  return {
+    contacts: rows as TContactWithUser[],
+    count,
+    maxPage: Math.ceil(count / Contact.limit),
+  };
+}
+
+export function getContactsCount() {
+  return Contact.count();
 }
 
 /**
@@ -73,3 +85,4 @@ export async function updateContactStatus(
 
   return contact;
 }
+
