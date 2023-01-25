@@ -9,20 +9,24 @@ const logout = () => {
   auth.logout();
   router.push({ name: "home" });
 };
+
+// onscroll, make the navbar
 </script>
 <template>
-  <nav class="bg-gray-700">
-    <div class="max-w-screen-xl px-4 py-3 mx-auto md:px-6">
-      <div class="flex items-center">
+  <nav class="bg-gray-700 bg-opacity-50" id="nav_app">
+    <div class="px-4 py-3 md:px-6">
+      <div class="flex items-center justify-between">
         <ul class="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
           <li>
             <RouterLink
               :to="{ name: 'home' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline text-4xl"
             >
-              Home
+              Wacky Ride
             </RouterLink>
           </li>
+        </ul>
+        <ul class="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
           <li>
             <RouterLink
               :to="{ name: 'dashboard' }"
