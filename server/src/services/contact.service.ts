@@ -57,10 +57,6 @@ export async function getContacts(page: number) {
   };
 }
 
-export function getContactsCount() {
-  return Contact.count();
-}
-
 /**
  * Updates the status of the contact with the given `contactId`
  * @param contactId The contact's id
