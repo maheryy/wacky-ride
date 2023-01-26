@@ -1,4 +1,8 @@
-import { updateContactStatus } from "../../../../services/contact.service";
+import {
+  getContactById,
+  getContacts,
+  updateContactStatus,
+} from "../../../../services/contact.service";
 import { createConversation } from "../../../../services/conversation.service";
 import { EContactStatus, IContact } from "../../../../types/contact";
 import {
@@ -6,6 +10,7 @@ import {
   TContactIO,
   TContactSocket,
 } from "../../../@types/admin";
+import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
@@ -20,7 +25,17 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
    * conversation to the client and the user that created the contact.
    */
   async function onContactAccept(contactId: IContact["id"]) {
-    const contact = await updateContactStatus(
+    const contact = await getContactById(contactId);
+
+    if (!contact) {
+      throw new WackyRideError("Contact not found");
+    }
+
+    if (contact.status !== EContactStatus.pending) {
+      throw new WackyRideError("Contact is not pending");
+    }
+
+    const updatedContact = await updateContactStatus(
       contactId,
       EContactStatus.accepted
     );
@@ -30,11 +45,11 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
       contact.userId
     );
 
-    io.of("/")
-      .to(`user:${contact.userId}`)
-      .emit("contact:accepted", { data: { contact, conversation } });
+    const result = { data: { contact: updatedContact, conversation } };
 
-    socket.emit("contact:accepted", { data: { contact, conversation } });
+    io.of("/").to(`user:${contact.userId}`).emit("contact:accepted", result);
+
+    socket.emit("contact:accepted", result);
   }
 
   /**
@@ -44,20 +59,38 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
    * that created the contact.
    */
   async function onContactRefuse(contactId: IContact["id"]) {
-    const contact = await updateContactStatus(
+    const contact = await getContactById(contactId);
+
+    if (!contact) {
+      throw new WackyRideError("Contact not found");
+    }
+
+    if (contact.status !== EContactStatus.pending) {
+      throw new WackyRideError("Contact is not pending");
+    }
+
+    const updatedContact = await updateContactStatus(
       contactId,
       EContactStatus.refused
     );
 
-    socket.emit("contact:refused", { data: { contact } });
+    const result = { data: { contact: updatedContact } };
 
-    io.of("/")
-      .to(`user:${contact.userId}`)
-      .emit("contact:refused", { data: { contact } });
+    socket.emit("contact:refused", result);
+
+    io.of("/").to(`user:${contact.userId}`).emit("contact:refused", result);
+  }
+
+  async function onContacts(page: number) {
+    const data = await getContacts(page);
+
+    socket.emit("contacts", { data });
   }
 
   socket.on("contact:accept", handle(onContactAccept, "contact:accepted"));
   socket.on("contact:refuse", handle(onContactRefuse, "contact:refused"));
+  socket.on("contacts", handle(onContacts, "contacts"));
 }
 
 export default registerContactHandlers;
+

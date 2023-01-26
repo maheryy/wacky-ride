@@ -22,6 +22,8 @@ export class ContactModel extends Model implements IContact {
 
   declare static associate?: (models: IListModel) => void;
   declare static seed?: (models: IListModel) => Promise<void>;
+
+  static limit = 10;
 }
 
 const Contact = (sequelize: Sequelize): typeof ContactModel => {
@@ -44,9 +46,16 @@ const Contact = (sequelize: Sequelize): typeof ContactModel => {
       sequelize,
       defaultScope: {
         attributes: { exclude: ["deletedAt", "updatedAt"] },
+        limit: ContactModel.limit,
       },
     }
   );
+
+  ContactModel.addScope("withUser", {
+    include: "user",
+    attributes: { exclude: ["deletedAt", "updatedAt"] },
+    limit: ContactModel.limit,
+  });
 
   ContactModel.associate = (models: IListModel) => {
     ContactModel.belongsTo(models.User, {
@@ -59,3 +68,4 @@ const Contact = (sequelize: Sequelize): typeof ContactModel => {
 };
 
 export default Contact;
+
