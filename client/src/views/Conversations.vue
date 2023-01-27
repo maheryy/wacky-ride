@@ -79,6 +79,7 @@ function contact() {
       >
         {{ conversation?.receiver?.username }}
       </RouterLink>
+      <span v-if="conversation?.endedAt">Ended</span>
     </li>
   </ul>
   <button @click="contact">Contact</button>
