@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from "vue";
+import { useToast } from "vue-toastification";
 import { useAuthStore } from "../../stores";
 import { IContact, TContactWithUser } from "../../types/contact";
 import { TSocket } from "../../types/socket.io";
@@ -23,6 +24,7 @@ type TContactRef = {
 };
 
 const auth = useAuthStore();
+const toast = useToast();
 const adminSocket = auth.adminSocket as TSocket;
 const contacts = ref<TContactRef>({});
 const count = ref(0);
@@ -96,7 +98,9 @@ watch(page, (newPage) => adminSocket.emit("contacts", newPage), {
 onMounted(() => {
   adminSocket.on("contacts", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
@@ -116,7 +120,9 @@ onMounted(() => {
 
   adminSocket.on("contact:accepted", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
@@ -132,7 +138,9 @@ onMounted(() => {
 
   adminSocket.on("contact:refused", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }

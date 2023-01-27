@@ -5,6 +5,7 @@ import Message from "../components/ConversationMessage.vue";
 import { useAuthStore, useConversationStore } from "../stores";
 import dayjs from "dayjs";
 import { IUser } from "../types/user";
+import { useToast } from "vue-toastification";
 
 interface IConversationProps {
   conversationId: IUser["id"];
@@ -12,6 +13,7 @@ interface IConversationProps {
 
 const { conversationId } = defineProps<IConversationProps>();
 const store = useConversationStore();
+const toast = useToast();
 const auth = useAuthStore();
 const conversation = computed(() => store.conversations[conversationId]);
 const message = ref("");
@@ -64,7 +66,9 @@ onMounted(() => {
 
   socket.on("conversation", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
@@ -74,7 +78,9 @@ onMounted(() => {
 
   socket.on("conversation:message:received", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
@@ -84,7 +90,9 @@ onMounted(() => {
 
   socket.on("conversation:ended", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
