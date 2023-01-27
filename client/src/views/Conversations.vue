@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { useToast } from "vue-toastification";
 import { useAuthStore, useConversationStore } from "../stores";
 import { TSocket } from "../types/socket.io";
@@ -45,6 +45,12 @@ onMounted(() => {
 
     toast.info("You already have a pending contact");
   });
+});
+
+onUnmounted(() => {
+  socket.off("conversations");
+  socket.off("contact:created");
+  socket.off("contact:pending");
 });
 
 function contact() {
