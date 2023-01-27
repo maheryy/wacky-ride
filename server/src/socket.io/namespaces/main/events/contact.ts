@@ -1,6 +1,6 @@
 import {
   createContact,
-  getContactByUserId,
+  getPendingContact,
 } from "../../../../services/contact.service";
 import { EContactStatus } from "../../../../types/contact";
 import {
@@ -31,11 +31,11 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
 
     const { id: userId } = socket.data.user;
 
-    const existingContact = await getContactByUserId(userId);
+    const pendingContact = await getPendingContact(userId);
 
-    if (existingContact?.status === EContactStatus.pending) {
+    if (pendingContact) {
       return socket.emit("contact:created", {
-        data: { contact: existingContact },
+        data: { contact: pendingContact },
       });
     }
 
@@ -50,3 +50,4 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
 }
 
 export default registerContactHandlers;
+

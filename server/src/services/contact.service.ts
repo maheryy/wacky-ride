@@ -1,5 +1,5 @@
 import { db } from "../database/sequelize";
-import { IContact, TContactWithUser } from "../types/contact";
+import { EContactStatus, IContact, TContactWithUser } from "../types/contact";
 import { IUser } from "../types/user";
 
 const { Contact } = db;
@@ -20,10 +20,11 @@ export function createContact(userId: IUser["id"]) {
  * @param userId The user's id
  * @returns The contact
  */
-export function getContactByUserId(userId: IUser["id"]) {
+export function getPendingContact(userId: IUser["id"]) {
   return Contact.findOne({
     where: {
       userId,
+      status: EContactStatus.pending,
     },
   });
 }
