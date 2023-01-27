@@ -8,6 +8,7 @@ export interface IConversation {
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  endedAt?: Date;
 }
 
 export type TConversationWithUsers = ConversationModel & {

@@ -82,13 +82,41 @@ export type TContactIO = Server<IContactListenEvents, IContactEmitEvents>;
 
 export type TContactSocket = Socket<IContactListenEvents, IContactEmitEvents>;
 
+/**
+ * Conversation
+ */
+
+export interface IConversationListenEvents {
+  "conversation:end": (contactId: IConversation["id"]) => void;
+}
+
+export interface IConversationEmitEvents {
+  "conversation:ended": TEmitEvent<{ conversation: IConversation }>;
+}
+
+export type TConversationIO = Server<
+  IConversationListenEvents,
+  IConversationEmitEvents
+>;
+
+export type TConversationSocket = Socket<
+  IConversationListenEvents,
+  IConversationEmitEvents
+>;
+
 export type TAdminListenEvents =
   | IUserListenEvents
   | IRoomListenEvents
-  | IContactListenEvents;
+  | IContactListenEvents
+  | IConversationListenEvents;
 
 export type TAdminEmitEvents = IEmitEvents &
-  (TUserEmitEvents | IRoomEmitEvents | IContactEmitEvents);
+  (
+    | TUserEmitEvents
+    | IRoomEmitEvents
+    | IContactEmitEvents
+    | IConversationEmitEvents
+  );
 
 export type TAdminIO = Server<TAdminListenEvents, TAdminEmitEvents>;
 

@@ -16,7 +16,11 @@ const auth = useAuthStore();
 const conversation = computed(() => store.conversations[conversationId]);
 const message = ref("");
 const socket = auth.socket as TSocket;
+const adminSocket = auth.adminSocket as TSocket;
 const conversationMessages = ref<HTMLUListElement | null>(null);
+
+const canSendMessage = computed(() => conversation.value?.endedAt === null);
+const canEndConversation = computed(() => canSendMessage.value && auth.isAdmin);
 
 const messages = computed(() => {
   return conversation.value?.messages || [];
@@ -77,18 +81,37 @@ onMounted(() => {
 
     store.addMessage(conversationId, data.message);
   });
+
+  socket.on("conversation:ended", ({ data, errors }) => {
+    if (errors) {
+      console.error(errors);
+
+      return;
+    }
+
+    store.updateConversation(data.conversation);
+  });
 });
 
 onUnmounted(() => {
   socket.off("conversation");
   socket.off("conversation:message:received");
 });
+
+function endConversation() {
+  adminSocket.emit("conversation:end", conversationId);
+}
 </script>
 
 <template>
   <div class="main-container">
     <div id="conversation" class="conversation">
-      <h3>{{ conversation?.receiver.username }}</h3>
+      <div class="conversation__header">
+        <h3>{{ conversation?.receiver.username }}</h3>
+        <button @click="endConversation" v-if="canEndConversation">
+          End conversation
+        </button>
+      </div>
       <div class="conversation__messages">
         <ul
           id="conversation-messages"
@@ -103,9 +126,12 @@ onUnmounted(() => {
           />
         </ul>
       </div>
-      <div class="conversation__input">
+      <div v-if="canSendMessage" class="conversation__input">
         <input type="text" v-model.trim="message" @keyup.enter="sendMessage" />
         <button @click="sendMessage">Send</button>
+      </div>
+      <div v-else>
+        <p>Conversation ended</p>
       </div>
     </div>
   </div>
@@ -128,6 +154,11 @@ onUnmounted(() => {
     background-color: #999;
     color: white;
   }
+}
+
+.conversation__header {
+  display: grid;
+  grid-template-columns: 1fr auto;
 }
 
 .conversation__messages {
@@ -172,3 +203,4 @@ onUnmounted(() => {
   }
 }
 </style>
+

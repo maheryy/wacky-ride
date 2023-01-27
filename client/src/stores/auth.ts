@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, readonly, watch, onUnmounted } from "vue";
+import { ref, readonly, watch, computed } from "vue";
 import { IUser, IUserCredentials } from "../types/user";
 import axios from "axios";
 import { TSocket } from "../types/socket.io";
@@ -31,7 +31,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const isAuthenticated = (): boolean => !!(token.value && user.value);
 
-  const isAdmin = (): boolean => user.value?.isAdmin || false;
+  const isAdmin = computed(() => user.value?.isAdmin ?? false);
 
   const login = async (credentials: IUserCredentials): Promise<void> => {
     try {

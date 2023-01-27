@@ -4,6 +4,7 @@ import { IUser } from "./user";
 export interface IConversation {
   id: number;
   createdAt: Date;
+  endedAt: string;
   receiver: Pick<IUser, "id" | "username">;
   sender: Pick<IUser, "id" | "username">;
 }
@@ -11,3 +12,4 @@ export interface IConversation {
 export type TConversationWithMessages = IConversation & {
   messages: TMessage[];
 };
+

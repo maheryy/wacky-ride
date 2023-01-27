@@ -95,6 +95,33 @@ export function getOrCreateConversation(
   });
 }
 
+export async function endConversation(
+  adminId: IUser["id"],
+  conversationId: IConversation["id"]
+) {
+  const [, [conversation]] = await Conversation.update(
+    {
+      endedAt: new Date(),
+    },
+    {
+      where: {
+        id: conversationId,
+        [Op.or]: [
+          {
+            senderId: adminId,
+          },
+          {
+            receiverId: adminId,
+          },
+        ],
+      },
+      returning: true,
+    }
+  );
+
+  return conversation;
+}
+
 function swapSenderAndReceiver(conversation: TConversationWithUsers) {
   return conversation.set({
     sender: conversation.receiver,

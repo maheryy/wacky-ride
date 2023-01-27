@@ -3,6 +3,7 @@ import { EUserStatus } from "../../../types/user";
 import { TAdminIO, TAdminSocket } from "../../@types/admin";
 import { authenticate, authorize } from "../../middlewares/auth";
 import registerContactHandlers from "./events/contact";
+import registerConversationHandlers from "./events/conversation";
 import registerRoomHandlers from "./events/room";
 import registerUserHandlers from "./events/user";
 
@@ -25,6 +26,7 @@ function registerAdminNamespace(io: TAdminIO) {
     registerUserHandlers(io, socket);
     registerRoomHandlers(io, socket);
     registerContactHandlers(io, socket);
+    registerConversationHandlers(io, socket);
 
     async function onDisconnect() {
       console.log("[socket.io]: Admin disconnected", userId);
@@ -43,3 +45,4 @@ function registerAdminNamespace(io: TAdminIO) {
 }
 
 export default registerAdminNamespace;
+

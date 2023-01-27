@@ -10,7 +10,7 @@ export const adminResolver = (
   if (!auth.isAuthenticated()) {
     return next({ name: "login" });
   }
-  if (!auth.isAdmin()) {
+  if (!auth.isAdmin) {
     return next({ name: "not-found", params: { pathMatch: to.path.slice(1) } });
   }
 
@@ -37,7 +37,7 @@ export const loginResolver = (
   auth: TStoreAuth
 ) => {
   if (auth.isAuthenticated()) {
-    return next({ name: auth.isAdmin() ? "admin" : "dashboard" });
+    return next({ name: auth.isAdmin ? "admin" : "dashboard" });
   }
 
   next();
@@ -71,3 +71,4 @@ export const beforeResolve = (
   next();
 };
 */
+
