@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue";
+import { useToast } from "vue-toastification";
 import { useAuthStore } from "../../stores";
 import { TSocket } from "../../types/socket.io";
 import { UserStatus } from "../../types/user";
 
 const auth = useAuthStore();
+const toast = useToast();
 const status = ref(auth.user?.status);
 const adminSocket = auth.adminSocket as TSocket;
 
@@ -17,7 +19,9 @@ watch(status, (status) => {
 onMounted(() => {
   adminSocket.on("admin:status:updated", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }

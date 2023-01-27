@@ -3,8 +3,10 @@ import { computed, onMounted } from "vue";
 import { useRoomStore } from "../stores/room";
 import { TSocket } from "../types/socket.io";
 import { useAuthStore } from "../stores";
+import { useToast } from "vue-toastification";
 
 const store = useRoomStore();
+const toast = useToast();
 const hasRooms = computed(() => Object.keys(store.rooms).length > 0);
 const auth = useAuthStore();
 const socket = auth.socket as TSocket;
@@ -14,7 +16,9 @@ onMounted(() => {
 
   socket.on("rooms", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }

@@ -4,12 +4,14 @@ import { useAuthStore, useRoomStore } from "../../stores";
 import { TSocket } from "../../types/socket.io";
 import EditableRoom from "./EditableRoom.vue";
 import { IRoom, TRoomUpdate } from "../../types/room";
+import { useToast } from "vue-toastification";
 
 const auth = useAuthStore();
 const socket = auth.socket as TSocket;
 const adminSocket = auth.adminSocket as TSocket;
 
 const roomStore = useRoomStore();
+const toast = useToast();
 const rooms = computed(() => roomStore.rooms);
 const initialRoom = { name: "", limit: 50 };
 const room = reactive({ ...initialRoom });
@@ -31,7 +33,9 @@ onMounted(() => {
 
   socket.on("rooms", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
@@ -41,7 +45,9 @@ onMounted(() => {
 
   adminSocket.on("room:created", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
@@ -53,7 +59,9 @@ onMounted(() => {
 
   adminSocket.on("room:updated", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
@@ -63,7 +71,9 @@ onMounted(() => {
 
   adminSocket.on("room:deleted", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }

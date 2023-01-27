@@ -18,7 +18,9 @@ onMounted(() => {
 
   socket.on("conversations", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
@@ -28,7 +30,9 @@ onMounted(() => {
 
   socket.on("contact:created", ({ errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }
@@ -38,7 +42,9 @@ onMounted(() => {
 
   socket.on("contact:pending", ({ errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
       return;
     }

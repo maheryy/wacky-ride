@@ -6,6 +6,7 @@ import { IRoom } from "../types/room";
 import { useRoomStore } from "../stores/room";
 import dayjs from "dayjs";
 import { useAuthStore } from "../stores";
+import { useToast } from "vue-toastification";
 
 interface IChatRoomProps {
   roomId: IRoom["id"];
@@ -16,6 +17,7 @@ const { roomId } = defineProps<IChatRoomProps>();
 const message = ref("");
 const store = useRoomStore();
 const auth = useAuthStore();
+const toast = useToast();
 const socket = auth.socket as TSocket;
 const room = computed(() => store.rooms[roomId]);
 const messages = computed(() => room.value?.messages || []);
@@ -59,9 +61,10 @@ onMounted(() => {
 
   socket.on("room:joined", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
-      // TODO: have better error handling
       return;
     }
 
@@ -70,9 +73,10 @@ onMounted(() => {
 
   socket.on("room:message:received", ({ data, errors }) => {
     if (errors) {
-      console.error(errors);
+      for (const error of errors) {
+        toast.error(error.message);
+      }
 
-      // TODO: have better error handling
       return;
     }
 
@@ -174,3 +178,4 @@ onUnmounted(() => {
   }
 }
 </style>
+
