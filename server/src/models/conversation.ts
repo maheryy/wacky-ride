@@ -25,10 +25,13 @@ export class ConversationModel extends Model implements IConversation {
   declare readonly createdAt?: Date;
   declare readonly updatedAt?: Date;
   declare readonly deletedAt?: Date;
+  declare readonly endedAt?: Date;
 
   declare sender?: NonAttribute<UserModel>;
   declare receiver?: NonAttribute<UserModel>;
   declare messages?: NonAttribute<MessageModel[]>;
+  declare senderId: number;
+  declare receiverId: number;
 
   declare getSender: HasOneGetAssociationMixin<UserModel>;
   declare setSender: HasOneSetAssociationMixin<UserModel, number>;
@@ -55,6 +58,10 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
+      },
+      endedAt: {
+        allowNull: true,
+        type: DataTypes.DATE,
       },
     },
     {

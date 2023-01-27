@@ -33,6 +33,10 @@ const registerConversationHandlers = (
       throw new WackyRideError("Conversation not found");
     }
 
+    if (conversation.endedAt) {
+      throw new WackyRideError("Conversation has ended");
+    }
+
     const message = await createMessage({
       conversationId: conversation.id,
       authorId,
