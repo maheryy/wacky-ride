@@ -19,6 +19,7 @@ export interface IListenEvents {
   "room:left": TListenEvent<{ roomId: IRoom["id"] }>;
   rooms: TListenEvent<{ rooms: IRoom[] }>;
   "contact:created": TListenEvent<{ contact: IContact }>;
+  "contact:pending": TListenEvent<{ contact: IContact }>;
   "admin:status": TListenEvent<boolean>;
   conversation: TListenEvent<{ conversation: IConversation }>;
   conversations: TListenEvent<{ conversations: IConversation[] }>;

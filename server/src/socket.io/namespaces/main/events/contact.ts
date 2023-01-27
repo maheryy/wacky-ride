@@ -2,7 +2,6 @@ import {
   createContact,
   getPendingContact,
 } from "../../../../services/contact.service";
-import { EContactStatus } from "../../../../types/contact";
 import {
   IContactEmitEvents,
   TContactIO,
@@ -34,7 +33,7 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
     const pendingContact = await getPendingContact(userId);
 
     if (pendingContact) {
-      return socket.emit("contact:created", {
+      return socket.emit("contact:pending", {
         data: { contact: pendingContact },
       });
     }

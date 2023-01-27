@@ -35,6 +35,16 @@ onMounted(() => {
 
     toast.success("Contact created, an advisor will contact you soon");
   });
+
+  socket.on("contact:pending", ({ errors }) => {
+    if (errors) {
+      console.error(errors);
+
+      return;
+    }
+
+    toast.info("You already have a pending contact");
+  });
 });
 
 function contact() {

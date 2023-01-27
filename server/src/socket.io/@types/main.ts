@@ -70,6 +70,7 @@ export interface IContactListenEvents {
 
 export interface IContactEmitEvents {
   "contact:created": TEmitEvent<{ contact: IContact }>;
+  "contact:pending": TEmitEvent<{ contact: IContact }>;
 }
 
 export type TContactIO = Server<IContactListenEvents, IContactEmitEvents>;
