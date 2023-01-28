@@ -40,10 +40,11 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
       EContactStatus.accepted
     );
 
-    const conversation = await createConversation(
-      socket.data.user.id,
-      contact.userId
-    );
+    const conversation = await createConversation({
+      senderId: socket.data.user.id,
+      receiverId: contact.userId,
+      isAdvise: true,
+    });
 
     const result = { data: { contact: updatedContact, conversation } };
 

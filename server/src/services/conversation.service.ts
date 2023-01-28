@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import sequelize, { db } from "../database/sequelize";
 import {
   IConversation,
+  TConversationCreateAttributes,
   TConversationWithUsers,
   TConversationWithUsersAndMessages,
 } from "../types/conversation";
@@ -10,22 +11,18 @@ import { IUser } from "../types/user";
 const { Conversation } = db;
 
 export async function createConversation(
-  senderId: IUser["id"],
-  receiverId: IUser["id"]
+  fields: TConversationCreateAttributes
 ) {
   const transaction = await sequelize.transaction();
 
   try {
-    const { id } = await Conversation.create({
-      senderId,
-      receiverId,
-    });
+    const { id } = await Conversation.create(fields);
 
     const conversation = (await Conversation.findByPk(
       id
     )) as TConversationWithUsers;
 
-    const isReceiver = conversation.receiver.id === receiverId;
+    const isReceiver = conversation.receiver.id === fields.receiverId;
 
     if (isReceiver) {
       return swapSenderAndReceiver(conversation);
@@ -144,7 +141,7 @@ export async function endConversation(
   return conversation;
 }
 
-export function getNotEndedConversation(userId: IUser["id"]) {
+export function getNotEndedAdvisorConversation(userId: IUser["id"]) {
   return Conversation.findOne({
     where: {
       [Op.or]: [
@@ -156,6 +153,7 @@ export function getNotEndedConversation(userId: IUser["id"]) {
         },
       ],
       endedAt: null,
+      isAdvise: true,
     },
   });
 }

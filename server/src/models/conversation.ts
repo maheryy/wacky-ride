@@ -21,6 +21,7 @@ import { UserModel } from "./user";
 
 export class ConversationModel extends Model implements IConversation {
   declare id: number;
+  declare isAdvise: boolean;
 
   declare readonly createdAt?: Date;
   declare readonly updatedAt?: Date;
@@ -58,6 +59,11 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
+      },
+      isAdvise: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       endedAt: {
         allowNull: true,
