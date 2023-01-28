@@ -61,8 +61,20 @@ onMounted(() => {
       return;
     }
 
-    toast.success("Contact accepted");
+    toast.success("An advisor accepted your contact");
     store.setConversation(data.conversation);
+  });
+
+  socket.on("contact:refused", ({ data, errors }) => {
+    if (errors) {
+      for (const error of errors) {
+        toast.error(error.message);
+      }
+
+      return;
+    }
+
+    toast.warning("There is too many contacts, please try again later");
   });
 
   socket.on("conversation:ended", ({ data, errors }) => {
