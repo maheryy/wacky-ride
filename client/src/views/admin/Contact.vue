@@ -167,7 +167,7 @@ onMounted(() => {
     }
   });
 
-  adminSocket.on("contact:created", ({ data, errors }) => {
+  adminSocket.on("contact:created", ({ errors }) => {
     if (errors) {
       for (const error of errors) {
         toast.error(error.message);
