@@ -1,6 +1,6 @@
 import {
   getConversation,
-  getConversations,
+  getConversations, getOrCreateConversation,
 } from "../../../../services/conversation.service";
 import { createMessage } from "../../../../services/message.service";
 import { IConversation } from "../../../../types/conversation";
@@ -12,6 +12,8 @@ import {
 } from "../../../@types/main";
 import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
+import {getUserById} from "../../../../services/user.service";
+import {IUser} from "../../../../types/user";
 
 const registerConversationHandlers = (
   io: TConversationIO,
@@ -20,14 +22,14 @@ const registerConversationHandlers = (
   const handle = withErrorHandling<IConversationEmitEvents>(socket);
 
   async function onMessage(
-    conversationId: IConversation["id"],
+      receiverId: IUser["id"],
     content: IMessage["content"]
   ) {
     console.log("[socket.io]: conversation:message:send");
 
     const { id: authorId } = socket.data.user;
 
-    const conversation = await getConversation(authorId, conversationId);
+    const conversation = await getConversation(authorId, receiverId);
 
     if (!conversation) {
       throw new WackyRideError("Conversation not found");
@@ -43,27 +45,36 @@ const registerConversationHandlers = (
       content,
     });
 
-    const data = { message };
+    const result = {  data: { message } };
 
-    socket.emit("conversation:message:received", { data });
+    socket.emit("conversation:message:received", result);
 
     io.to(`user:${conversation.receiver.id}`).emit(
       "conversation:message:received",
-      { data }
+      result
     );
   }
 
-  async function onConversation(conversationId: IConversation["id"]) {
-    const conversation = await getConversation(
-      socket.data.user.id,
-      conversationId
-    );
+  async function onConversation(receiverId: IUser["id"]) {
+    const receiver = await getUserById(receiverId);
 
-    if (!conversation) {
-      throw new WackyRideError("Conversation not found");
+    if(!receiver){
+      throw new WackyRideError("User not found");
     }
 
-    socket.emit("conversation", { data: { conversation } });
+    if (receiver.isAdmin){
+      throw new WackyRideError("You can't create conversation with admin");
+    }
+
+    const conversation = await getOrCreateConversation({
+      senderId: socket.data.user.id,
+      receiverId,
+    });
+
+    const result = { data: { conversation } }
+
+    socket.emit("conversation", result );
+    socket.to(`user:${receiverId}`).emit("conversation", result);
   }
 
   async function onConversations() {

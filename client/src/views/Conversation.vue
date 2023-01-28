@@ -8,14 +8,14 @@ import { IUser } from "../types/user";
 import { useToast } from "vue-toastification";
 
 interface IConversationProps {
-  conversationId: IUser["id"];
+  receiverId: IUser["id"];
 }
 
-const { conversationId } = defineProps<IConversationProps>();
+const { receiverId } = defineProps<IConversationProps>();
 const store = useConversationStore();
 const toast = useToast();
 const auth = useAuthStore();
-const conversation = computed(() => store.conversations[conversationId]);
+const conversation = computed(() => store.conversations[receiverId]);
 const message = ref("");
 const socket = auth.socket as TSocket;
 const adminSocket = auth.adminSocket as TSocket;
@@ -43,7 +43,7 @@ const sendMessage = () => {
     return;
   }
 
-  socket.emit("conversation:message:send", conversationId, message.value);
+  socket.emit("conversation:message:send", receiverId, message.value);
 
   // TODO ? : add directly messageData to messages
   // Implying that we cannot edit the inserted message without the newly created id from the database
@@ -62,14 +62,13 @@ watch(
 );
 
 onMounted(() => {
-  socket.emit("conversation", conversationId);
+  socket.emit("conversation", receiverId);
 
   socket.on("conversation", ({ data, errors }) => {
     if (errors) {
       for (const error of errors) {
         toast.error(error.message);
       }
-
       return;
     }
 
@@ -85,7 +84,7 @@ onMounted(() => {
       return;
     }
 
-    store.addMessage(conversationId, data.message);
+    store.addMessage(receiverId, data.message);
   });
 
   socket.on("conversation:ended", ({ data, errors }) => {
@@ -107,7 +106,7 @@ onUnmounted(() => {
 });
 
 function endConversation() {
-  adminSocket.emit("conversation:end", conversationId);
+  adminSocket.emit("conversation:end", receiverId);
 }
 </script>
 

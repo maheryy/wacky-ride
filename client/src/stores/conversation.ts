@@ -5,25 +5,26 @@ import {
   TConversationWithMessages,
 } from "../types/conversation";
 import { TMessage } from "../types/message";
+import {IUser} from "../types/user";
 
 export type TStoreConversation = IConversation &
   Partial<TConversationWithMessages>;
 
 type TStoreConversations = {
-  [conversationId: IConversation["id"]]: TStoreConversation | undefined;
+  [receiverId: IUser["id"]]: TStoreConversation | undefined;
 };
 
 export const useConversationStore = defineStore("conversation", () => {
   const conversations = ref<TStoreConversations>({});
 
   function setConversation(conversation: TStoreConversation) {
-    conversations.value[conversation.id] = conversation;
+    conversations.value[conversation.receiver.id] = conversation;
   }
 
   function setConversations(newConversations: IConversation[]) {
     conversations.value = newConversations.reduce<TStoreConversations>(
       (accumulator, conversation) => {
-        accumulator[conversation.id] = { messages: [], ...conversation };
+        accumulator[conversation.receiver.id] = { messages: [], ...conversation };
 
         return accumulator;
       },
@@ -34,15 +35,15 @@ export const useConversationStore = defineStore("conversation", () => {
   function updateConversations(newConversations: TStoreConversation[]) {
     conversations.value = newConversations.reduce<TStoreConversations>(
       (accumulator, conversation) => {
-        const existingConversation = accumulator[conversation.id];
+        const existingConversation = accumulator[conversation.receiver.id];
 
         if (existingConversation) {
-          accumulator[conversation.id] = {
+          accumulator[conversation.receiver.id] = {
             ...existingConversation,
             ...conversation,
           };
         } else {
-          accumulator[conversation.id] = { messages: [], ...conversation };
+          accumulator[conversation.receiver.id] = { messages: [], ...conversation };
         }
 
         return accumulator;
@@ -52,14 +53,14 @@ export const useConversationStore = defineStore("conversation", () => {
   }
 
   function updateConversation(conversation: TStoreConversation) {
-    conversations.value[conversation.id] = {
-      ...conversations.value[conversation.id],
+    conversations.value[conversation.receiver.id] = {
+      ...conversations.value[conversation.receiver.id],
       ...conversation,
     };
   }
 
-  function addMessage(conversationId: IConversation["id"], message: TMessage) {
-    conversations.value[conversationId]?.messages?.push(message);
+  function addMessage(receiverId: IUser["id"], message: TMessage) {
+    conversations.value[receiverId]?.messages?.push(message);
   }
 
   return {

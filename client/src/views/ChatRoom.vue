@@ -41,9 +41,6 @@ const sendMessage = () => {
 
   socket.emit("room:message:send", roomId, message.value);
 
-  // TODO ? : add directly messageData to messages
-  // Implying that we cannot edit the inserted message without the newly created id from the database
-
   message.value = "";
 };
 
