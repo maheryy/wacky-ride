@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { db } from "../database/sequelize";
+import sequelize, { db } from "../database/sequelize";
 import {
   IConversation,
   TConversationWithUsers,
@@ -9,14 +9,36 @@ import { IUser } from "../types/user";
 
 const { Conversation } = db;
 
-export function createConversation(
+export async function createConversation(
   senderId: IUser["id"],
   receiverId: IUser["id"]
 ) {
-  return Conversation.create({
-    senderId,
-    receiverId,
-  });
+  const transaction = await sequelize.transaction();
+
+  try {
+    const { id } = await Conversation.create({
+      senderId,
+      receiverId,
+    });
+
+    const conversation = (await Conversation.findByPk(
+      id
+    )) as TConversationWithUsers;
+
+    const isReceiver = conversation.receiver.id === receiverId;
+
+    if (isReceiver) {
+      return swapSenderAndReceiver(conversation);
+    }
+
+    await transaction.commit();
+
+    return conversation;
+  } catch (error) {
+    await transaction.rollback();
+
+    throw error;
+  }
 }
 
 export async function getConversation(
@@ -120,6 +142,22 @@ export async function endConversation(
   );
 
   return conversation;
+}
+
+export function getNotEndedConversation(userId: IUser["id"]) {
+  return Conversation.findOne({
+    where: {
+      [Op.or]: [
+        {
+          senderId: userId,
+        },
+        {
+          receiverId: userId,
+        },
+      ],
+      endedAt: null,
+    },
+  });
 }
 
 function swapSenderAndReceiver(conversation: TConversationWithUsers) {

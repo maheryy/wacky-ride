@@ -2,6 +2,7 @@ import {
   createContact,
   getPendingContact,
 } from "../../../../services/contact.service";
+import { getNotEndedConversation } from "../../../../services/conversation.service";
 import {
   IContactEmitEvents,
   TContactIO,
@@ -36,6 +37,12 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
       return socket.emit("contact:pending", {
         data: { contact: pendingContact },
       });
+    }
+
+    const notEndedConversation = await getNotEndedConversation(userId);
+
+    if (notEndedConversation) {
+      throw new WackyRideError("An advisor is already helping you");
     }
 
     const newContact = await createContact(userId);

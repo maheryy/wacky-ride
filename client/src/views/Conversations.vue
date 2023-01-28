@@ -51,6 +51,31 @@ onMounted(() => {
 
     toast.info("You already have a pending contact");
   });
+
+  socket.on("contact:accepted", ({ data, errors }) => {
+    if (errors) {
+      for (const error of errors) {
+        toast.error(error.message);
+      }
+
+      return;
+    }
+
+    toast.success("Contact accepted");
+    store.setConversation(data.conversation);
+  });
+
+  socket.on("conversation:ended", ({ data, errors }) => {
+    if (errors) {
+      for (const error of errors) {
+        toast.error(error.message);
+      }
+
+      return;
+    }
+
+    store.updateConversation(data.conversation);
+  });
 });
 
 onUnmounted(() => {
@@ -65,12 +90,8 @@ function contact() {
 </script>
 
 <template>
-  <ul>
-    <li
-      v-if="hasConversations"
-      v-for="conversation of store.conversations"
-      :key="conversation?.id"
-    >
+  <ul v-if="hasConversations">
+    <li v-for="conversation of store.conversations" :key="conversation?.id">
       <RouterLink
         :to="{
           name: 'conversation',

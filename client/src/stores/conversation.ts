@@ -16,7 +16,7 @@ type TStoreConversations = {
 export const useConversationStore = defineStore("conversation", () => {
   const conversations = ref<TStoreConversations>({});
 
-  function setConversation(conversation: TConversationWithMessages) {
+  function setConversation(conversation: TStoreConversation) {
     conversations.value[conversation.id] = conversation;
   }
 
