@@ -29,7 +29,7 @@ const adminSocket = auth.adminSocket as TSocket;
 const contacts = ref<TContactRef>({});
 const count = ref(0);
 const filter = ref<TFilter>({ key: "email", search: "" });
-const sortKey = ref<TSortKey>("email");
+const sortKey = ref<TSortKey>("status");
 const order = ref<TOrder>("asc");
 const page = ref(1);
 const maxPage = ref(1);
@@ -66,7 +66,14 @@ const sortedContacts = computed(() => {
 
   return filteredContacts.value.slice().sort((a, b) => {
     if (isContactSortKey(sortKey.value)) {
-      const comparision = a[sortKey.value].localeCompare(b[sortKey.value]);
+      const statusOrder = {
+        pending: 0,
+        accepted: 1,
+        refused: 2,
+      };
+
+      const comparision =
+        statusOrder[a[sortKey.value]] - statusOrder[b[sortKey.value]];
 
       if (order.value === "asc") {
         return comparision;
