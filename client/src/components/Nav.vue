@@ -55,7 +55,7 @@ const logout = () => {
               Chatbot
             </RouterLink>
           </li>
-          <li>
+          <li v-if="auth.isAdmin">
             <RouterLink
               :to="{ name: 'admin' }"
               class="text-white hover:underline"
@@ -63,15 +63,7 @@ const logout = () => {
               Admin
             </RouterLink>
           </li>
-          <li>
-            <RouterLink
-              :to="{ name: 'login' }"
-              class="text-white hover:underline"
-            >
-              Login
-            </RouterLink>
-          </li>
-          <li>
+          <li v-if="auth.isAuthenticated">
             <a
               @click="logout"
               class="text-white hover:underline cursor-pointer"
@@ -79,8 +71,17 @@ const logout = () => {
               Logout
             </a>
           </li>
+          <li v-else>
+            <RouterLink
+              :to="{ name: 'login' }"
+              class="text-white hover:underline"
+            >
+              Login
+            </RouterLink>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
 </template>
+
