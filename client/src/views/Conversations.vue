@@ -107,7 +107,7 @@ function contact() {
       <RouterLink
         :to="{
           name: 'conversation',
-          params: { conversationId: conversation?.id },
+          params: { receiverId: conversation.receiver?.id },
         }"
       >
         {{ conversation?.receiver?.username }}

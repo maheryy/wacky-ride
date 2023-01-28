@@ -26,6 +26,7 @@ export const useAuthStore = defineStore("auth", () => {
       }
     } else {
       socket.value?.disconnect();
+      adminSocket.value?.disconnect();
     }
   });
 

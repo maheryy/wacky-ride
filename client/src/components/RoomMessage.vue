@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { TMessage } from "../types/message";
+import {useAuthStore} from "../stores";
+import {computed} from "vue";
 
 interface MessageProps {
   message: TMessage;
 }
 
-defineProps<MessageProps>();
+const props = defineProps<MessageProps>();
+
+const auth = useAuthStore();
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -14,6 +18,15 @@ const formatDate = (dateString: string) => {
   const withLeadingZero = (n: number) => (n < 10 ? "0" + n : n);
   return `${withLeadingZero(hours)}:${withLeadingZero(minutes)}`;
 };
+
+
+const canConversate = computed(() => {
+  if (props.message.author.isAdmin) {
+    return false;
+  }
+  return auth.user?.id !== props.message.author.id;
+});
+
 </script>
 
 <template>
@@ -22,7 +35,12 @@ const formatDate = (dateString: string) => {
       {{ message.content }}
     </div>
     <div class="message__meta">
-      <span class="message__meta__user">{{ message.author.username }}</span>
+      <RouterLink v-if="canConversate" class="cursor-pointer message__meta__user" :to="{ name: 'conversation', params: { receiverId: message.author?.id } }">
+        {{ message.author.username }}
+      </RouterLink>
+      <span v-else class="message__meta__user">
+        {{ message.author.username }}
+      </span>
       <span class="message__meta__date" v-if="message.createdAt">
         {{ formatDate(message.createdAt as unknown as string) }}
       </span>
