@@ -72,7 +72,7 @@ export interface IAdminEmitEvents {
   "room:restore": (id: IRoom["id"]) => void;
   "contact:accept": (contactId: IContact["id"]) => void;
   "contact:refuse": (contactId: IContact["id"]) => void;
-  "conversation:end": (conversationId: IConversation["id"]) => void;
+  "conversation:end": (receiverId: IUser["id"]) => void;
 }
 
 export type TSocket = Socket<

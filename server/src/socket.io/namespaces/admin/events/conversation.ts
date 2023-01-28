@@ -10,6 +10,7 @@ import {
 } from "../../../@types/admin";
 import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
+import {IUser} from "../../../../types/user";
 
 function registerConversationHandlers(
   io: TConversationIO,
@@ -17,16 +18,16 @@ function registerConversationHandlers(
 ) {
   const handle = withErrorHandling<IConversationEmitEvents>(socket);
 
-  async function onConversationEnd(conversationId: IConversation["id"]) {
+  async function onConversationEnd(receiverId: IUser["id"]) {
     const { id: adminId } = socket.data.user;
 
-    const existingConversation = await getConversation(adminId, conversationId);
+    const existingConversation = await getConversation(adminId, receiverId);
 
     if (!existingConversation) {
       throw new WackyRideError("Conversation not found");
     }
 
-    const conversation = await endConversation(adminId, conversationId);
+    const conversation = await endConversation(adminId, receiverId);
 
     const result = { data: { conversation } };
 

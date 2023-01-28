@@ -96,7 +96,15 @@ onMounted(() => {
       return;
     }
 
-    store.updateConversation(data.conversation);
+    const { conversation } = data
+
+    const isReceiver = auth.user?.id === conversation.receiver.id
+
+    if (isReceiver) {
+      return store.updateConversation(conversation);
+    }
+
+    store.updateConversation({ ...conversation, receiver: conversation.sender });
   });
 });
 
