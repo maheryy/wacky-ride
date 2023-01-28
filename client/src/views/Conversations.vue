@@ -82,6 +82,6 @@ function contact() {
       <span v-if="conversation?.endedAt">Ended</span>
     </li>
   </ul>
-  <button @click="contact">Contact</button>
+  <button @click="contact" v-if="!auth.isAdmin">Contact</button>
 </template>
 
