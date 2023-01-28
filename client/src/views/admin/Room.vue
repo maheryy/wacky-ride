@@ -28,6 +28,10 @@ function deleteRoom(roomId: IRoom["id"]) {
   adminSocket.emit("room:delete", roomId);
 }
 
+function restoreRoom(roomId: IRoom["id"]) {
+  adminSocket.emit("room:restore", roomId);
+}
+
 onMounted(() => {
   socket.emit("rooms");
 
@@ -53,7 +57,7 @@ onMounted(() => {
     }
 
     roomStore.setRoom(data.room);
-
+    toast.success("Room created");
     Object.assign(room, initialRoom);
   });
 
@@ -67,6 +71,7 @@ onMounted(() => {
     }
 
     roomStore.updateRoom(data.room);
+    toast.success("Room updated");
   });
 
   adminSocket.on("room:deleted", ({ data, errors }) => {
@@ -79,6 +84,25 @@ onMounted(() => {
     }
 
     roomStore.deleteRoom(data.id);
+
+    toast.success("Room deleted, click to restore", {
+      timeout: 6000,
+      onClick() {
+        restoreRoom(data.id);
+      },
+    });
+  });
+
+  adminSocket.on("room:restored", ({ data, errors }) => {
+    if (errors) {
+      for (const error of errors) {
+        toast.error(error.message);
+      }
+
+      return;
+    }
+
+    roomStore.setRoom(data.room);
   });
 });
 

@@ -105,6 +105,12 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
     }
   );
 
+  RoomModel.addScope("withDeletedAt", {
+    attributes: {
+      exclude: ["updatedAt"],
+    },
+  });
+
   RoomModel.addScope("withUsers", {
     attributes: {
       exclude: ["deletedAt", "updatedAt"],
@@ -165,3 +171,4 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
 };
 
 export default Room;
+
