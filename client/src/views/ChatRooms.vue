@@ -31,10 +31,10 @@ onMounted(() => {
 <template>
   <ul id="chat-rooms">
     <li
-      class="chat-room"
-      v-if="hasRooms"
-      v-for="room of store.rooms"
-      :key="room?.id"
+        class="chat-room"
+        v-if="hasRooms"
+        v-for="room of store.rooms"
+        :key="room?.id"
     >
       <RouterLink :to="{ name: 'room', params: { roomId: room?.id } }">
         {{ room?.name }}

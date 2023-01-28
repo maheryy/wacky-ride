@@ -13,7 +13,8 @@ ul {
 }
 
 body {
-  background-color: #242424;
+  /*background-color: #242424;*/
+  overflow-x: hidden;
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
 }
 
