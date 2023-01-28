@@ -1,10 +1,13 @@
-import { Optional } from "sequelize";
 import { ConversationModel } from "../models/conversation";
 import { UserModel } from "../models/user";
 import { TMessageWithAuthor } from "./message";
+import { IUser } from "./user";
 
 export interface IConversation {
   id: number;
+  isAdvise: boolean;
+  senderId: IUser["id"];
+  receiverId: IUser["id"];
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -20,5 +23,9 @@ export type TConversationWithUsersAndMessages = TConversationWithUsers & {
   messages: TMessageWithAuthor[];
 };
 
-export type ConversationCreationAttributes = Optional<IConversation, "id">;
+export type TConversationCreateAttributes = Pick<
+  IConversation,
+  "senderId" | "receiverId"
+> &
+  Partial<Pick<IConversation, "isAdvise">>;
 

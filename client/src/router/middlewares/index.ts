@@ -7,7 +7,7 @@ export const adminResolver = (
   next: NavigationGuardNext,
   auth: TStoreAuth
 ) => {
-  if (!auth.isAuthenticated()) {
+  if (!auth.isAuthenticated) {
     return next({ name: "login" });
   }
   if (!auth.isAdmin) {
@@ -23,7 +23,7 @@ export const authResolver = (
   next: NavigationGuardNext,
   auth: TStoreAuth
 ) => {
-  if (!auth.isAuthenticated()) {
+  if (!auth.isAuthenticated) {
     return next({ name: "login" });
   }
 
@@ -36,7 +36,7 @@ export const loginResolver = (
   next: NavigationGuardNext,
   auth: TStoreAuth
 ) => {
-  if (auth.isAuthenticated()) {
+  if (auth.isAuthenticated) {
     return next({ name: auth.isAdmin ? "admin" : "dashboard" });
   }
 
@@ -51,7 +51,7 @@ export const beforeEach = (
   next: NavigationGuardNext,
   auth: TStoreAuth
 ) => {
-  if (to.meta.requiresAuth && !auth.isAuthenticated()) {
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
     return next({ name: "login" });
   }
 

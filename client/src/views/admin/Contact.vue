@@ -29,10 +29,11 @@ const adminSocket = auth.adminSocket as TSocket;
 const contacts = ref<TContactRef>({});
 const count = ref(0);
 const filter = ref<TFilter>({ key: "email", search: "" });
-const sortKey = ref<TSortKey>("email");
+const sortKey = ref<TSortKey>("status");
 const order = ref<TOrder>("asc");
 const page = ref(1);
 const maxPage = ref(1);
+const canRefresh = ref(false);
 
 const filteredContacts = computed(() => {
   if (!contacts.value || !filter.value.key) {
@@ -65,7 +66,14 @@ const sortedContacts = computed(() => {
 
   return filteredContacts.value.slice().sort((a, b) => {
     if (isContactSortKey(sortKey.value)) {
-      const comparision = a[sortKey.value].localeCompare(b[sortKey.value]);
+      const statusOrder = {
+        pending: 0,
+        accepted: 1,
+        refused: 2,
+      };
+
+      const comparision =
+        statusOrder[a[sortKey.value]] - statusOrder[b[sortKey.value]];
 
       if (order.value === "asc") {
         return comparision;
@@ -116,6 +124,7 @@ onMounted(() => {
     contacts.value = reducedContacts;
     count.value = data.count;
     maxPage.value = data.maxPage;
+    canRefresh.value = false;
   });
 
   adminSocket.on("contact:accepted", ({ data, errors }) => {
@@ -157,12 +166,25 @@ onMounted(() => {
       contact.status = status;
     }
   });
+
+  adminSocket.on("contact:created", ({ errors }) => {
+    if (errors) {
+      for (const error of errors) {
+        toast.error(error.message);
+      }
+
+      return;
+    }
+
+    canRefresh.value = true;
+  });
 });
 
 onUnmounted(() => {
   adminSocket.off("contacts");
   adminSocket.off("contact:accepted");
   adminSocket.off("contact:refused");
+  adminSocket.off("contact:created");
 });
 
 function onAcceptContact(contactId: IContact["id"]) {
@@ -171,6 +193,10 @@ function onAcceptContact(contactId: IContact["id"]) {
 
 function onRefuseContact(contactId: IContact["id"]) {
   adminSocket.emit("contact:refuse", contactId);
+}
+
+function onRefresh() {
+  adminSocket.emit("contacts", page.value);
 }
 
 function onPreviousPage() {
@@ -216,6 +242,7 @@ function isUserSortKey(key: string): key is TUserSortKey {
     </option>
   </select>
   <input v-model="filter.search" />
+  <button v-if="canRefresh" @click="onRefresh">Refresh</button>
   <table v-if="sortedContacts">
     <thead>
       <tr>

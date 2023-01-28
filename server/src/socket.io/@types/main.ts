@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { IContact } from "../../types/contact";
+import { IContact, TContactWithUser } from "../../types/contact";
 import { IConversation, TFullConversation } from "../../types/conversation";
 import { IMessage } from "../../types/message";
 import { IRoom, TRoomWithMessages } from "../../types/room";
@@ -69,7 +69,7 @@ export interface IContactListenEvents {
 }
 
 export interface IContactEmitEvents {
-  "contact:created": TEmitEvent<{ contact: IContact }>;
+  "contact:created": TEmitEvent<{ contact: TContactWithUser }>;
   "contact:pending": TEmitEvent<{ contact: IContact }>;
 }
 

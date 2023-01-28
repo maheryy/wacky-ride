@@ -62,7 +62,10 @@ export async function restoreRoom(roomId: IRoom["id"]) {
   const transaction = await sequelize.transaction();
 
   try {
-    const room = await Room.findByPk(roomId, { transaction, paranoid: false });
+    const room = await Room.scope("withDeletedAt").findByPk(roomId, {
+      transaction,
+      paranoid: false,
+    });
 
     if (!room) {
       throw new WackyRideError("The room does not exist");
@@ -83,3 +86,4 @@ export async function restoreRoom(roomId: IRoom["id"]) {
     throw error;
   }
 }
+

@@ -49,7 +49,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 
     const isRoomFull = uniqueUserIds.size >= room.limit;
 
-    if (!isUserInRoom && isRoomFull) {
+    if (!socket.data.user.isAdmin && !isUserInRoom && isRoomFull) {
       throw new WackyRideError("The room is full");
     }
 
@@ -79,3 +79,4 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 }
 
 export default registerRoomHandlers;
+

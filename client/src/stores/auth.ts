@@ -29,7 +29,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   });
 
-  const isAuthenticated = (): boolean => !!(token.value && user.value);
+  const isAuthenticated = computed(() => !!token.value && !!user.value);
 
   const isAdmin = computed(() => user.value?.isAdmin ?? false);
 

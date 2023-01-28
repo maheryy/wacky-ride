@@ -18,7 +18,7 @@ export interface IListenEvents {
   "room:joined": TListenEvent<{ room: TRoomWithUsersAndMessages }>;
   "room:left": TListenEvent<{ roomId: IRoom["id"] }>;
   rooms: TListenEvent<{ rooms: IRoom[] }>;
-  "contact:created": TListenEvent<{ contact: IContact }>;
+  "contact:created": TListenEvent<{ contact: TContactWithUser }>;
   "contact:pending": TListenEvent<{ contact: IContact }>;
   "admin:status": TListenEvent<boolean>;
   conversation: TListenEvent<{ conversation: IConversation }>;
@@ -50,7 +50,7 @@ export interface IAdminListenEvents {
   "room:deleted": TListenEvent<{ id: IRoom["id"] }>;
   "room:updated": TListenEvent<{ room: TRoomUpdate }>;
   "room:restored": TListenEvent<{ room: IRoom }>;
-  "contact:created": TListenEvent<{ contact: IContact }>;
+  "contact:created": TListenEvent<{ contact: TContactWithUser }>;
   "contact:accepted": TListenEvent<{
     contact: IContact;
     conversation: IConversation;

@@ -22,6 +22,7 @@ const socket = auth.socket as TSocket;
 const room = computed(() => store.rooms[roomId]);
 const messages = computed(() => room.value?.messages || []);
 const chatRoomMessages = ref<HTMLUListElement | null>(null);
+const canSendMessage = ref(false);
 
 const sortedMessages = computed(() =>
   messages.value.slice().sort((a, b) => {
@@ -68,6 +69,8 @@ onMounted(() => {
       return;
     }
 
+    canSendMessage.value = true;
+
     store.updateRoom(data.room);
   });
 
@@ -109,10 +112,11 @@ onUnmounted(() => {
           />
         </ul>
       </div>
-      <div class="chat-room__input">
+      <div class="chat-room__input" v-if="canSendMessage">
         <input type="text" v-model.trim="message" @keyup.enter="sendMessage" />
         <button @click="sendMessage">Send</button>
       </div>
+      <div v-else>You cannot send messages in this room</div>
     </div>
   </div>
 </template>

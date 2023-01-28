@@ -51,6 +51,43 @@ onMounted(() => {
 
     toast.info("You already have a pending contact");
   });
+
+  socket.on("contact:accepted", ({ data, errors }) => {
+    if (errors) {
+      for (const error of errors) {
+        toast.error(error.message);
+      }
+
+      return;
+    }
+
+    toast.success("An advisor accepted your contact");
+    store.setConversation(data.conversation);
+  });
+
+  socket.on("contact:refused", ({ data, errors }) => {
+    if (errors) {
+      for (const error of errors) {
+        toast.error(error.message);
+      }
+
+      return;
+    }
+
+    toast.warning("There is too many contacts, please try again later");
+  });
+
+  socket.on("conversation:ended", ({ data, errors }) => {
+    if (errors) {
+      for (const error of errors) {
+        toast.error(error.message);
+      }
+
+      return;
+    }
+
+    store.updateConversation(data.conversation);
+  });
 });
 
 onUnmounted(() => {
@@ -65,12 +102,8 @@ function contact() {
 </script>
 
 <template>
-  <ul>
-    <li
-      v-if="hasConversations"
-      v-for="conversation of store.conversations"
-      :key="conversation?.id"
-    >
+  <ul v-if="hasConversations">
+    <li v-for="conversation of store.conversations" :key="conversation?.id">
       <RouterLink
         :to="{
           name: 'conversation',
@@ -79,8 +112,9 @@ function contact() {
       >
         {{ conversation?.receiver?.username }}
       </RouterLink>
+      <span v-if="conversation?.endedAt">Ended</span>
     </li>
   </ul>
-  <button @click="contact">Contact</button>
+  <button @click="contact" v-if="!auth.isAdmin">Contact</button>
 </template>
 

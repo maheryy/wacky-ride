@@ -1,7 +1,8 @@
 import { Op } from "sequelize";
-import { db } from "../database/sequelize";
+import sequelize, { db } from "../database/sequelize";
 import {
   IConversation,
+  TConversationCreateAttributes,
   TConversationWithUsers,
   TConversationWithUsersAndMessages,
 } from "../types/conversation";
@@ -9,14 +10,32 @@ import { IUser } from "../types/user";
 
 const { Conversation } = db;
 
-export function createConversation(
-  senderId: IUser["id"],
-  receiverId: IUser["id"]
+export async function createConversation(
+  fields: TConversationCreateAttributes
 ) {
-  return Conversation.create({
-    senderId,
-    receiverId,
-  });
+  const transaction = await sequelize.transaction();
+
+  try {
+    const { id } = await Conversation.create(fields);
+
+    const conversation = (await Conversation.findByPk(
+      id
+    )) as TConversationWithUsers;
+
+    const isReceiver = conversation.receiver.id === fields.receiverId;
+
+    if (isReceiver) {
+      return swapSenderAndReceiver(conversation);
+    }
+
+    await transaction.commit();
+
+    return conversation;
+  } catch (error) {
+    await transaction.rollback();
+
+    throw error;
+  }
 }
 
 export async function getConversation(
@@ -120,6 +139,23 @@ export async function endConversation(
   );
 
   return conversation;
+}
+
+export function getNotEndedAdvisorConversation(userId: IUser["id"]) {
+  return Conversation.findOne({
+    where: {
+      [Op.or]: [
+        {
+          senderId: userId,
+        },
+        {
+          receiverId: userId,
+        },
+      ],
+      endedAt: null,
+      isAdvise: true,
+    },
+  });
 }
 
 function swapSenderAndReceiver(conversation: TConversationWithUsers) {
