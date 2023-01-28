@@ -184,6 +184,7 @@ onUnmounted(() => {
   adminSocket.off("contacts");
   adminSocket.off("contact:accepted");
   adminSocket.off("contact:refused");
+  adminSocket.off("contact:created");
 });
 
 function onAcceptContact(contactId: IContact["id"]) {
