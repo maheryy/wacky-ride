@@ -9,10 +9,12 @@ const { Contact } = db;
  * @param userId The user's id
  * @returns The created contact
  */
-export function createContact(userId: IUser["id"]) {
-  return Contact.create({
-    userId,
-  });
+export async function createContact(userId: IUser["id"]) {
+  const conversation = await Contact.create({ userId });
+
+  return Contact.scope("withUser").findByPk(
+    conversation.id
+  ) as Promise<TContactWithUser>;
 }
 
 /**
