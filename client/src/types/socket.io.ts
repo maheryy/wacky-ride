@@ -27,7 +27,7 @@ export interface IListenEvents {
 
 export interface IEmitEvents {
   "conversation:message:send": (
-    receiverId: IUser["id"],
+    conversationId: IConversation["id"],
     content: TMessage["content"]
   ) => void;
   "room:message:send": (
@@ -39,7 +39,7 @@ export interface IEmitEvents {
   rooms: () => void;
   "contact:create": () => void;
   "admin:status": () => void;
-  conversation: (receiverId: IUser["id"]) => void;
+  conversation: (conversationId: IConversation["id"]) => void;
   conversations: () => void;
   "conversation:conversate": (receiverId: IUser["id"]) => void;
   contacts: (page: number) => void;
@@ -73,7 +73,7 @@ export interface IAdminEmitEvents {
   "room:restore": (id: IRoom["id"]) => void;
   "contact:accept": (contactId: IContact["id"]) => void;
   "contact:refuse": (contactId: IContact["id"]) => void;
-  "conversation:end": (receiverId: IUser["id"]) => void;
+  "conversation:end": (conversationId: IConversation["id"]) => void;
 }
 
 export type TSocket = Socket<

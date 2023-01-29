@@ -107,7 +107,7 @@ function contact() {
       <RouterLink
         :to="{
           name: 'conversation',
-          params: { receiverId: conversation?.receiver?.id },
+          params: { conversationId: conversation?.id },
         }"
       >
         {{ conversation?.receiver?.username }}
@@ -117,3 +117,4 @@ function contact() {
   </ul>
   <button @click="contact" v-if="!auth.isAdmin">Contact</button>
 </template>
+

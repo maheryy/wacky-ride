@@ -1,6 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { IContact, TContactWithUser } from "../../types/contact";
 import {
+  IConversation,
   TConversationWithUsers,
   TConversationWithUsersAndMessages,
 } from "../../types/conversation";
@@ -15,10 +16,10 @@ import { TEmitEvent } from "./result";
 
 export interface IConversationListenEvents {
   "conversation:message:send": (
-    receiverId: IUser["id"],
+    conversationId: IConversation["id"],
     content: IMessage["content"]
   ) => void;
-  conversation: (receiverId: IUser["id"]) => void;
+  conversation: (conversationId: IUser["id"]) => void;
   conversations: () => void;
   "conversation:conversate": (receiverId: IUser["id"]) => void;
 }

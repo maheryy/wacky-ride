@@ -6,6 +6,7 @@ import {
 } from "../../../../services/conversation.service";
 import { createMessage } from "../../../../services/message.service";
 import { getUserById } from "../../../../services/user.service";
+import { IConversation } from "../../../../types/conversation";
 import { IMessage } from "../../../../types/message";
 import { IUser } from "../../../../types/user";
 import {
@@ -23,14 +24,14 @@ const registerConversationHandlers = (
   const handle = withErrorHandling<IConversationEmitEvents>(socket);
 
   async function onMessage(
-    receiverId: IUser["id"],
+    conversationId: IConversation["id"],
     content: IMessage["content"]
   ) {
     console.log("[socket.io]: conversation:message:send");
 
     const { id: authorId } = socket.data.user;
 
-    const conversation = await getConversation(authorId, receiverId);
+    const conversation = await getConversation(authorId, conversationId);
 
     if (!conversation) {
       throw new WackyRideError("Conversation not found");
@@ -41,7 +42,7 @@ const registerConversationHandlers = (
     }
 
     const message = await createMessage({
-      conversationId: conversation.id,
+      conversationId,
       authorId,
       content,
     });
@@ -56,40 +57,17 @@ const registerConversationHandlers = (
     );
   }
 
-  async function onConversation(receiverId: IUser["id"]) {
-    const receiver = await getUserById(receiverId);
-
-    if (!receiver) {
-      throw new WackyRideError("User not found");
-    }
-
-    const existingConversation = await getConversation(
+  async function onConversation(conversationId: IConversation["id"]) {
+    const conversation = await getConversation(
       socket.data.user.id,
-      receiverId
+      conversationId
     );
 
-    if (!existingConversation) {
-      if (receiver.isAdmin) {
-        throw new WackyRideError("You can't create conversation with admin");
-      }
-
-      const conversation = await createConversation({
-        senderId: socket.data.user.id,
-        receiverId,
-      });
-
-      const result = { data: { conversation } };
-
-      socket.emit("conversation", result);
-      socket.to(`user:${receiverId}`).emit("conversation", result);
-
-      return;
+    if (!conversation) {
+      throw new WackyRideError("Conversation not found");
     }
 
-    const result = { data: { conversation: existingConversation } };
-
-    socket.emit("conversation", result);
-    socket.to(`user:${receiverId}`).emit("conversation", result);
+    socket.emit("conversation", { data: { conversation } });
   }
 
   async function onConversate(receiverId: IUser["id"]) {
@@ -103,28 +81,25 @@ const registerConversationHandlers = (
       throw new WackyRideError("You can't discuss with admin");
     }
 
+    const { id: senderId } = socket.data.user;
+
     const existingConversation = await getConversationByUsers(
-      socket.data.user.id,
+      senderId,
       receiverId
     );
 
     if (!existingConversation) {
       const conversation = await createConversation({
-        senderId: socket.data.user.id,
+        senderId,
         receiverId,
       });
 
-      const result = { data: { conversation } };
-
-      socket.emit("conversation", result);
-
-      return socket.to(`user:${receiverId}`).emit("conversation", result);
+      return socket.emit("conversation", { data: { conversation } });
     }
 
-    const result = { data: { conversation: existingConversation } };
-
-    socket.emit("conversation", result);
-    socket.to(`user:${receiverId}`).emit("conversation", result);
+    socket.emit("conversation", {
+      data: { conversation: existingConversation },
+    });
   }
 
   async function onConversations() {

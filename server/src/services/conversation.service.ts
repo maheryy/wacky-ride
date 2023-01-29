@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import sequelize, { db } from "../database/sequelize";
 import {
+  IConversation,
   TConversationCreateAttributes,
   TConversationWithUsers,
   TConversationWithUsersAndMessages,
@@ -32,23 +33,25 @@ export async function createConversation(
   }
 }
 
-export async function getConversation(user1: IUser["id"], user2: IUser["id"]) {
+export async function getConversation(
+  userId: IUser["id"],
+  conversationId: IConversation["id"]
+) {
   const conversation = (await Conversation.scope("withMessages").findOne({
     where: {
+      id: conversationId,
       [Op.or]: [
         {
-          senderId: user1,
-          receiverId: user2,
+          senderId: userId,
         },
         {
-          senderId: user2,
-          receiverId: user1,
+          receiverId: userId,
         },
       ],
     },
   })) as TConversationWithUsersAndMessages | null;
 
-  const isReceiver = conversation?.receiver.id === user1;
+  const isReceiver = conversation?.receiver.id === userId;
 
   if (isReceiver) {
     return swapSenderAndReceiver(conversation);
@@ -110,24 +113,26 @@ export async function getConversations(userId: IUser["id"]) {
   });
 }
 
-export async function endConversation(user1: IUser["id"], user2: IUser["id"]) {
+export async function endConversation(
+  userId: IUser["id"],
+  conversationId: IConversation["id"]
+) {
   const transaction = await sequelize.transaction();
 
   try {
-    const [, [{ id }]] = await Conversation.update(
+    await Conversation.update(
       {
         endedAt: new Date(),
       },
       {
         where: {
+          id: conversationId,
           [Op.or]: [
             {
-              senderId: user1,
-              receiverId: user2,
+              senderId: userId,
             },
             {
-              senderId: user2,
-              receiverId: user1,
+              receiverId: userId,
             },
           ],
         },
@@ -136,7 +141,9 @@ export async function endConversation(user1: IUser["id"], user2: IUser["id"]) {
       }
     );
 
-    const conversation = await Conversation.findByPk(id, { transaction });
+    const conversation = await Conversation.findByPk(conversationId, {
+      transaction,
+    });
 
     await transaction.commit();
 

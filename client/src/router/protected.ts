@@ -21,10 +21,10 @@ const getRoutes = (auth: TStoreAuth): RouteRecordRaw[] => {
       ...options,
     },
     {
-      path: "/conversation/:receiverId",
+      path: "/conversation/:conversationId",
       name: "conversation",
       component: () => import("../views/Conversation.vue"),
-      props: (route) => ({ receiverId: route.params.receiverId }),
+      props: (route) => ({ conversationId: route.params.conversationId }),
       ...options,
     },
     {
@@ -50,3 +50,4 @@ const getRoutes = (auth: TStoreAuth): RouteRecordRaw[] => {
 };
 
 export default getRoutes;
+
