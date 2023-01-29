@@ -3,7 +3,7 @@ import { createServer, Server as HttpServer } from "http";
 import app from "./express";
 import initializeSocketIOServer from "./socket.io";
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 const httpServer: HttpServer = createServer(app);
 
 initializeSocketIOServer(httpServer);

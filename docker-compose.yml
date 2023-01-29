@@ -2,7 +2,7 @@ version: "3.6"
 
 services:
   db:
-    image: postgres:alpine
+    image: postgres:15-alpine
     container_name: wacky-ride-custom-db
     restart: unless-stopped
     ports:
