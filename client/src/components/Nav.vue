@@ -51,7 +51,7 @@ const logout = () => {
               Rooms
             </RouterLink>
           </li>
-          <li>
+          <li v-if="auth.isAuthenticated && !auth.isAdmin">
             <RouterLink
               :to="{ name: 'chatbot' }"
               class="text-white hover:underline"

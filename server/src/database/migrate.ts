@@ -1,6 +1,4 @@
-import { config } from "dotenv";
-
-config();
+import "../config";
 import sequelize from "./sequelize";
 
 (async () => {

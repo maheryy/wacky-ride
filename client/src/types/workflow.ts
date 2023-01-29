@@ -23,3 +23,7 @@ export interface Step {
   message: string;
   payload?: WorkflowPayload[];
 }
+
+export interface WorkflowResponse {
+  next: string;
+}

@@ -159,7 +159,7 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
       rooms.map(async (room) => {
         const randomUsers = faker.helpers
           .shuffle(users)
-          .slice(0, Math.floor(Math.random() * users.length));
+          .slice(0, Math.floor(Math.random() * (users.length - 1)));
         const newRoom = await models.Room.create(room);
 
         return newRoom.setUsers(randomUsers);
