@@ -1,9 +1,8 @@
-import { Request, Response, Router } from "express";
+import { Router } from "express";
+import ChatbotRouter from "./chatbot";
 
 const router: Router = Router();
 
-router.get("/test", (_req: Request, res: Response) => {
-  res.send("Testing /test from private.ts");
-});
+router.use("/workflow", ChatbotRouter);
 
 export default router;

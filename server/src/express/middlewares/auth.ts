@@ -14,7 +14,7 @@ export async function authenticate(
   next: NextFunction
 ) {
   const token = getBearerToken(request);
-
+  
   if (!token) {
     return response.sendStatus(401);
   }
@@ -46,10 +46,6 @@ export function authorize(
   response: Response,
   next: NextFunction
 ) {
-  if (!user) {
-    return response.sendStatus(401);
-  }
-
   if (!user.isAdmin) {
     return response.sendStatus(403);
   }

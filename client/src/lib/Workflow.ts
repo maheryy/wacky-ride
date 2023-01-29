@@ -1,4 +1,5 @@
-import { Step, WorkflowPayload } from "../types/workflow";
+import axios from "axios";
+import { Step, WorkflowPayload, WorkflowResponse } from "../types/workflow";
 
 export default class Workflow {
   declare path: string;
@@ -31,34 +32,24 @@ export default class Workflow {
   async requestNext(
     params: Array<string | boolean | number>
   ): Promise<string | null> {
-    const res = await fetch(`http://localhost:3000/${this.path}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ params }),
-    });
-    if (!res.ok) {
+    try {
+      const response = await axios.post<WorkflowResponse>(this.path, {
+        params,
+      });
+      return response.data.next;
+    } catch (error) {
       return null;
     }
-    const json = await res.json();
-    return json.next;
   }
 
   async fetchStep(path: string): Promise<Step | null> {
     this.path = path;
-    const res = await fetch(`http://localhost:3000/${this.path}`);
-
-    if (!res.ok) {
+    try {
+      const response = await axios.get<Step>(this.path);
+      return response.data;
+    } catch (error) {
       return null;
     }
-
-    const step = await res.json();
-    return {
-      action: step.action,
-      message: step.message,
-      ...(step.payload ? { payload: step.payload } : {}),
-    };
   }
 
   getActionPayload() {
