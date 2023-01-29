@@ -236,50 +236,218 @@ function isUserSortKey(key: string): key is TUserSortKey {
 </script>
 
 <template>
-  <select v-model="filter.key">
-    <option v-for="key in keys" :key="key" :value="key">
-      {{ key }}
-    </option>
-  </select>
-  <input v-model="filter.search" />
-  <button v-if="canRefresh" @click="onRefresh">Refresh</button>
-  <table v-if="sortedContacts">
-    <thead>
-      <tr>
-        <th v-for="key in keys" :key="key" @click="sortBy(key)">
-          {{ key }}
-          <span v-if="key === sortKey">
-            <span v-if="order === 'asc'">↑</span>
-            <span v-else>↓</span>
-          </span>
-        </th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="contact in sortedContacts" :key="contact.id">
-        <td>{{ contact.user.username }}</td>
-        <td>{{ contact.user.email }}</td>
-        <td>{{ contact.status }}</td>
-        <td>
-          <button @click="onAcceptContact(contact.id)">Accept</button>
-          <button @click="onRefuseContact(contact.id)">Refuse</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div v-else>
-    <p>No contacts</p>
-  </div>
-  <div>
-    <button @click="onPreviousPage">Previous</button>
-    <span>{{ page }}</span>
-    <span>/</span>
-    <span>{{ maxPage }}</span>
-    <button @click="onNextPage">Next</button>
-  </div>
-  <div v-if="count">
-    <span>{{ count }} contacts</span>
-  </div>
+  <section id="contact">
+    <div id="header">
+      <div id="filter">
+        <select v-model="filter.key">
+          <option v-for="key in keys" :key="key" :value="key">
+            {{ key }}
+          </option>
+        </select>
+        <input v-model="filter.search" type="text" />
+      </div>
+      <button
+        @click="onRefresh"
+        id="refresh"
+        :disabled="!canRefresh"
+        :class="{ highlighted: canRefresh }"
+      >
+        Rafraîchir
+      </button>
+    </div>
+    <div v-if="sortedContacts" id="contacts">
+      <table>
+        <thead>
+          <tr>
+            <th v-for="key in keys" :key="key" @click="sortBy(key)">
+              <div class="key">
+                <span>{{ key }}</span>
+                <span v-show="key === sortKey" id="order">
+                  <span v-show="order === 'asc'">↑</span>
+                  <span v-show="order === 'desc'">↓</span>
+                </span>
+              </div>
+            </th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="contact in sortedContacts" :key="contact.id">
+            <td>{{ contact.user.username }}</td>
+            <td>{{ contact.user.email }}</td>
+            <td>{{ contact.status }}</td>
+            <td>
+              <div id="actions">
+                <button @click="onAcceptContact(contact.id)" id="accept">
+                  Accept
+                </button>
+                <button @click="onRefuseContact(contact.id)" id="refuse">
+                  Refuse
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="pagination">
+        <button @click="onPreviousPage" v-show="page > 1">Précédent</button>
+        <span>{{ page }}</span>
+        <span>/</span>
+        <span>{{ maxPage }}</span>
+        <button @click="onNextPage" v-show="page < maxPage">Suivant</button>
+      </div>
+      <div v-if="count" id="count">
+        <span>{{ count }} contacts</span>
+      </div>
+    </div>
+    <div v-else>
+      <p>Personne n'a besoin d'aide !</p>
+    </div>
+  </section>
 </template>
+
+<style scoped lang="scss">
+#contact {
+  border: 1px solid black;
+  padding: 1rem;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+}
+
+#header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+
+  #filter {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+
+    input,
+    select {
+      padding: 0.5rem;
+    }
+
+    input {
+      border: 1px solid black;
+    }
+
+    select {
+      background: white;
+      border: 1px solid black;
+    }
+  }
+
+  #refresh {
+    display: grid;
+    justify-content: end;
+
+    padding: 0.5rem;
+    border: 1px solid black;
+    background: white;
+
+    &.highlighted {
+      animation: highlight 1s ease-in-out infinite alternate;
+
+      @keyframes highlight {
+        0% {
+          background: white;
+          color: black;
+        }
+        100% {
+          background: black;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+#contacts {
+  display: grid;
+  gap: 1rem;
+
+  table {
+    tr {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    th,
+    td {
+      display: grid;
+      align-items: center;
+      border: 1px solid black;
+      padding: 0.5rem;
+    }
+
+    .key {
+      display: grid;
+      grid-template-columns: auto 1px;
+      justify-content: start;
+      gap: 0.5rem;
+    }
+
+    th:not(:last-child) {
+      cursor: pointer;
+    }
+
+    #actions {
+      display: grid;
+      grid-auto-flow: column;
+      gap: 0.5rem;
+
+      button {
+        padding: 0.5rem;
+        border: 1px solid black;
+        background: white;
+      }
+
+      #accept {
+        color: green;
+
+        &:hover {
+          background: green;
+          color: white;
+        }
+      }
+
+      #refuse {
+        color: red;
+
+        &:hover {
+          background: red;
+          color: white;
+        }
+      }
+    }
+  }
+
+  #pagination {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      padding: 0.5rem;
+      border: 1px solid black;
+      background: white;
+
+      &:hover {
+        background: black;
+        color: white;
+      }
+    }
+  }
+
+  #count {
+    display: grid;
+    justify-content: center;
+  }
+}
+</style>
 
