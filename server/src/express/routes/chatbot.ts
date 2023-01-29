@@ -45,6 +45,7 @@ router.post("/*", (req: Request, res: Response) => {
 
 const retrieveStep = (keys: string[]): Step | null => {
   let current: any = CHATBOT_WORKFLOW;
+
   for (const [index, key] of keys.entries()) {
     if (!current.next[key] && index <= keys.length - 1) {
       return null;

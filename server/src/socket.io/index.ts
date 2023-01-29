@@ -1,5 +1,6 @@
 import { Server as HttpServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
+import { getAllowedOrigins } from "../config";
 import { TServer, TSocket } from "./@types";
 import { authenticate, authorize } from "./middlewares/auth";
 import registerAdminNamespace from "./namespaces/admin";
@@ -7,7 +8,6 @@ import registerContactHandlers from "./namespaces/main/events/contact";
 import registerConversationHandlers from "./namespaces/main/events/conversation";
 import registerRoomHandlers from "./namespaces/main/events/room";
 import registerUserHandlers from "./namespaces/main/events/user";
-import { getAllowedOrigins } from "../config";
 
 function initializeSocketIOServer(httpServer: HttpServer): void {
   const io: TServer = new SocketIOServer(httpServer, {

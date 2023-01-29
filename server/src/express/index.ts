@@ -1,11 +1,11 @@
 import cors from "cors";
 import express, { Express } from "express";
+import { getAllowedOrigins } from "../config";
 import { authenticate, authorize } from "./middlewares/auth";
 import sse from "./middlewares/sse";
 import AdminRouter from "./routes/admin";
 import ProtectedRouter from "./routes/protected";
 import PublicRouter from "./routes/public";
-import { getAllowedOrigins } from "../config";
 
 const app: Express = express();
 

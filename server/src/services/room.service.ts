@@ -86,4 +86,3 @@ export async function restoreRoom(roomId: IRoom["id"]) {
     throw error;
   }
 }
-

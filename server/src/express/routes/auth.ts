@@ -28,16 +28,19 @@ router.post("/login", async (request: Request, response: Response) => {
 
 router.get("/me", async (request: Request, response: Response) => {
   const token = getBearerToken(request);
+
   if (!token) {
     return response.sendStatus(401);
   }
 
   const payload = await verify(token);
+
   if (!payload) {
     return response.sendStatus(401);
   }
 
   const user = await getUserById(payload.userId);
+
   if (!user) {
     return response.sendStatus(401);
   }

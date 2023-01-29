@@ -94,4 +94,3 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
 }
 
 export default registerContactHandlers;
-

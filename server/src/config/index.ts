@@ -1,5 +1,6 @@
 import { CorsOptions } from "cors";
 import { config } from "dotenv";
+
 config();
 
 export const getAllowedOrigins = (): CorsOptions["origin"] => {

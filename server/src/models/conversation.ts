@@ -156,4 +156,3 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
 };
 
 export default Conversation;
-

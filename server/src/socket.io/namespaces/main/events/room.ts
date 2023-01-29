@@ -79,4 +79,3 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 }
 
 export default registerRoomHandlers;
-

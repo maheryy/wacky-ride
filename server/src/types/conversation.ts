@@ -28,4 +28,3 @@ export type TConversationCreateAttributes = Pick<
   "senderId" | "receiverId"
 > &
   Partial<Pick<IConversation, "isAdvise">>;
-

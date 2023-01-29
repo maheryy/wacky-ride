@@ -16,7 +16,6 @@ export interface Step {
   next?: unknown;
 }
 
-
 export interface WorkflowPayload {
   label: string;
   value: string | number | boolean;
