@@ -308,8 +308,6 @@ function isUserSortKey(key: string): key is TUserSortKey {
 
 <style scoped lang="scss">
 #contact {
-  border: 1px solid black;
-  padding: 1rem;
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 1rem;
@@ -370,16 +368,23 @@ function isUserSortKey(key: string): key is TUserSortKey {
   gap: 1rem;
 
   table {
+    thead {
+      border: 1px solid black;
+    }
+
     tr {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
+
+      &:nth-child(even) {
+        background: #f3f3f3;
+      }
     }
 
     th,
     td {
       display: grid;
       align-items: center;
-      border: 1px solid black;
       padding: 0.5rem;
     }
 
