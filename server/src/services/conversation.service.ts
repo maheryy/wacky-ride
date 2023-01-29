@@ -25,11 +25,11 @@ export async function createConversation(
 
     const isReceiver = conversation.receiver.id === fields.receiverId;
 
+    await transaction.commit();
+
     if (isReceiver) {
       return swapSenderAndReceiver(conversation);
     }
-
-    await transaction.commit();
 
     return conversation;
   } catch (error) {
@@ -152,3 +152,4 @@ function swapSenderAndReceiver<T extends TConversationWithUsers>(
     receiver: conversation.sender,
   });
 }
+
