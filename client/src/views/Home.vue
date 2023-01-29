@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import { useRoute, useRouter } from "vue-router";
-
-const router = useRouter();
-const route = useRoute();
-
-const redirectToPath = (path: string) => router.push(path);
-const redirectToRoute = (route: string) => router.push({ name: route });
-const showAlertQuery = () =>
-  alert(
-    route.query.test ?? "Type '?test=something' in the url to see the result"
-  );
-</script>
-
 <template>
   <div class="main-container">
     <div class="bg-img"></div>
@@ -22,28 +8,10 @@ const showAlertQuery = () =>
       >
         Bienvenue sur Wacky Ride
       </h1>
-      <div class="playground">
+      <div>
         <h2 class="text-2xl text-center font-extrabold text-gray-300 mb-4">
           Le site fait pour les motards
         </h2>
-        <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-1 rounded"
-            @click="redirectToPath('/chatbot')"
-        >
-          Redirect to chatbot as path
-        </button>
-        <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-1 rounded"
-            @click="redirectToRoute('chatbot')"
-        >
-          Redirect to chatbot as route name
-        </button>
-        <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-1 rounded"
-            @click="showAlertQuery()"
-        >
-          Show an URL query string
-        </button>
       </div>
     </section>
     <section class="mt-10 mb-10 w-3/4">
