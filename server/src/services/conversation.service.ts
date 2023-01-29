@@ -23,12 +23,6 @@ export async function createConversation(
       { transaction }
     )) as TConversationWithUsersAndMessages;
 
-    const isReceiver = conversation.receiver.id === fields.receiverId;
-
-    if (isReceiver) {
-      return swapSenderAndReceiver(conversation);
-    }
-
     await transaction.commit();
 
     return conversation;
@@ -39,7 +33,37 @@ export async function createConversation(
   }
 }
 
-export async function getConversation(user1: IUser["id"], user2: IUser["id"]) {
+export async function getConversation(
+  userId: IUser["id"],
+  conversationId: IConversation["id"]
+) {
+  const conversation = (await Conversation.scope("withMessages").findOne({
+    where: {
+      id: conversationId,
+      [Op.or]: [
+        {
+          senderId: userId,
+        },
+        {
+          receiverId: userId,
+        },
+      ],
+    },
+  })) as TConversationWithUsersAndMessages | null;
+
+  const isReceiver = conversation?.receiver.id === userId;
+
+  if (isReceiver) {
+    return swapSenderAndReceiver(conversation);
+  }
+
+  return conversation;
+}
+
+export async function getConversationByUsers(
+  user1: IUser["id"],
+  user2: IUser["id"]
+) {
   const conversation = (await Conversation.scope("withMessages").findOne({
     where: {
       [Op.or]: [
@@ -89,24 +113,26 @@ export async function getConversations(userId: IUser["id"]) {
   });
 }
 
-export async function endConversation(user1: IUser["id"], user2: IUser["id"]) {
+export async function endConversation(
+  userId: IUser["id"],
+  conversationId: IConversation["id"]
+) {
   const transaction = await sequelize.transaction();
 
   try {
-    const [, [{ id }]] = await Conversation.update(
+    await Conversation.update(
       {
         endedAt: new Date(),
       },
       {
         where: {
+          id: conversationId,
           [Op.or]: [
             {
-              senderId: user1,
-              receiverId: user2,
+              senderId: userId,
             },
             {
-              senderId: user2,
-              receiverId: user1,
+              receiverId: userId,
             },
           ],
         },
@@ -115,11 +141,13 @@ export async function endConversation(user1: IUser["id"], user2: IUser["id"]) {
       }
     );
 
-    const conversation = await Conversation.findByPk(id, { transaction });
+    const conversation = await Conversation.findByPk(conversationId, {
+      transaction,
+    });
 
     await transaction.commit();
 
-    return conversation as IConversation;
+    return conversation as TConversationWithUsers;
   } catch (error) {
     await transaction.rollback();
 
@@ -144,7 +172,7 @@ export function getNotEndedAdvisorConversation(userId: IUser["id"]) {
   });
 }
 
-function swapSenderAndReceiver<T extends TConversationWithUsers>(
+export function swapSenderAndReceiver<T extends TConversationWithUsers>(
   conversation: T
 ) {
   return conversation.set({
@@ -152,3 +180,4 @@ function swapSenderAndReceiver<T extends TConversationWithUsers>(
     receiver: conversation.sender,
   });
 }
+

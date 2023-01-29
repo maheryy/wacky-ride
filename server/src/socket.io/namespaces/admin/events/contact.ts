@@ -3,7 +3,10 @@ import {
   getContacts,
   updateContactStatus,
 } from "../../../../services/contact.service";
-import { createConversation } from "../../../../services/conversation.service";
+import {
+  createConversation,
+  swapSenderAndReceiver,
+} from "../../../../services/conversation.service";
 import { EContactStatus, IContact } from "../../../../types/contact";
 import {
   IContactEmitEvents,
@@ -46,11 +49,18 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
       isAdvise: true,
     });
 
-    const result = { data: { contact: updatedContact, conversation } };
+    socket.emit("contact:accepted", {
+      data: { contact: updatedContact, conversation },
+    });
 
-    io.of("/").to(`user:${contact.userId}`).emit("contact:accepted", result);
-
-    socket.emit("contact:accepted", result);
+    io.of("/")
+      .to(`user:${contact.userId}`)
+      .emit("contact:accepted", {
+        data: {
+          contact: updatedContact,
+          conversation: swapSenderAndReceiver(conversation),
+        },
+      });
   }
 
   /**
@@ -94,3 +104,4 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
 }
 
 export default registerContactHandlers;
+

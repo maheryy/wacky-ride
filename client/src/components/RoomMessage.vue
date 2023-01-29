@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { TMessage } from "../types/message";
-import {useAuthStore} from "../stores";
-import {computed} from "vue";
+import { useAuthStore } from "../stores";
+import { computed } from "vue";
+import { IUser } from "../types/user";
+import { TSocket } from "../types/socket.io";
+import { useToast } from "vue-toastification";
+import { useRouter } from "vue-router";
 
 interface MessageProps {
   message: TMessage;
 }
 
 const props = defineProps<MessageProps>();
-
+const toast = useToast();
 const auth = useAuthStore();
+const socket = auth.socket as TSocket;
+const router = useRouter();
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -19,14 +25,36 @@ const formatDate = (dateString: string) => {
   return `${withLeadingZero(hours)}:${withLeadingZero(minutes)}`;
 };
 
-
 const canConversate = computed(() => {
   if (props.message.author.isAdmin) {
     return false;
   }
+
   return auth.user?.id !== props.message.author.id;
 });
 
+function conversate(receiverId: IUser["id"]) {
+  if (!canConversate.value) {
+    return;
+  }
+
+  socket.emit("conversation:conversate", receiverId);
+
+  socket.once("conversation", ({ data, errors }) => {
+    if (errors) {
+      for (const error of errors) {
+        toast.error(error.message);
+      }
+
+      return;
+    }
+
+    router.push({
+      name: "conversation",
+      params: { conversationId: data.conversation.id },
+    });
+  });
+}
 </script>
 
 <template>
@@ -35,10 +63,10 @@ const canConversate = computed(() => {
       {{ message.content }}
     </div>
     <div class="message__meta">
-      <RouterLink v-if="canConversate" class="cursor-pointer message__meta__user" :to="{ name: 'conversation', params: { receiverId: message.author?.id } }">
-        {{ message.author.username }}
-      </RouterLink>
-      <span v-else class="message__meta__user">
+      <span
+        :class="{ message__meta__user: true, pointer: canConversate }"
+        @click="conversate(message.author.id)"
+      >
         {{ message.author.username }}
       </span>
       <span class="message__meta__date" v-if="message.createdAt">
@@ -57,6 +85,10 @@ const canConversate = computed(() => {
   border-radius: 0.5rem;
   background-color: #f5f5f5;
   margin-bottom: 1rem;
+}
+
+.pointer {
+  cursor: pointer;
 }
 
 .message__content {
@@ -88,3 +120,4 @@ const canConversate = computed(() => {
   margin: 0 0.5rem;
 }
 </style>
+

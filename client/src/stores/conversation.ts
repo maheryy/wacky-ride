@@ -5,26 +5,29 @@ import {
   TConversationWithMessages,
 } from "../types/conversation";
 import { TMessage } from "../types/message";
-import {IUser} from "../types/user";
+import { IUser } from "../types/user";
 
 export type TStoreConversation = IConversation &
   Partial<TConversationWithMessages>;
 
 type TStoreConversations = {
-  [receiverId: IUser["id"]]: TStoreConversation | undefined;
+  [conversationId: IConversation["id"]]: TStoreConversation | undefined;
 };
 
 export const useConversationStore = defineStore("conversation", () => {
   const conversations = ref<TStoreConversations>({});
 
   function setConversation(conversation: TStoreConversation) {
-    conversations.value[conversation.receiver.id] = conversation;
+    conversations.value[conversation.id] = conversation;
   }
 
   function setConversations(newConversations: IConversation[]) {
     conversations.value = newConversations.reduce<TStoreConversations>(
       (accumulator, conversation) => {
-        accumulator[conversation.receiver.id] = { messages: [], ...conversation };
+        accumulator[conversation.id] = {
+          messages: [],
+          ...conversation,
+        };
 
         return accumulator;
       },
@@ -35,15 +38,18 @@ export const useConversationStore = defineStore("conversation", () => {
   function updateConversations(newConversations: TStoreConversation[]) {
     conversations.value = newConversations.reduce<TStoreConversations>(
       (accumulator, conversation) => {
-        const existingConversation = accumulator[conversation.receiver.id];
+        const existingConversation = accumulator[conversation.id];
 
         if (existingConversation) {
-          accumulator[conversation.receiver.id] = {
+          accumulator[conversation.id] = {
             ...existingConversation,
             ...conversation,
           };
         } else {
-          accumulator[conversation.receiver.id] = { messages: [], ...conversation };
+          accumulator[conversation.id] = {
+            messages: [],
+            ...conversation,
+          };
         }
 
         return accumulator;
@@ -53,14 +59,14 @@ export const useConversationStore = defineStore("conversation", () => {
   }
 
   function updateConversation(conversation: TStoreConversation) {
-    conversations.value[conversation.receiver.id] = {
-      ...conversations.value[conversation.receiver.id],
+    conversations.value[conversation.id] = {
+      ...conversations.value[conversation.id],
       ...conversation,
     };
   }
 
-  function addMessage(receiverId: IUser["id"], message: TMessage) {
-    conversations.value[receiverId]?.messages?.push(message);
+  function addMessage(conversationId: IConversation["id"], message: TMessage) {
+    conversations.value[conversationId]?.messages?.push(message);
   }
 
   return {

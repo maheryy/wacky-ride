@@ -5,8 +5,19 @@ import Contact from "../../components/admin/Contact.vue";
 </script>
 
 <template>
-  <Room />
-  <Status />
-  <Contact />
+  <section id="admin">
+    <Status />
+    <Contact />
+    <Room />
+  </section>
 </template>
+
+<style scoped lang="scss">
+#admin {
+  padding: 1rem;
+  display: grid;
+  grid-auto-flow: row;
+  gap: 3rem;
+}
+</style>
 

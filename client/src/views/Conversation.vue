@@ -8,14 +8,14 @@ import { IUser } from "../types/user";
 import { useToast } from "vue-toastification";
 
 interface IConversationProps {
-  receiverId: IUser["id"];
+  conversationId: IUser["id"];
 }
 
-const { receiverId } = defineProps<IConversationProps>();
+const { conversationId } = defineProps<IConversationProps>();
 const store = useConversationStore();
 const toast = useToast();
 const auth = useAuthStore();
-const conversation = computed(() => store.conversations[receiverId]);
+const conversation = computed(() => store.conversations[conversationId]);
 const message = ref("");
 const socket = auth.socket as TSocket;
 const adminSocket = auth.adminSocket as TSocket;
@@ -43,7 +43,7 @@ const sendMessage = () => {
     return;
   }
 
-  socket.emit("conversation:message:send", receiverId, message.value);
+  socket.emit("conversation:message:send", conversationId, message.value);
 
   // TODO ? : add directly messageData to messages
   // Implying that we cannot edit the inserted message without the newly created id from the database
@@ -62,7 +62,7 @@ watch(
 );
 
 onMounted(() => {
-  socket.emit("conversation", receiverId);
+  socket.emit("conversation", conversationId);
 
   socket.on("conversation", ({ data, errors }) => {
     if (errors) {
@@ -84,7 +84,7 @@ onMounted(() => {
       return;
     }
 
-    store.addMessage(receiverId, data.message);
+    store.addMessage(conversationId, data.message);
   });
 
   socket.on("conversation:ended", ({ data, errors }) => {
@@ -96,25 +96,18 @@ onMounted(() => {
       return;
     }
 
-    const { conversation } = data
-
-    const isReceiver = auth.user?.id === conversation.receiver.id
-
-    if (isReceiver) {
-      return store.updateConversation(conversation);
-    }
-
-    store.updateConversation({ ...conversation, receiver: conversation.sender });
+    return store.updateConversation(data.conversation);
   });
 });
 
 onUnmounted(() => {
   socket.off("conversation");
   socket.off("conversation:message:received");
+  socket.off("conversation:ended");
 });
 
 function endConversation() {
-  adminSocket.emit("conversation:end", receiverId);
+  adminSocket.emit("conversation:end", conversationId);
 }
 </script>
 
@@ -132,14 +125,17 @@ function endConversation() {
           id="conversation-messages"
           class="conversation__messages__container"
           ref="conversationMessages"
+          v-if="sortedMessages.length"
         >
           <Message
-            v-if="sortedMessages.length"
             v-for="message in sortedMessages"
             :key="message.id"
             :message="message"
           />
         </ul>
+        <div v-else>
+          <p>No messages yet</p>
+        </div>
       </div>
       <div v-if="canSendMessage" class="conversation__input">
         <input type="text" v-model.trim="message" @keyup.enter="sendMessage" />
