@@ -114,6 +114,7 @@ onMounted(() => {
 onUnmounted(() => {
   socket.off("conversation");
   socket.off("conversation:message:received");
+  socket.off("conversation:ended");
 });
 
 function endConversation() {
