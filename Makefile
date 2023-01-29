@@ -9,7 +9,6 @@ build:
 start:
 	@docker compose -f docker-compose.demo.yml up -d
 	@echo "Wacky ride live at http://localhost:8080/"
-	@sleep 1 && open "http://localhost:8080/"
 
 
 # Stop and remove all docker services
