@@ -1,35 +1,29 @@
-version: "3.6"
+version: "3.8"
 
 services:
-  server:
-    image: node:alpine
-    container_name: wacky-ride-server
-    working_dir: /usr/local/server
-    command: npm run start
+  client:
+    container_name: wacky-ride-client
+    build:
+      context: ./client
+      args:
+        - VITE_API_URL=http://localhost:3000
     ports:
-      - "8080:3000"
-    volumes:
-      - ./server:/usr/local/server
-    environment:
-      - PORT=3000
-      - DB_URI=postgres://root:password@db/app
-      - JWT_SECRET=mySecret
+      - "8080:80"
+
+  server:
+    container_name: wacky-ride-server
+    build:
+      context: ./server
+      args:
+        - DB_URI=postgres://root:password@db/app
+    ports:
+      - "3000:3000"
     depends_on:
       - db
 
-  client:
-    image: caddy:latest
-    container_name: wacky-ride-client
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./.docker/caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ./client/dist:/srv
-
   db:
-    image: postgres:alpine
     container_name: wacky-ride-db
+    image: postgres:15-alpine
     restart: unless-stopped
     ports:
       - "5432:5432"

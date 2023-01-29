@@ -7,9 +7,11 @@
     "dev": "APP_ENV=development nodemon src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "start": "APP_ENV=production ts-node src/index.ts",
+    "start": "APP_ENV=production node dist/index.js",
+    "build": "tsc",
     "migrate": "ts-node src/database/migrate.ts",
-    "seed": "ts-node src/database/seed.ts"
+    "seed": "ts-node src/database/seed.ts",
+    "seed:prod": "node dist/database/seed.js"
   },
   "author": "",
   "license": "ISC",
