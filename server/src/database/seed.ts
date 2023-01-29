@@ -1,7 +1,5 @@
-import { config } from "dotenv";
+import "../config";
 import { DatabaseModel } from "../types/models";
-
-config();
 import sequelize, { db } from "./sequelize";
 
 (async () => {

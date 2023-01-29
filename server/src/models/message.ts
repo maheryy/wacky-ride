@@ -110,6 +110,9 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
 
     const roomsMessagesPromises = rooms.map(async (room) => {
       const users = await room.getUsers();
+
+      if (!users.length) return null;
+
       const messages: MessageCreationAttributes[] = Array.from(
         { length: faker.datatype.number({ min: 5, max: 10 }) },
         () => ({
@@ -119,7 +122,7 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
 
       return Promise.all(
         messages.map(async (message) => {
-          const randomUser = users[Math.floor(Math.random() * users.length)];
+          const randomUser = faker.helpers.arrayElement(users);
 
           return models.Message.create({
             ...message,
@@ -146,7 +149,7 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
 
         return Promise.all(
           messages.map(async (message) => {
-            const randomUser = users[Math.floor(Math.random() * users.length)];
+            const randomUser = faker.helpers.arrayElement(users);
 
             return models.Message.create({
               ...message,

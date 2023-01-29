@@ -1,6 +1,4 @@
-import { config } from "dotenv";
-
-config();
+import "./config";
 import { createServer, Server as HttpServer } from "http";
 import app from "./express";
 import initializeSocketIOServer from "./socket.io";
