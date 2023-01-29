@@ -27,6 +27,7 @@ onMounted(() => {
     }
 
     auth.setStatus(data.status);
+    toast.success("Status updated");
   });
 });
 
@@ -36,12 +37,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div>
+  <section class="status">
     <select v-if="status" v-model="status">
       <option v-for="status in UserStatus" :key="status" :value="status">
         {{ status }}
       </option>
     </select>
-  </div>
+  </section>
 </template>
+
+<style scoped lang="scss"></style>
 
