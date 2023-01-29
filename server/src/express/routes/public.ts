@@ -1,5 +1,4 @@
 import { Request, Response, Router } from "express";
-import { getAllUsers } from "../../services/user.service";
 import AuthRouter from "./auth";
 import ChatbotRouter from "./chatbot";
 
@@ -15,18 +14,7 @@ router.use("/auth", AuthRouter);
 
 router.get("/sse", (req: Request, res: Response) => {
   res.initSSE();
-  res.send("SSE live");
-});
-
-router.get("/test", async (req: Request, res: Response) => {
-  try {
-    res.json(await getAllUsers());
-  } catch (error: unknown) {
-    console.error(error);
-
-    // TODO: handle the error format
-    res.send(error);
-  }
+  res.sendStatus(204);
 });
 
 export default router;
