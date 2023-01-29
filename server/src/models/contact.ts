@@ -68,4 +68,3 @@ const Contact = (sequelize: Sequelize): typeof ContactModel => {
 };
 
 export default Contact;
-

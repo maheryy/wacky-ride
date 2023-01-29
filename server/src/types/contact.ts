@@ -20,4 +20,3 @@ export interface IContact {
 export type TContactWithUser = ContactModel & {
   user: IUser;
 };
-

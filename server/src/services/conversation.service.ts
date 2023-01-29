@@ -89,20 +89,6 @@ export async function getConversations(userId: IUser["id"]) {
   });
 }
 
-export async function getOrCreateConversation(
-  fields: TConversationCreateAttributes
-) {
-  const { senderId, receiverId } = fields;
-
-  const existingConversation = await getConversation(senderId, receiverId);
-
-  if (existingConversation) {
-    return existingConversation;
-  }
-
-  return createConversation(fields);
-}
-
 export async function endConversation(user1: IUser["id"], user2: IUser["id"]) {
   const transaction = await sequelize.transaction();
 
@@ -166,4 +152,3 @@ function swapSenderAndReceiver<T extends TConversationWithUsers>(
     receiver: conversation.sender,
   });
 }
-

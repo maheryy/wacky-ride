@@ -171,4 +171,3 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
 };
 
 export default Room;
-

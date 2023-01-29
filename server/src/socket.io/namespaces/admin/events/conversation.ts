@@ -2,7 +2,7 @@ import {
   endConversation,
   getConversation,
 } from "../../../../services/conversation.service";
-import { IConversation } from "../../../../types/conversation";
+import { IUser } from "../../../../types/user";
 import {
   IConversationEmitEvents,
   TConversationIO,
@@ -10,7 +10,6 @@ import {
 } from "../../../@types/admin";
 import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
-import {IUser} from "../../../../types/user";
 
 function registerConversationHandlers(
   io: TConversationIO,
@@ -47,4 +46,3 @@ function registerConversationHandlers(
 }
 
 export default registerConversationHandlers;
-

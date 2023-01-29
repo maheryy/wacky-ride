@@ -104,6 +104,7 @@ export const CHATBOT_WORKFLOW = {
 const yearDiff = (date1: Date, date2: Date) => {
   const diffTime = Math.abs(date2.getTime() - date1.getTime());
   const diffYears = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365));
+
   return diffYears;
 };
 

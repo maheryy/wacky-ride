@@ -121,4 +121,3 @@ export type TAdminEmitEvents = IEmitEvents &
 export type TAdminIO = Server<TAdminListenEvents, TAdminEmitEvents>;
 
 export type TAdminSocket = Socket<TAdminListenEvents, TAdminEmitEvents>;
-

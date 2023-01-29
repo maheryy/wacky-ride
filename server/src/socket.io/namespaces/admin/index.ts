@@ -45,4 +45,3 @@ function registerAdminNamespace(io: TAdminIO) {
 }
 
 export default registerAdminNamespace;
-

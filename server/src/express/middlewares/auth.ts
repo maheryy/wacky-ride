@@ -14,7 +14,7 @@ export async function authenticate(
   next: NextFunction
 ) {
   const token = getBearerToken(request);
-  
+
   if (!token) {
     return response.sendStatus(401);
   }

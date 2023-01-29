@@ -1,6 +1,9 @@
 import { Server, Socket } from "socket.io";
 import { IContact, TContactWithUser } from "../../types/contact";
-import { TConversationWithUsersAndMessages, TConversationWithUsers } from "../../types/conversation";
+import {
+  TConversationWithUsers,
+  TConversationWithUsersAndMessages,
+} from "../../types/conversation";
 import { IMessage } from "../../types/message";
 import { IRoom, TRoomWithMessages } from "../../types/room";
 import { IUser } from "../../types/user";
@@ -104,4 +107,3 @@ export type TMainEmitEvents =
   | IRoomEmitEvents
   | IContactEmitEvents
   | IUserEmitEvents;
-
