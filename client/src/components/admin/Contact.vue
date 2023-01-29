@@ -361,6 +361,11 @@ function isUserSortKey(key: string): key is TUserSortKey {
     border: 1px solid black;
     background: white;
 
+    &:disabled {
+      background: #f3f3f3;
+      cursor: not-allowed;
+    }
+
     &.highlighted {
       animation: highlight 1s ease-in-out infinite alternate;
 
