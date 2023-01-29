@@ -16,10 +16,11 @@ export async function createConversation(
   const transaction = await sequelize.transaction();
 
   try {
-    const { id } = await Conversation.create(fields);
+    const { id } = await Conversation.create(fields, { transaction });
 
     const conversation = (await Conversation.scope("withMessages").findByPk(
-      id
+      id,
+      { transaction }
     )) as TConversationWithUsersAndMessages;
 
     const isReceiver = conversation.receiver.id === fields.receiverId;
@@ -38,10 +39,7 @@ export async function createConversation(
   }
 }
 
-export async function getConversation(
-  user1: IUser["id"],
-  user2: IUser["id"]
-) {
+export async function getConversation(user1: IUser["id"], user2: IUser["id"]) {
   const conversation = (await Conversation.scope("withMessages").findOne({
     where: {
       [Op.or]: [
@@ -94,44 +92,41 @@ export async function getConversations(userId: IUser["id"]) {
 export async function getOrCreateConversation(
   fields: TConversationCreateAttributes
 ) {
-  const {senderId, receiverId } = fields
+  const { senderId, receiverId } = fields;
 
   const existingConversation = await getConversation(senderId, receiverId);
 
   if (existingConversation) {
-    return existingConversation
+    return existingConversation;
   }
 
   return createConversation(fields);
 }
 
-export async function endConversation(
-  user1: IUser["id"],
-  user2: IUser["id"]
-) {
+export async function endConversation(user1: IUser["id"], user2: IUser["id"]) {
   const transaction = await sequelize.transaction();
 
   try {
     const [, [{ id }]] = await Conversation.update(
-        {
-          endedAt: new Date(),
+      {
+        endedAt: new Date(),
+      },
+      {
+        where: {
+          [Op.or]: [
+            {
+              senderId: user1,
+              receiverId: user2,
+            },
+            {
+              senderId: user2,
+              receiverId: user1,
+            },
+          ],
         },
-        {
-          where: {
-            [Op.or]: [
-              {
-                senderId: user1,
-                receiverId: user2
-              },
-              {
-                senderId: user2,
-                receiverId: user1,
-              },
-            ],
-          },
-          returning: true,
-          transaction,
-        }
+        returning: true,
+        transaction,
+      }
     );
 
     const conversation = await Conversation.findByPk(id, { transaction });
@@ -142,7 +137,7 @@ export async function endConversation(
   } catch (error) {
     await transaction.rollback();
 
-    throw error
+    throw error;
   }
 }
 
@@ -163,7 +158,9 @@ export function getNotEndedAdvisorConversation(userId: IUser["id"]) {
   });
 }
 
-function swapSenderAndReceiver<T extends TConversationWithUsers>(conversation: T) {
+function swapSenderAndReceiver<T extends TConversationWithUsers>(
+  conversation: T
+) {
   return conversation.set({
     sender: conversation.receiver,
     receiver: conversation.sender,
