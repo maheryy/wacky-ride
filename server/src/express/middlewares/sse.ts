@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { ServerSentEvent } from "../../types/event";
 
 const clients: Set<Response> = new Set();
 
@@ -8,6 +9,7 @@ const sse = () => {
       res.writeHead(200, {
         "Cache-Control": "no-cache",
         "Content-Type": "text/event-stream",
+        "Access-Control-Allow-Credentials": "true",
         Connection: "keep-alive",
       });
       clients.add(res);
@@ -24,7 +26,7 @@ const sse = () => {
       });
     };
 
-    res.sendEvent = (eventType: string, data: object) => {
+    res.sendEvent = <T>(eventType: ServerSentEvent, data: T) => {
       const dataString =
         `data: ${JSON.stringify(data)}\n` + `event: ${eventType}\n\n`;
 

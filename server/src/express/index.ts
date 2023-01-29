@@ -7,8 +7,9 @@ import ProtectedRouter from "./routes/protected";
 import PublicRouter from "./routes/public";
 
 const app: Express = express();
+const allowedOrigins = ["http://localhost:5173", "https://maheryy.github.io"];
 
-app.use(cors());
+app.use(cors({ origin: allowedOrigins }));
 app.use(sse());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

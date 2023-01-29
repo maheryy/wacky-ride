@@ -14,6 +14,12 @@ const getRoutes = (auth: TStoreAuth): RouteRecordRaw[] => {
       component: () => import("../views/admin/Admin.vue"),
       ...options,
     },
+    {
+      path: "/notification",
+      name: "notification",
+      component: () => import("../views/admin/Notification.vue"),
+      ...options,
+    },
   ];
 };
 

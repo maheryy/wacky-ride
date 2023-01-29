@@ -4,15 +4,17 @@ import { IUser, IUserCredentials } from "../types/user";
 import axios from "axios";
 import { TSocket } from "../types/socket.io";
 import { io } from "socket.io-client";
+import { ServerSentEvent } from "../types/event";
+import * as events from "../lib/event";
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref<string | null>(null);
   const user = ref<IUser | null>(null);
   const socket = ref<TSocket | null>(null);
   const adminSocket = ref<TSocket | null>(null);
+  const eventSource = ref<EventSource | null>(null);
 
-  // Init socket.io client on user authenticated
-  // NB: Depending on the user role, the client socket uses a different namespace (see server-side namespace registration)
+  // Init socket.io client and sse on user authenticated depending on its role
   watch(user, (newUser) => {
     if (newUser) {
       socket.value = io(import.meta.env.VITE_API_URL, {
@@ -20,14 +22,31 @@ export const useAuthStore = defineStore("auth", () => {
       });
 
       if (newUser.isAdmin) {
-        adminSocket.value = io(import.meta.env.VITE_API_URL + "/admin", {
+        adminSocket.value = io(`${import.meta.env.VITE_API_URL}/admin`, {
           auth: { token: token.value },
         });
+      }
+
+      if (!newUser.isAdmin) {
+        eventSource.value = new EventSource(
+          `${import.meta.env.VITE_API_URL}/sse`,
+          { withCredentials: true }
+        );
       }
     } else {
       socket.value?.disconnect();
       adminSocket.value?.disconnect();
+      eventSource.value?.close();
     }
+  });
+
+  watch(eventSource, (event) => {
+    if (!event) return;
+
+    event.addEventListener(
+      ServerSentEvent.NOTIFICATION,
+      events.displayAdminNotification
+    );
   });
 
   const isAuthenticated = computed(() => !!token.value && !!user.value);
@@ -94,4 +113,3 @@ export const useAuthStore = defineStore("auth", () => {
 });
 
 export type TStoreAuth = ReturnType<typeof useAuthStore>;
-
