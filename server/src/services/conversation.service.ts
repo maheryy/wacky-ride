@@ -1,7 +1,6 @@
 import { Op } from "sequelize";
 import sequelize, { db } from "../database/sequelize";
 import {
-  IConversation,
   TConversationCreateAttributes,
   TConversationWithUsers,
   TConversationWithUsersAndMessages,
@@ -23,13 +22,7 @@ export async function createConversation(
       { transaction }
     )) as TConversationWithUsersAndMessages;
 
-    const isReceiver = conversation.receiver.id === fields.receiverId;
-
     await transaction.commit();
-
-    if (isReceiver) {
-      return swapSenderAndReceiver(conversation);
-    }
 
     return conversation;
   } catch (error) {
@@ -119,7 +112,7 @@ export async function endConversation(user1: IUser["id"], user2: IUser["id"]) {
 
     await transaction.commit();
 
-    return conversation as IConversation;
+    return conversation as TConversationWithUsers;
   } catch (error) {
     await transaction.rollback();
 
@@ -144,7 +137,7 @@ export function getNotEndedAdvisorConversation(userId: IUser["id"]) {
   });
 }
 
-function swapSenderAndReceiver<T extends TConversationWithUsers>(
+export function swapSenderAndReceiver<T extends TConversationWithUsers>(
   conversation: T
 ) {
   return conversation.set({

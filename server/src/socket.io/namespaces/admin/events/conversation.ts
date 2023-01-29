@@ -1,6 +1,7 @@
 import {
   endConversation,
   getConversation,
+  swapSenderAndReceiver,
 } from "../../../../services/conversation.service";
 import { IUser } from "../../../../types/user";
 import {
@@ -28,15 +29,15 @@ function registerConversationHandlers(
 
     const conversation = await endConversation(adminId, receiverId);
 
-    const result = { data: { conversation } };
-
     io.of("/")
       .to(`user:${conversation.senderId}`)
-      .emit("conversation:ended", result);
+      .emit("conversation:ended", { data: { conversation } });
 
     io.of("/")
       .to(`user:${conversation.receiverId}`)
-      .emit("conversation:ended", result);
+      .emit("conversation:ended", {
+        data: { conversation: swapSenderAndReceiver(conversation) },
+      });
   }
 
   socket.on(
@@ -46,3 +47,4 @@ function registerConversationHandlers(
 }
 
 export default registerConversationHandlers;
+
