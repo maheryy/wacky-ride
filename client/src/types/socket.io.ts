@@ -41,6 +41,7 @@ export interface IEmitEvents {
   "admin:status": () => void;
   conversation: (receiverId: IUser["id"]) => void;
   conversations: () => void;
+  "conversation:conversate": (receiverId: IUser["id"]) => void;
   contacts: (page: number) => void;
 }
 

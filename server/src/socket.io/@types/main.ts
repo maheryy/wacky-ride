@@ -20,6 +20,7 @@ export interface IConversationListenEvents {
   ) => void;
   conversation: (receiverId: IUser["id"]) => void;
   conversations: () => void;
+  "conversation:conversate": (receiverId: IUser["id"]) => void;
 }
 
 export interface IConversationEmitEvents {
@@ -107,3 +108,4 @@ export type TMainEmitEvents =
   | IRoomEmitEvents
   | IContactEmitEvents
   | IUserEmitEvents;
+

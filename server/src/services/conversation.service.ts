@@ -57,6 +57,34 @@ export async function getConversation(user1: IUser["id"], user2: IUser["id"]) {
   return conversation;
 }
 
+export async function getConversationByUsers(
+  user1: IUser["id"],
+  user2: IUser["id"]
+) {
+  const conversation = (await Conversation.scope("withMessages").findOne({
+    where: {
+      [Op.or]: [
+        {
+          senderId: user1,
+          receiverId: user2,
+        },
+        {
+          senderId: user2,
+          receiverId: user1,
+        },
+      ],
+    },
+  })) as TConversationWithUsersAndMessages | null;
+
+  const isReceiver = conversation?.receiver.id === user1;
+
+  if (isReceiver) {
+    return swapSenderAndReceiver(conversation);
+  }
+
+  return conversation;
+}
+
 export async function getConversations(userId: IUser["id"]) {
   const conversations = (await Conversation.findAll({
     where: {

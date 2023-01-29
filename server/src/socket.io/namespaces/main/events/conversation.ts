@@ -1,6 +1,7 @@
 import {
   createConversation,
   getConversation,
+  getConversationByUsers,
   getConversations,
 } from "../../../../services/conversation.service";
 import { createMessage } from "../../../../services/message.service";
@@ -91,6 +92,41 @@ const registerConversationHandlers = (
     socket.to(`user:${receiverId}`).emit("conversation", result);
   }
 
+  async function onConversate(receiverId: IUser["id"]) {
+    const receiver = await getUserById(receiverId);
+
+    if (!receiver) {
+      throw new WackyRideError("User not found");
+    }
+
+    if (receiver.isAdmin) {
+      throw new WackyRideError("You can't discuss with admin");
+    }
+
+    const existingConversation = await getConversationByUsers(
+      socket.data.user.id,
+      receiverId
+    );
+
+    if (!existingConversation) {
+      const conversation = await createConversation({
+        senderId: socket.data.user.id,
+        receiverId,
+      });
+
+      const result = { data: { conversation } };
+
+      socket.emit("conversation", result);
+
+      return socket.to(`user:${receiverId}`).emit("conversation", result);
+    }
+
+    const result = { data: { conversation: existingConversation } };
+
+    socket.emit("conversation", result);
+    socket.to(`user:${receiverId}`).emit("conversation", result);
+  }
+
   async function onConversations() {
     const conversations = await getConversations(socket.data.user.id);
 
@@ -110,6 +146,8 @@ const registerConversationHandlers = (
 
   socket.on("conversation", handle(onConversation, "conversation"));
   socket.on("conversations", handle(onConversations, "conversations"));
+  socket.on("conversation:conversate", handle(onConversate, "conversation"));
 };
 
 export default registerConversationHandlers;
+
