@@ -2,25 +2,40 @@
 
 ## Requirements
 
-- Docker (with docker-compose)
-- Node
+[Docker](https://docs.docker.com/get-docker/)  
+[Node](https://nodejs.org/en/download/)
 
 ## Try it out
 
-_Shorthand command to run the app for the first time_
+Run the app for the first time with :
 
 ```
 make build start seed
 ```
 
-_Just run make start_
+Log in with the following credentials
+
+```
+# As an admin
+email: admin@wacky.com 
+password: password
+
+OR 
+
+# As a regular user
+email: user@wacky.com
+password: password
+```
+
+Enjoy chatting and riding with Wacky Ride community !
+
+
+For later usage, run :
 ```
 make start
 ```
 
 ## Commands
-
-_Run the entire app through docker_
 
 ```
 $ make build // Build the app in production mode

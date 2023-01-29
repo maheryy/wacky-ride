@@ -1,5 +1,0 @@
-localhost {
-    file_server {
-        root /srv
-    }
-}
