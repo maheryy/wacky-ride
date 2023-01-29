@@ -9,5 +9,9 @@ const httpServer: HttpServer = createServer(app);
 initializeSocketIOServer(httpServer);
 
 httpServer.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(
+    `[server]: Server is running in ${
+      process.env.APP_ENV || "developement"
+    } mode at http://localhost:${port}`
+  );
 });
