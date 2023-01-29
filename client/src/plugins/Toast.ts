@@ -5,6 +5,7 @@ const options: PluginOptions = {
   position: POSITION.BOTTOM_RIGHT,
   maxToasts: 3,
   timeout: 3000,
+  hideProgressBar: true,
   pauseOnFocusLoss: false,
   filterBeforeCreate: (toast, toasts) => {
     const isDuplicate = toasts.some(({ content }) => toast.content === content);

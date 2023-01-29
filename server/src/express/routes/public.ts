@@ -14,7 +14,6 @@ router.use("/auth", AuthRouter);
 
 router.get("/sse", (req: Request, res: Response) => {
   res.initSSE();
-  res.sendStatus(204);
 });
 
 export default router;

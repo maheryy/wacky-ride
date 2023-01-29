@@ -67,6 +67,14 @@ const logout = () => {
               Admin
             </RouterLink>
           </li>
+          <li v-if="auth.isAdmin">
+            <RouterLink
+              :to="{ name: 'notification' }"
+              class="text-white hover:underline"
+            >
+              Notification
+            </RouterLink>
+          </li>
           <li v-if="auth.isAuthenticated">
             <a
               @click="logout"
@@ -88,4 +96,3 @@ const logout = () => {
     </div>
   </nav>
 </template>
-
