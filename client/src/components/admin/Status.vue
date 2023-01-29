@@ -57,6 +57,7 @@ onUnmounted(() => {
   padding: 1rem;
 
   select {
+    cursor: pointer;
     padding: 0.5rem;
     background: white;
     border: 1px solid black;

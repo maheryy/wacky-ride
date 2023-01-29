@@ -116,6 +116,7 @@ onUnmounted(() => {
 
 <template>
   <section id="room">
+    <h2>Salons de discussion</h2>
     <div id="new-room">
       <input
         type="text"
@@ -125,7 +126,7 @@ onUnmounted(() => {
         maxlength="50"
       />
       <input type="number" v-model="room.limit" min="2" max="50" />
-      <button type="button" @click="createRoom">Create</button>
+      <button type="button" @click="createRoom">Créer</button>
     </div>
     <div id="rooms">
       <template v-for="room in rooms" :key="room?.id">
@@ -143,6 +144,7 @@ onUnmounted(() => {
 <style scoped lang="scss">
 #room {
   display: grid;
+  gap: 1rem;
   grid-auto-flow: row;
 }
 
@@ -150,7 +152,6 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: 1fr auto auto;
   gap: 1rem;
-  padding: 1rem;
 
   input {
     padding: 0.5rem;
@@ -176,10 +177,12 @@ onUnmounted(() => {
 
 #rooms {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
   align-items: center;
-  padding: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(6, 1fr);
+  }
 }
 </style>
 

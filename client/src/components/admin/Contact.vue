@@ -237,6 +237,7 @@ function isUserSortKey(key: string): key is TUserSortKey {
 
 <template>
   <section id="contact">
+    <h2>Demandes de prise en contact</h2>
     <div id="header">
       <div id="filter">
         <select v-model="filter.key">
@@ -328,6 +329,10 @@ function isUserSortKey(key: string): key is TUserSortKey {
       padding: 0.5rem;
     }
 
+    select {
+      cursor: pointer;
+    }
+
     input {
       border: 1px solid black;
     }
@@ -372,13 +377,17 @@ function isUserSortKey(key: string): key is TUserSortKey {
       border: 1px solid black;
     }
 
+    tbody {
+      tr {
+        &:nth-child(odd) {
+          background: #f3f3f3;
+        }
+      }
+    }
+
     tr {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-
-      &:nth-child(even) {
-        background: #f3f3f3;
-      }
     }
 
     th,
