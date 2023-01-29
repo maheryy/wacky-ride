@@ -1,32 +1,63 @@
 # Wacky Ride
 
-## Requirement
+## Requirements
 
 - Docker (with docker-compose)
 - Node
 
-## Get started
+## Try it out
+
+_Shorthand command to run the app for the first time_
+
+```
+make build start seed
+```
+
+_Just run make start_
+```
+make start
+```
+
+## Commands
 
 _Run the entire app through docker_
 
 ```
-docker compose -f docker-compose.demo.yml up -d
+$ make build // Build the app in production mode
+$ make start // Run the app in production mode    
+$ make stop // Stop the running app
+$ make seed // Populate the database with random data
+$ make dev // Get the app ready for development
+$ make start-db // Start a postgres container
+$ make stop-db // Stop the postgres container
 ```
 
-_Install dependencies_
+## Contributing
+
+Get the app ready using the following command
 
 ```
-npm install
+make dev
 ```
 
-_Create database schemas (recreate if already exist)_
+Start a postgres container with the provided docker-compose file
 
 ```
-npm run migrate
+make start-db
 ```
 
-_Populate the database with pre-defined data_
+Populate the database with random data
 
 ```
-npm run seed
+make seed
+```
+
+Then you can start working on client or server separately
+
+```
+cd client && npm run dev
+```
+
+```
+cd server && npm run dev
 ```
