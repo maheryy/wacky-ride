@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import { useAuthStore } from "../../stores";
 import { IContact, TContactWithUser } from "../../types/contact";
@@ -34,6 +35,7 @@ const order = ref<TOrder>("asc");
 const page = ref(1);
 const maxPage = ref(1);
 const canRefresh = ref(false);
+const router = useRouter();
 
 const filteredContacts = computed(() => {
   if (!contacts.value || !filter.value.key) {
@@ -136,13 +138,21 @@ onMounted(() => {
       return;
     }
 
-    const { status, id } = data.contact;
+    const { conversation, contact } = data;
+    const { status, id } = contact;
+    const storeContact = contacts.value[id];
 
-    const contact = contacts.value[id];
-
-    if (contact) {
-      contact.status = status;
+    if (storeContact) {
+      storeContact.status = status;
     }
+
+    toast.success("Contact accepted, click here to go to the conversation", {
+      onClick: () =>
+        router.push({
+          name: "conversation",
+          params: { conversationId: conversation.id },
+        }),
+    });
   });
 
   adminSocket.on("contact:refused", ({ data, errors }) => {
