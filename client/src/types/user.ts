@@ -8,6 +8,17 @@ export const EUserStatus = strEnum(UserStatus);
 
 export type TUserStatus = keyof typeof EUserStatus;
 
+export type TTranslatedUserStatus = {
+  [key in TUserStatus]: string;
+};
+
+export const translatedUserStatus: TTranslatedUserStatus = {
+  online: "En ligne",
+  idle: "Absent",
+  dnd: "Ne pas déranger",
+  invisible: "Invisible",
+};
+
 export interface IUser {
   id: number;
   username: string;
@@ -26,3 +37,4 @@ export interface IUserCredentials {
   email: string;
   password: string;
 }
+

@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted, watch } from "vue";
 import { useToast } from "vue-toastification";
 import { useAuthStore } from "../../stores";
 import { TSocket } from "../../types/socket.io";
-import { UserStatus } from "../../types/user";
+import { translatedUserStatus, UserStatus } from "../../types/user";
 
 const auth = useAuthStore();
 const toast = useToast();
@@ -37,14 +37,30 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="status">
-    <select v-if="status" v-model="status">
+  <section id="status">
+    <label for="status-select">Status</label>
+    <select v-if="status" v-model="status" id="status-select">
       <option v-for="status in UserStatus" :key="status" :value="status">
-        {{ status }}
+        {{ translatedUserStatus[status] }}
       </option>
     </select>
   </section>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+#status {
+  display: grid;
+  grid-template-columns: min-content min-content;
+  align-items: center;
+  justify-content: end;
+  gap: 1rem;
+  padding: 1rem;
+
+  select {
+    padding: 0.5rem;
+    background: white;
+    border: 1px solid black;
+  }
+}
+</style>
 

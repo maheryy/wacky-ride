@@ -5,8 +5,8 @@ import Contact from "../../components/admin/Contact.vue";
 </script>
 
 <template>
-  <Room />
   <Status />
+  <Room />
   <Contact />
 </template>
 
