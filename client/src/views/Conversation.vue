@@ -125,14 +125,17 @@ function endConversation() {
           id="conversation-messages"
           class="conversation__messages__container"
           ref="conversationMessages"
+          v-if="sortedMessages.length"
         >
           <Message
-            v-if="sortedMessages.length"
             v-for="message in sortedMessages"
             :key="message.id"
             :message="message"
           />
         </ul>
+        <div v-else>
+          <p>No messages yet</p>
+        </div>
       </div>
       <div v-if="canSendMessage" class="conversation__input">
         <input type="text" v-model.trim="message" @keyup.enter="sendMessage" />

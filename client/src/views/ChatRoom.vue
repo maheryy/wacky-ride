@@ -100,14 +100,15 @@ onUnmounted(() => {
           id="chat-room-messages"
           class="chat-room__messages__container"
           ref="chatRoomMessages"
+          v-if="sortedMessages.length"
         >
           <Message
-            v-if="sortedMessages.length"
             v-for="message in sortedMessages"
             :key="message.id"
             :message="message"
           />
         </ul>
+        <div v-else>No messages yet</div>
       </div>
       <div class="chat-room__input" v-if="canSendMessage">
         <input type="text" v-model.trim="message" @keyup.enter="sendMessage" />
