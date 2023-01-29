@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "APP_ENV=development nodemon src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "start": "ts-node src/index.ts",
+    "start": "APP_ENV=production ts-node src/index.ts",
     "migrate": "ts-node src/database/migrate.ts",
     "seed": "ts-node src/database/seed.ts"
   },

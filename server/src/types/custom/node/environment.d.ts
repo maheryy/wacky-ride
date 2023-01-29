@@ -6,6 +6,7 @@ declare global {
       PORT: number;
       DB_URI: string;
       JWT_SECRET: string;
+      APP_ENV?: "development" | "production";
     }
   }
 }

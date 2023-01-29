@@ -39,7 +39,6 @@ export function withErrorHandling<TEmitEvents extends EventsMap>(
        * Handles the `error` by emitting an {@link event} with a WackyRideError to the {@link socket}.
        */
       function handleError(error: unknown): boolean {
-        console.error(error);
 
         if (error instanceof ValidationError) {
           return socket.emit(event, WackyRideError.fromValidationError(error));

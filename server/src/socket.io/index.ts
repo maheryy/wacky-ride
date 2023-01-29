@@ -7,13 +7,11 @@ import registerContactHandlers from "./namespaces/main/events/contact";
 import registerConversationHandlers from "./namespaces/main/events/conversation";
 import registerRoomHandlers from "./namespaces/main/events/room";
 import registerUserHandlers from "./namespaces/main/events/user";
+import { getAllowedOrigins } from "../config";
 
 function initializeSocketIOServer(httpServer: HttpServer): void {
   const io: TServer = new SocketIOServer(httpServer, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"],
-    },
+    cors: { origin: getAllowedOrigins() },
   });
 
   io.use(authenticate);

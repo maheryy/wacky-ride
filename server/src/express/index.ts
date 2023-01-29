@@ -5,11 +5,11 @@ import sse from "./middlewares/sse";
 import AdminRouter from "./routes/admin";
 import ProtectedRouter from "./routes/protected";
 import PublicRouter from "./routes/public";
+import { getAllowedOrigins } from "../config";
 
 const app: Express = express();
-const allowedOrigins = ["http://localhost:5173", "https://maheryy.github.io"];
 
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors({ origin: getAllowedOrigins() }));
 app.use(sse());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
