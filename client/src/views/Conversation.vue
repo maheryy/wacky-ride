@@ -59,6 +59,8 @@ watch(
 );
 
 onMounted(() => {
+  bottom.value?.scrollIntoView({ block: "end" });
+
   socket.emit("conversation", conversationId);
 
   socket.on("conversation", ({ data, errors }) => {
@@ -112,12 +114,12 @@ function endConversation() {
   <div class="main-container">
     <section id="conversation">
       <header>
+        <RouterLink to="/conversations" class="back">ᐸ</RouterLink>
         <h3>{{ conversation?.receiver.username }}</h3>
         <button @click="endConversation" v-if="canEndConversation">
           Terminer
         </button>
       </header>
-
       <ul v-if="sortedMessages.length" class="messages">
         <Message
           v-for="message in sortedMessages"
@@ -126,8 +128,8 @@ function endConversation() {
         />
         <div ref="bottom" />
       </ul>
-      <div v-else>
-        <p>No messages yet</p>
+      <div v-else class="no-messages">
+        <p>Il n'y a pas de messages</p>
       </div>
       <div v-if="canSendMessage" class="board">
         <input
@@ -138,8 +140,8 @@ function endConversation() {
         />
         <button @click="sendMessage">Envoyer</button>
       </div>
-      <div v-else>
-        <p>Conversation ended</p>
+      <div v-else class="ended">
+        <p>La conversation est terminé</p>
       </div>
     </section>
   </div>
@@ -155,22 +157,35 @@ function endConversation() {
   border: 1px solid black;
   color: black;
   width: 400px;
+  position: relative;
 
   header {
     display: grid;
-    grid-template-columns: 1fr auto;
+    align-items: center;
+    background: black;
+    position: relative;
+    .back {
+      position: absolute;
+      left: 0.5rem;
+      font-size: 1rem;
+      text-decoration: none;
+      color: white;
+    }
 
     h3 {
       padding: 0.5rem;
       background-color: black;
       color: white;
+      justify-self: center;
     }
 
     button {
+      position: absolute;
+      right: 0;
       padding: 0.5rem;
-      background-color: black;
       color: white;
-      border-bottom: 1px solid black;
+      outline: 1px solid black;
+      height: calc(100% - 1px);
 
       &:hover {
         background-color: white;
@@ -201,6 +216,13 @@ function endConversation() {
     }
   }
 
+  .no-messages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+  }
+
   .board {
     display: flex;
     align-items: center;
@@ -221,6 +243,17 @@ function endConversation() {
       color: white;
       cursor: pointer;
     }
+  }
+
+  .ended {
+    position: absolute;
+    bottom: 0;
+    background: black;
+    color: white;
+    padding: 0.5rem;
+    display: grid;
+    justify-content: center;
+    width: 100%;
   }
 }
 </style>

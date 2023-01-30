@@ -102,19 +102,105 @@ function contact() {
 </script>
 
 <template>
-  <ul v-if="hasConversations">
-    <li v-for="conversation of store.conversations" :key="conversation?.id">
-      <RouterLink
-        :to="{
-          name: 'conversation',
-          params: { conversationId: conversation?.id },
-        }"
-      >
-        {{ conversation?.receiver?.username }}
-      </RouterLink>
-      <span v-if="conversation?.endedAt">Ended</span>
-    </li>
-  </ul>
-  <button @click="contact" v-if="!auth.isAdmin">Contact</button>
+  <div class="main-container">
+    <section id="conversations">
+      <header>
+        <h3>Conversations</h3>
+      </header>
+      <ul v-if="hasConversations">
+        <li v-for="conversation of store.conversations" :key="conversation?.id">
+          <RouterLink
+            :to="{
+              name: 'conversation',
+              params: { conversationId: conversation?.id },
+            }"
+          >
+            <span>{{ conversation?.receiver?.username }}</span>
+            <span class="status" v-if="conversation?.endedAt">Terminé</span>
+          </RouterLink>
+        </li>
+      </ul>
+      <button @click="contact" v-if="!auth.isAdmin">Contact</button>
+    </section>
+  </div>
 </template>
+
+<style scoped lang="scss">
+#conversations {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  max-height: 500px;
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+  width: 400px;
+
+  header {
+    display: grid;
+    justify-content: center;
+    background: black;
+    color: white;
+
+    h3 {
+      padding: 0.5rem;
+    }
+
+    button {
+      padding: 0.5rem;
+      background-color: black;
+      color: white;
+      border-bottom: 1px solid black;
+
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+    }
+  }
+
+  ul {
+    display: grid;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 0.5rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #888;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+    }
+
+    li:nth-child(odd) {
+      background-color: #f3f3f3;
+    }
+
+    li {
+      height: 3rem;
+
+      &:hover {
+        background-color: black;
+        color: white;
+      }
+
+      a {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        text-decoration: none;
+        align-items: center;
+        height: 100%;
+        padding: 0.5rem;
+      }
+    }
+  }
+}
+</style>
 
