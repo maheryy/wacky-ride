@@ -24,7 +24,7 @@
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto autem doloremque dolorum enim eveniet ex facere hic iure laudantium nemo,
           neque obcaecati odio possimus praesentium similique sit soluta voluptas voluptates.</p>
         </div>
-        <div class="relative">
+        <div class="relative h-fit">
           <div class="overlay_classic"/>
           <div class="home_img_1"/>
         </div>
@@ -33,7 +33,7 @@
     <hr class="w-1/2 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
     <section class="mt-10 w-3/4 mb-10">
       <div class="flex justify-around">
-        <div class="relative">
+        <div class="relative h-fit">
           <div class="overlay_classic"/>
           <div class="home_img_2"/>
         </div>
