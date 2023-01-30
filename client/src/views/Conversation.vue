@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted, nextTick, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { TSocket } from "../types/socket.io";
 import Message from "../components/ConversationMessage.vue";
 import { useAuthStore, useConversationStore } from "../stores";
@@ -19,7 +19,7 @@ const conversation = computed(() => store.conversations[conversationId]);
 const message = ref("");
 const socket = auth.socket as TSocket;
 const adminSocket = auth.adminSocket as TSocket;
-const conversationMessages = ref<HTMLUListElement | null>(null);
+const bottom = ref<HTMLDivElement | null>(null);
 
 const canSendMessage = computed(() => conversation.value?.endedAt === null);
 const canEndConversation = computed(() => canSendMessage.value && auth.isAdmin);
@@ -45,23 +45,14 @@ const sendMessage = () => {
 
   socket.emit("conversation:message:send", conversationId, message.value);
 
-  // TODO ? : add directly messageData to messages
-  // Implying that we cannot edit the inserted message without the newly created id from the database
-
   message.value = "";
+
+  bottom.value?.scrollIntoView({ block: "end" });
 };
 
-/* Scroll to the bottom for each new message */
-watch(
-  () => messages.value.length,
-  async () => {
-    await nextTick();
-
-    conversationMessages.value?.scrollIntoView({ block: "end" });
-  }
-);
-
 onMounted(() => {
+  bottom.value?.scrollIntoView({ block: "end" });
+
   socket.emit("conversation", conversationId);
 
   socket.on("conversation", ({ data, errors }) => {
@@ -113,104 +104,148 @@ function endConversation() {
 
 <template>
   <div class="main-container">
-    <div id="conversation" class="conversation">
-      <div class="conversation__header">
+    <section id="conversation">
+      <header>
+        <RouterLink to="/conversations" class="back">ᐸ</RouterLink>
         <h3>{{ conversation?.receiver.username }}</h3>
         <button @click="endConversation" v-if="canEndConversation">
-          End conversation
+          Terminer
         </button>
+      </header>
+      <ul v-if="sortedMessages.length" class="messages">
+        <Message
+          v-for="message in sortedMessages"
+          :key="message.id"
+          :message="message"
+        />
+        <div ref="bottom" />
+      </ul>
+      <div v-else class="no-messages">
+        <p>Il n'y a pas de messages</p>
       </div>
-      <div class="conversation__messages">
-        <ul
-          id="conversation-messages"
-          class="conversation__messages__container"
-          ref="conversationMessages"
-          v-if="sortedMessages.length"
-        >
-          <Message
-            v-for="message in sortedMessages"
-            :key="message.id"
-            :message="message"
-          />
-        </ul>
-        <div v-else>
-          <p>No messages yet</p>
-        </div>
+      <div v-if="canSendMessage" class="board">
+        <input
+          type="text"
+          v-model.trim="message"
+          @keyup.enter="sendMessage"
+          autofocus
+        />
+        <button @click="sendMessage">Envoyer</button>
       </div>
-      <div v-if="canSendMessage" class="conversation__input">
-        <input type="text" v-model.trim="message" @keyup.enter="sendMessage" />
-        <button @click="sendMessage">Send</button>
+      <div v-else class="ended">
+        <p>La conversation est terminé</p>
       </div>
-      <div v-else>
-        <p>Conversation ended</p>
-      </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <style scoped lang="scss">
-.conversation {
-  display: flex;
-  flex-direction: column;
+#conversation {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   height: 500px;
   max-height: 500px;
-  background-color: #fff;
-  border: #999 solid 1px;
-  border-radius: 0.3em;
+  background-color: white;
+  border: 1px solid black;
   color: black;
   width: 400px;
 
-  h3 {
-    padding: 0.5em;
-    background-color: #999;
-    color: white;
+  header {
+    display: grid;
+    align-items: center;
+    background: black;
+    position: relative;
+    .back {
+      position: absolute;
+      left: 0.5rem;
+      font-size: 1rem;
+      text-decoration: none;
+      color: white;
+    }
+
+    h3 {
+      padding: 0.5rem;
+      background-color: black;
+      color: white;
+      justify-self: center;
+    }
+
+    button {
+      position: absolute;
+      right: 0;
+      padding: 0.5rem;
+      color: white;
+      outline: 1px solid black;
+      height: calc(100% - 1px);
+
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+    }
   }
-}
 
-.conversation__header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-}
+  .messages {
+    display: grid;
+    gap: 1rem;
+    overflow-y: auto;
 
-.conversation__messages {
-  flex: 1;
-  overflow-y: auto;
+    &::-webkit-scrollbar {
+      width: 0.5rem;
+    }
 
-  &::-webkit-scrollbar {
-    width: 0.5em;
+    &::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #888;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+    }
+
+    li {
+      height: fit-content;
+    }
   }
 
-  &::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #888;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-  }
-}
-
-.conversation__input {
-  display: flex;
-  align-items: center;
-
-  input {
+  .no-messages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex: 1;
-    padding: 0.5em;
-    border: none;
-    border-top: #999 solid 1px;
   }
 
-  button {
-    padding: 0.5em;
-    border: none;
-    border-top: #999 solid 1px;
-    border-left: #999 solid 1px;
-    background-color: gray;
-    cursor: pointer;
+  .board {
+    display: flex;
+    align-items: center;
+
+    input {
+      flex: 1;
+      padding: 0.5em;
+      border: none;
+      border-top: 1px solid black;
+    }
+
+    button {
+      padding: 0.5rem;
+      border: none;
+      border-top: 1px solid black;
+      border-left: 1px solid black;
+      background-color: black;
+      color: white;
+      cursor: pointer;
+    }
+  }
+
+  .ended {
+    background: black;
+    color: white;
+    padding: 0.5rem;
+    display: grid;
+    justify-content: center;
   }
 }
 </style>
