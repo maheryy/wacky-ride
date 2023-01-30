@@ -55,6 +55,16 @@ const formatDate = (dateString: string) => {
   margin-right: 0.5rem;
 }
 
+.talkableUser {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.talkableUser:hover {
+  color:#2758ce ;
+}
+
+
 .message__meta__date {
   color: #2758ce;
 }
