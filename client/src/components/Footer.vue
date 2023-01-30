@@ -26,12 +26,13 @@ const logout = () => {
             </RouterLink>
           </li>
         </ul>
-        <ul class="flex flex-row mt-0 mr-6 text-white space-x-8 text-sm font-medium">
-          <li>
-            Copyright &copy; 2021 Wacky Ride
-          </li>
+        <ul
+          class="flex flex-row mt-0 mr-6 text-white space-x-8 text-sm font-medium"
+        >
+          <li>Copyright &copy; 2023 Wacky Ride</li>
         </ul>
       </div>
     </div>
   </footer>
 </template>
+
