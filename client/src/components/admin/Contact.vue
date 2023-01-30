@@ -308,11 +308,17 @@ function isUserSortKey(key: string): key is TUserSortKey {
         </tbody>
       </table>
       <div id="pagination">
-        <button @click="onPreviousPage" v-show="page > 1">Précédent</button>
-        <span>{{ page }}</span>
-        <span>/</span>
-        <span>{{ maxPage }}</span>
-        <button @click="onNextPage" v-show="page < maxPage">Suivant</button>
+        <button @click="onPreviousPage" :disabled="page === 1">
+          Précédent
+        </button>
+        <div id="pages">
+          <span>{{ page }}</span>
+          <span>/</span>
+          <span>{{ maxPage }}</span>
+        </div>
+        <button @click="onNextPage" :disabled="page === maxPage">
+          Suivant
+        </button>
       </div>
       <div v-if="count" id="count">
         <span>{{ count }} contacts</span>
@@ -400,7 +406,12 @@ function isUserSortKey(key: string): key is TUserSortKey {
     }
 
     tbody {
+      display: grid;
+      grid-template-rows: repeat(10, 1fr);
+
       tr {
+        height: 4rem;
+
         &:nth-child(odd) {
           background: #f3f3f3;
         }
@@ -468,8 +479,8 @@ function isUserSortKey(key: string): key is TUserSortKey {
 
   #pagination {
     display: grid;
-    grid-auto-flow: column;
-    gap: 0.5rem;
+    grid-template-columns: 10rem auto 10rem;
+    gap: 1rem;
     justify-content: center;
     align-items: center;
 
@@ -478,10 +489,26 @@ function isUserSortKey(key: string): key is TUserSortKey {
       border: 1px solid black;
       background: white;
 
+      &:disabled {
+        background: #f3f3f3;
+        cursor: not-allowed;
+
+        &:hover {
+          background: #f3f3f3;
+          color: black;
+        }
+      }
+
       &:hover {
         background: black;
         color: white;
       }
+    }
+
+    #pages {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
     }
   }
 
