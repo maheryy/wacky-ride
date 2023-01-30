@@ -6,6 +6,7 @@ import { useAuthStore } from "../../stores";
 import { IContact, TContactWithUser } from "../../types/contact";
 import { TSocket } from "../../types/socket.io";
 import { IUser } from "../../types/user";
+import { EContactStatus } from "../../types/contact";
 
 type TContactSortKey = keyof Pick<IContact, "status">;
 
@@ -288,13 +289,19 @@ function isUserSortKey(key: string): key is TUserSortKey {
             <td>{{ contact.user.email }}</td>
             <td>{{ contact.status }}</td>
             <td>
-              <div id="actions">
+              <div
+                id="actions"
+                v-if="contact.status === EContactStatus.pending"
+              >
                 <button @click="onAcceptContact(contact.id)" id="accept">
                   Accept
                 </button>
                 <button @click="onRefuseContact(contact.id)" id="refuse">
                   Refuse
                 </button>
+              </div>
+              <div v-else class="treated">
+                <span>Demande déjà traitée</span>
               </div>
             </td>
           </tr>
@@ -452,6 +459,11 @@ function isUserSortKey(key: string): key is TUserSortKey {
         }
       }
     }
+  }
+
+  .treated {
+    display: grid;
+    justify-content: center;
   }
 
   #pagination {

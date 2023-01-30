@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useToast } from "vue-toastification";
 import { useAuthStore, useConversationStore } from "../stores";
 import { TSocket } from "../types/socket.io";
@@ -8,10 +8,34 @@ const store = useConversationStore();
 const auth = useAuthStore();
 const socket = auth.socket as TSocket;
 const toast = useToast();
+const isEndedConversationDisplayed = ref(false);
+const conversations = computed(() => Object.values(store.conversations));
 
-const hasConversations = computed(
-  () => Object.keys(store.conversations).length > 0
-);
+const filteredConversations = computed(() => {
+  if (isEndedConversationDisplayed.value) {
+    return conversations.value;
+  }
+
+  return conversations.value.filter((conversation) => !conversation?.endedAt);
+});
+
+const sortedConversations = computed(() => {
+  return filteredConversations.value.sort((a, b) => {
+    if (a?.endedAt && b?.endedAt) {
+      return 0;
+    }
+
+    if (a?.endedAt) {
+      return 1;
+    }
+
+    if (b?.endedAt) {
+      return -1;
+    }
+
+    return 0;
+  });
+});
 
 onMounted(() => {
   socket.emit("conversations");
@@ -94,10 +118,17 @@ onUnmounted(() => {
   socket.off("conversations");
   socket.off("contact:created");
   socket.off("contact:pending");
+  socket.off("contact:accepted");
+  socket.off("contact:refused");
+  socket.off("conversation:ended");
 });
 
 function contact() {
   socket.emit("contact:create");
+}
+
+function toggleIsEndedConversationDisplayed() {
+  isEndedConversationDisplayed.value = !isEndedConversationDisplayed.value;
 }
 </script>
 
@@ -107,8 +138,8 @@ function contact() {
       <header>
         <h3>Conversations</h3>
       </header>
-      <ul v-if="hasConversations">
-        <li v-for="conversation of store.conversations" :key="conversation?.id">
+      <ul v-if="conversations.length">
+        <li v-for="conversation of sortedConversations" :key="conversation?.id">
           <RouterLink
             :to="{
               name: 'conversation',
@@ -120,6 +151,16 @@ function contact() {
           </RouterLink>
         </li>
       </ul>
+      <div class="show-ended-conversations">
+        <input
+          v-model="isEndedConversationDisplayed"
+          type="checkbox"
+          id="ended-conversations"
+        />
+        <label for="ended-conversations"
+          >Afficher les conversations terminées</label
+        >
+      </div>
       <button @click="contact" v-if="!auth.isAdmin">Contact</button>
     </section>
   </div>
@@ -127,8 +168,8 @@ function contact() {
 
 <style scoped lang="scss">
 #conversations {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   height: 500px;
   max-height: 500px;
   background-color: white;
@@ -161,6 +202,7 @@ function contact() {
 
   ul {
     display: grid;
+    grid-template-rows: repeat(auto-fill, 3rem);
     overflow-y: auto;
 
     &::-webkit-scrollbar {
@@ -184,8 +226,6 @@ function contact() {
     }
 
     li {
-      height: 3rem;
-
       &:hover {
         background-color: black;
         color: white;
@@ -199,6 +239,21 @@ function contact() {
         height: 100%;
         padding: 0.5rem;
       }
+    }
+  }
+
+  .show-ended-conversations {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-top: 1px solid black;
+    background: black;
+    color: white;
+
+    label {
+      cursor: pointer;
     }
   }
 }
