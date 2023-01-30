@@ -10,7 +10,7 @@ const endStep: Step = {
 const appointmentStep: Step = {
   action: WorkflowActions.CHOICES,
   message: "Quand souhaitez-vous un rendez-vous ?",
-  getPayload: () => dateChoices,
+  getPayload: () => dateChoices(),
   postHandler: (...params: any) => "end",
   next: { end: endStep },
 };
@@ -162,25 +162,47 @@ const workflowChoices: WorkflowPayload[] = [
   },
 ];
 
-const dateChoices = [
-  {
-    label: "Mercredi 10 mars",
-    value: "2021-03-10",
-  },
-  {
-    label: "Jeudi 11 mars",
-    value: "2021-03-11",
-  },
-  {
-    label: "Vendredi 12 mars",
-    value: "2021-03-12",
-  },
-  {
-    label: "Samedi 13 mars",
-    value: "2021-03-13",
-  },
-  {
-    label: "Dimanche 14 mars",
-    value: "2021-03-14",
-  },
-];
+const dateChoices = (): WorkflowPayload[] => {
+  let dates: Date[] = [];
+  let availableDates: Date[] = [];
+
+  do {
+    dates = getRemaingWeekDays(
+      dates.length ? dates[dates.length - 1] : undefined
+    );
+    // TODO: check if not already booked
+    availableDates = dates.filter((day) => true);
+  } while (!availableDates.length);
+
+  return toDateChoicesPayload(availableDates);
+};
+
+const toDateChoicesPayload = (days: Date[]): WorkflowPayload[] => {
+  return days.map((day) => {
+    return {
+      label: Intl.DateTimeFormat("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      }).format(day),
+      value: Intl.DateTimeFormat("fr-FR").format(day),
+    };
+  });
+};
+
+const getRemaingWeekDays = (current?: Date): Date[] => {
+  const days: Date[] = [];
+  let dt = new Date(current || new Date());
+
+  // Go to next sunday if current day is friday or saturday
+  if (dt.getDay() >= 5) {
+    dt.setDate(dt.getDate() + ((7 - dt.getDay()) % 7));
+  }
+
+  while (dt.getDay() < 5) {
+    dt.setDate(dt.getDate() + 1);
+    days.push(new Date(dt));
+  }
+
+  return days;
+};
