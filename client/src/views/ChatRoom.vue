@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted, nextTick } from "vue";
 import { TSocket } from "../types/socket.io";
 import Message from "../components/RoomMessage.vue";
 import { IRoom } from "../types/room";
@@ -25,13 +25,13 @@ const bottom = ref<HTMLDivElement | null>(null);
 const canSendMessage = ref(false);
 
 const sortedMessages = computed(() =>
-    messages.value.slice().sort((a, b) => {
-      if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
-        return 1;
-      }
+  messages.value.slice().sort((a, b) => {
+    if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
+      return 1;
+    }
 
-      return -1;
-    })
+    return -1;
+  })
 );
 
 const sendMessage = () => {
@@ -42,8 +42,6 @@ const sendMessage = () => {
   socket.emit("room:message:send", +roomId, message.value);
 
   message.value = "";
-
-  bottom.value?.scrollIntoView({ block: "end" });
 };
 
 onMounted(() => {
@@ -65,7 +63,7 @@ onMounted(() => {
     store.updateRoom(data.room);
   });
 
-  socket.on("room:message:received", ({ data, errors }) => {
+  socket.on("room:message:received", async ({ data, errors }) => {
     if (errors) {
       for (const error of errors) {
         toast.error(error.message);
@@ -75,6 +73,12 @@ onMounted(() => {
     }
 
     store.addMessage(roomId, data.message);
+
+    if (data.message.author.id === auth.user?.id) {
+      await nextTick();
+
+      bottom.value?.scrollIntoView({ block: "end" });
+    }
   });
 });
 
@@ -94,23 +98,23 @@ onUnmounted(() => {
       </header>
       <ul v-if="sortedMessages.length" class="messages">
         <Message
-            v-for="message in sortedMessages"
-            :key="message.id"
-            :message="message"
+          v-for="message in sortedMessages"
+          :key="message.id"
+          :message="message"
         />
-        <div ref="bottom" />
+        <div ref="bottom" class="bottom" />
       </ul>
       <div v-else class="no-messages">
         <p>Il n'y a pas de messages</p>
       </div>
       <div v-if="canSendMessage" class="board">
         <input
-            type="text"
-            v-model.trim="message"
-            @keyup.enter="sendMessage"
-            autofocus
-            maxlength="255"
-            minlength="1"
+          type="text"
+          v-model.trim="message"
+          @keyup.enter="sendMessage"
+          autofocus
+          maxlength="255"
+          minlength="1"
         />
         <button @click="sendMessage">Envoyer</button>
       </div>
@@ -154,9 +158,11 @@ onUnmounted(() => {
   }
 
   .messages {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
     overflow-y: auto;
+    padding-bottom: 1rem;
 
     &::-webkit-scrollbar {
       width: 0.5rem;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, nextTick } from "vue";
 import { TSocket } from "../types/socket.io";
 import Message from "../components/ConversationMessage.vue";
 import { useAuthStore, useConversationStore } from "../stores";
@@ -29,15 +29,15 @@ const messages = computed(() => {
 });
 
 const sortedMessages = computed(() =>
-    messages.value.slice().sort((a, b) => {
-      if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
-        return 1;
-      }
-      return -1;
-    })
+  messages.value.slice().sort((a, b) => {
+    if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
+      return 1;
+    }
+    return -1;
+  })
 );
 
-const sendMessage = () => {
+const sendMessage = async () => {
   if (!message.value) {
     return;
   }
@@ -45,8 +45,6 @@ const sendMessage = () => {
   socket.emit("conversation:message:send", +conversationId, message.value);
 
   message.value = "";
-
-  bottom.value?.scrollIntoView({ block: "end" });
 };
 
 onMounted(() => {
@@ -65,7 +63,7 @@ onMounted(() => {
     store.updateConversation(data.conversation);
   });
 
-  socket.on("conversation:message:received", ({ data, errors }) => {
+  socket.on("conversation:message:received", async ({ data, errors }) => {
     if (errors) {
       for (const error of errors) {
         toast.error(error.message);
@@ -75,6 +73,12 @@ onMounted(() => {
     }
 
     store.addMessage(conversationId, data.message);
+
+    if (data.message.author.id === auth.user?.id) {
+      await nextTick();
+
+      bottom.value?.scrollIntoView({ block: "end" });
+    }
   });
 
   socket.on("conversation:ended", ({ data, errors }) => {
@@ -113,23 +117,23 @@ function endConversation() {
       </header>
       <ul v-if="sortedMessages.length" class="messages">
         <Message
-            v-for="message in sortedMessages"
-            :key="message.id"
-            :message="message"
+          v-for="message in sortedMessages"
+          :key="message.id"
+          :message="message"
         />
-        <div ref="bottom" />
+        <div ref="bottom" class="bottom" />
       </ul>
       <div v-else class="no-messages">
         <p>Il n'y a pas de messages</p>
       </div>
       <div v-if="canSendMessage" class="board">
         <input
-            type="text"
-            v-model.trim="message"
-            @keyup.enter="sendMessage"
-            autofocus
-            maxlength="255"
-            minlength="1"
+          type="text"
+          v-model.trim="message"
+          @keyup.enter="sendMessage"
+          autofocus
+          maxlength="255"
+          minlength="1"
         />
         <button @click="sendMessage">Envoyer</button>
       </div>
@@ -178,9 +182,11 @@ function endConversation() {
   }
 
   .messages {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
     overflow-y: auto;
+    padding-bottom: 1rem;
 
     &::-webkit-scrollbar {
       width: 0.5rem;

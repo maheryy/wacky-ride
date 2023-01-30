@@ -24,7 +24,7 @@ import Contact from "../../components/admin/Contact.vue";
 </style>
 
 <style>
-.sub_title{
+.sub_title {
   color: #2758ce;
 }
 </style>
