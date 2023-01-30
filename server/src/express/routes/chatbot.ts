@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { CHATBOT_WORKFLOW } from "../../lib/workflow";
+import { CHATBOT_WORKFLOW } from "../../lib/chatbot/workflow";
 import { Step } from "../../types/workflow";
 
 const router: Router = Router();
@@ -24,7 +24,7 @@ router.get("/*", async (req: Request, res: Response) => {
   });
 });
 
-router.post("/*", (req: Request, res: Response) => {
+router.post("/*", async (req: Request, res: Response) => {
   const keys = req.path.split("/").filter((key) => key !== "");
   const step = retrieveStep(keys);
 
@@ -32,7 +32,7 @@ router.post("/*", (req: Request, res: Response) => {
     return res.status(404).send("Not found");
   }
 
-  const next = step.postHandler(...(req.body.params || []));
+  const next = await step.postHandler(req.user, ...(req.body.params || []));
 
   if (next === "quit") {
     return res.json({ next: "workflow/quit" });
