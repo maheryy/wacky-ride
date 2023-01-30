@@ -43,7 +43,7 @@ const sendMessage = () => {
     return;
   }
 
-  socket.emit("conversation:message:send", conversationId, message.value);
+  socket.emit("conversation:message:send", +conversationId, message.value);
 
   message.value = "";
 
@@ -53,7 +53,7 @@ const sendMessage = () => {
 onMounted(() => {
   bottom.value?.scrollIntoView({ block: "end" });
 
-  socket.emit("conversation", conversationId);
+  socket.emit("conversation", +conversationId);
 
   socket.on("conversation", ({ data, errors }) => {
     if (errors) {

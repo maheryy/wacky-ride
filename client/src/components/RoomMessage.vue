@@ -38,7 +38,7 @@ function conversate(receiverId: IUser["id"]) {
     return;
   }
 
-  socket.emit("conversation:conversate", receiverId);
+  socket.emit("conversation:conversate", +receiverId);
 
   socket.once("conversation", ({ data, errors }) => {
     if (errors) {
