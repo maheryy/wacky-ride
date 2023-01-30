@@ -14,19 +14,25 @@ export async function authenticate(
   const { token } = socket.handshake.auth;
 
   if (!token) {
-    return next(new Error("Authentication error: No token provided"));
+    return next(
+      new Error("Erreur d'authentification: Il manque quelque chose là...")
+    );
   }
 
   const payload = await verify(token);
 
   if (!payload) {
-    return next(new Error("Authentication error: Invalid token"));
+    return next(new Error("Erreur d'authentification: Qui êtes-vous ...?"));
   }
 
   const user = await getUserWithConversationsAndRooms(payload.userId);
 
   if (!user) {
-    return next(new Error("Authentication error: User not found"));
+    return next(
+      new Error(
+        "Erreur d'authentification: Il faut croire que vous n'existez pas..."
+      )
+    );
   }
 
   socket.data.user = user.toJSON();
@@ -45,14 +51,23 @@ export function authorize(isAdmin = false) {
   return async (socket: TSocket, next: (error?: Error) => void) => {
     const { user } = socket.data;
 
+    /**
+     * This should never happen, but TypeScript doesn't know that.
+     */
+
     if (!user) {
-      return next(new Error("Authorization error: No user found"));
+      return next(
+        new Error("Erreur d'authentification: l'impossible est arrivé")
+      );
     }
 
     if (isAdmin && !user.isAdmin) {
-      return next(new Error("Authorization error: User is not an admin"));
+      return next(
+        new Error("Erreur d'authentification: Bien essayé, mais non...")
+      );
     }
 
     return next();
   };
 }
+

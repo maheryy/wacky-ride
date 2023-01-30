@@ -39,7 +39,7 @@ const sendMessage = () => {
     return;
   }
 
-  socket.emit("room:message:send", roomId, message.value);
+  socket.emit("room:message:send", +roomId, message.value);
 
   message.value = "";
 
@@ -49,7 +49,7 @@ const sendMessage = () => {
 onMounted(() => {
   bottom.value?.scrollIntoView({ block: "end" });
 
-  socket.emit("room:join", roomId);
+  socket.emit("room:join", +roomId);
 
   socket.on("room:joined", ({ data, errors }) => {
     if (errors) {
@@ -79,7 +79,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  socket.emit("room:leave", roomId);
+  socket.emit("room:leave", +roomId);
   socket.off("room:joined");
   socket.off("room:message:received");
 });

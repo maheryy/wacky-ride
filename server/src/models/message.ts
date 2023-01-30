@@ -48,6 +48,15 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
       },
       content: {
         type: DataTypes.STRING(255),
+        validate: {
+          notEmpty: {
+            msg: "Votre message ne peut pas être vide",
+          },
+          len: {
+            args: [0, 255],
+            msg: "Votre message ne pas dépasser 255 caractères",
+          },
+        },
         allowNull: false,
       },
     },
@@ -58,13 +67,17 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
       validate: {
         bothRoomAndConversation() {
           if (this.roomId && this.conversationId) {
-            throw new Error("Message cannot be in both room and conversation");
+            throw new Error(
+              "Les messages ne peuvent être dans une conversation et un salon en même temps"
+            );
           }
         },
 
         eitherRoomOrConversation() {
           if (!this.roomId && !this.conversationId) {
-            throw new Error("Message must be in either room or conversation");
+            throw new Error(
+              "Les messages doivent être dans une conversation ou un salon"
+            );
           }
         },
       },
@@ -171,3 +184,4 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
 };
 
 export default Message;
+

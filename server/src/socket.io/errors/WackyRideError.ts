@@ -36,6 +36,7 @@ export class WackyRideError extends Error implements IWackyRideError {
       []
     );
 
-    return new WackyRideError("Validation error", errors);
+    return new WackyRideError("Veuillez vérifier les champs", errors);
   }
 }
+

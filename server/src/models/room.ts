@@ -73,7 +73,7 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
         validate: {
           len: {
             args: [2, 50],
-            msg: "Invalid name, length must be between 2 and 50",
+            msg: "Nom invalide, doit être compris entre 2 et 50 caractères",
           },
         },
       },
@@ -84,11 +84,11 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
         validate: {
           min: {
             args: [2],
-            msg: "Invalid limit, must at least 2",
+            msg: "Limit invalide, doit être supérieur à 2",
           },
           max: {
             args: [50],
-            msg: "Invalid limit, must be less than 50",
+            msg: "Limite invalide, doit être inférieur à 50",
           },
         },
       },
@@ -171,3 +171,4 @@ const Room = (sequelize: Sequelize): typeof RoomModel => {
 };
 
 export default Room;
+

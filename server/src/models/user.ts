@@ -104,7 +104,9 @@ const User = (sequelize: Sequelize): typeof UserModel => {
         validate: {
           isIn: {
             args: [UserStatus],
-            msg: "Invalid status, must be one of: " + UserStatus.join(", "),
+            msg:
+              "Status invalide, doit être l'un des suivants: " +
+              UserStatus.join(", "),
           },
         },
       },
@@ -243,3 +245,4 @@ const User = (sequelize: Sequelize): typeof UserModel => {
 };
 
 export default User;
+

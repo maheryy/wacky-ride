@@ -27,6 +27,10 @@ const registerConversationHandlers = (
     conversationId: IConversation["id"],
     content: IMessage["content"]
   ) {
+    if (typeof conversationId !== "number") {
+      throw new WackyRideError("Identifiant de conversation invalide");
+    }
+
     console.log("[socket.io]: conversation:message:send");
 
     const { id: authorId } = socket.data.user;
@@ -34,11 +38,13 @@ const registerConversationHandlers = (
     const conversation = await getConversation(authorId, conversationId);
 
     if (!conversation) {
-      throw new WackyRideError("Conversation not found");
+      throw new WackyRideError("Conversation non trouvée");
     }
 
     if (conversation.endedAt) {
-      throw new WackyRideError("Conversation has ended");
+      throw new WackyRideError(
+        "Conversation terminée, impossible d'envoyer un message"
+      );
     }
 
     const message = await createMessage({
@@ -58,27 +64,37 @@ const registerConversationHandlers = (
   }
 
   async function onConversation(conversationId: IConversation["id"]) {
+    if (typeof conversationId !== "number") {
+      throw new WackyRideError("Identifiant de conversation invalide");
+    }
+
     const conversation = await getConversation(
       socket.data.user.id,
       conversationId
     );
 
     if (!conversation) {
-      throw new WackyRideError("Conversation not found");
+      throw new WackyRideError("Conversation non trouvée");
     }
 
     socket.emit("conversation", { data: { conversation } });
   }
 
   async function onConversate(receiverId: IUser["id"]) {
+    if (typeof receiverId !== "number") {
+      throw new WackyRideError("Identifiant d'utilisateur invalide");
+    }
+
     const receiver = await getUserById(receiverId);
 
     if (!receiver) {
-      throw new WackyRideError("User not found");
+      throw new WackyRideError("Utilisateur non trouvé");
     }
 
     if (receiver.isAdmin) {
-      throw new WackyRideError("You can't discuss with admin");
+      throw new WackyRideError(
+        "Vous ne pouvez pas converser avec un conseiller"
+      );
     }
 
     const { id: senderId } = socket.data.user;

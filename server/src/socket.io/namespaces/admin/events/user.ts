@@ -13,7 +13,7 @@ function registerUserHandlers(io: TUserIO, socket: TUserSocket) {
     const user = await getUserById(socket.data.user.id);
 
     if (!user) {
-      throw new WackyRideError("User not found");
+      throw new WackyRideError("utilisateur non trouvé");
     }
 
     const { id: userId, status: currentUserStatus } = user;
@@ -50,3 +50,4 @@ function registerUserHandlers(io: TUserIO, socket: TUserSocket) {
 }
 
 export default registerUserHandlers;
+

@@ -49,14 +49,18 @@ export function withErrorHandling<TEmitEvents extends EventsMap>(
 
         return socket.emit(
           event,
-          new WackyRideError("Internal Server Error", [
-            {
-              message: "Internal Server Error",
-              extensions: {
-                code: EErrorCode.INTERNAL_SERVER_ERROR,
+          new WackyRideError(
+            "Une erreur est survenue, veuillez contacter le support",
+            [
+              {
+                message:
+                  "Une erreur est survenue, veuillez contacter le support",
+                extensions: {
+                  code: EErrorCode.INTERNAL_SERVER_ERROR,
+                },
               },
-            },
-          ])
+            ]
+          )
         );
       }
 
@@ -72,3 +76,4 @@ export function withErrorHandling<TEmitEvents extends EventsMap>(
     };
   };
 }
+

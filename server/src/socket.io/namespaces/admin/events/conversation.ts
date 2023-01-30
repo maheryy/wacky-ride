@@ -19,12 +19,16 @@ function registerConversationHandlers(
   const handle = withErrorHandling<IConversationEmitEvents>(socket);
 
   async function onConversationEnd(conversationId: IConversation["id"]) {
+    if (typeof conversationId !== "number") {
+      throw new WackyRideError("Identifiant de conversation invalide");
+    }
+
     const { id: adminId } = socket.data.user;
 
     const existingConversation = await getConversation(adminId, conversationId);
 
     if (!existingConversation) {
-      throw new WackyRideError("Conversation not found");
+      throw new WackyRideError("Conversation non trouvée");
     }
 
     const conversation = await endConversation(adminId, conversationId);
