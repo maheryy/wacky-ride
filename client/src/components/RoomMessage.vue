@@ -91,6 +91,7 @@ function conversate(receiverId: IUser["id"]) {
 
 .message__content {
   margin-bottom: 0.5rem;
+  word-break: break-word;
 }
 
 .message__meta {
