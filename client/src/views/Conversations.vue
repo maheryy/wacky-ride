@@ -94,6 +94,9 @@ onUnmounted(() => {
   socket.off("conversations");
   socket.off("contact:created");
   socket.off("contact:pending");
+  socket.off("contact:accepted");
+  socket.off("contact:refused");
+  socket.off("conversation:ended");
 });
 
 function contact() {
