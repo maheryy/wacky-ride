@@ -29,23 +29,98 @@ onMounted(() => {
 </script>
 
 <template>
-  <ul id="chat-rooms">
-    <li
-        class="chat-room"
-        v-if="hasRooms"
-        v-for="room of store.rooms"
-        :key="room?.id"
-    >
-      <RouterLink :to="{ name: 'room', params: { roomId: room?.id } }">
-        {{ room?.name }}
-      </RouterLink>
-    </li>
-  </ul>
+  <div class="main-container">
+    <section id="rooms">
+      <header>
+        <h3>Salons de discussion</h3>
+      </header>
+      <ul>
+        <li v-if="hasRooms" v-for="room of store.rooms" :key="room?.id">
+          <RouterLink :to="{ name: 'room', params: { roomId: room?.id } }">
+            {{ room?.name }}
+          </RouterLink>
+        </li>
+      </ul>
+    </section>
+  </div>
 </template>
 
-<style scoped>
-.chat-room {
-  color: white;
+<style scoped lang="scss">
+#rooms {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  max-height: 500px;
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+  width: 400px;
+
+  header {
+    display: grid;
+    justify-content: center;
+    background: black;
+    color: white;
+
+    h3 {
+      padding: 0.5rem;
+    }
+
+    button {
+      padding: 0.5rem;
+      background-color: black;
+      color: white;
+      border-bottom: 1px solid black;
+
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+    }
+  }
+
+  ul {
+    display: grid;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 0.5rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #888;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+    }
+
+    li:nth-child(odd) {
+      background-color: #f3f3f3;
+    }
+
+    li {
+      height: 3rem;
+
+      &:hover {
+        background-color: black;
+        color: white;
+      }
+
+      a {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        text-decoration: none;
+        align-items: center;
+        height: 100%;
+        padding: 0.5rem;
+      }
+    }
+  }
 }
 </style>
 

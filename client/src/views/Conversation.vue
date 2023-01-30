@@ -19,7 +19,7 @@ const conversation = computed(() => store.conversations[conversationId]);
 const message = ref("");
 const socket = auth.socket as TSocket;
 const adminSocket = auth.adminSocket as TSocket;
-const bottom = ref<HTMLUListElement | null>(null);
+const bottom = ref<HTMLDivElement | null>(null);
 
 const canSendMessage = computed(() => conversation.value?.endedAt === null);
 const canEndConversation = computed(() => canSendMessage.value && auth.isAdmin);
@@ -149,15 +149,14 @@ function endConversation() {
 
 <style scoped lang="scss">
 #conversation {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   height: 500px;
   max-height: 500px;
   background-color: white;
   border: 1px solid black;
   color: black;
   width: 400px;
-  position: relative;
 
   header {
     display: grid;
@@ -214,6 +213,10 @@ function endConversation() {
     &::-webkit-scrollbar-thumb:hover {
       background-color: #555;
     }
+
+    li {
+      height: fit-content;
+    }
   }
 
   .no-messages {
@@ -246,14 +249,11 @@ function endConversation() {
   }
 
   .ended {
-    position: absolute;
-    bottom: 0;
     background: black;
     color: white;
     padding: 0.5rem;
     display: grid;
     justify-content: center;
-    width: 100%;
   }
 }
 </style>
