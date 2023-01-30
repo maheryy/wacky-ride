@@ -38,11 +38,13 @@ const registerConversationHandlers = (
     const conversation = await getConversation(authorId, conversationId);
 
     if (!conversation) {
-      throw new WackyRideError("Conversation not found");
+      throw new WackyRideError("Conversation non trouvée");
     }
 
     if (conversation.endedAt) {
-      throw new WackyRideError("Conversation has ended");
+      throw new WackyRideError(
+        "Conversation terminée, impossible d'envoyer un message"
+      );
     }
 
     const message = await createMessage({
@@ -72,7 +74,7 @@ const registerConversationHandlers = (
     );
 
     if (!conversation) {
-      throw new WackyRideError("Conversation not found");
+      throw new WackyRideError("Conversation non trouvée");
     }
 
     socket.emit("conversation", { data: { conversation } });
@@ -86,11 +88,13 @@ const registerConversationHandlers = (
     const receiver = await getUserById(receiverId);
 
     if (!receiver) {
-      throw new WackyRideError("User not found");
+      throw new WackyRideError("Utilisateur non trouvé");
     }
 
     if (receiver.isAdmin) {
-      throw new WackyRideError("You can't discuss with admin");
+      throw new WackyRideError(
+        "Vous ne pouvez pas converser avec un conseiller"
+      );
     }
 
     const { id: senderId } = socket.data.user;

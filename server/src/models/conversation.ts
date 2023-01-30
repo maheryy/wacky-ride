@@ -87,7 +87,9 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
           }
 
           if (+this.senderId === +this.receiverId) {
-            throw new Error("Sender and receiver must be different");
+            throw new Error(
+              "Vous ne pouvez pas vous envoyer un message à vous-même"
+            );
           }
         },
       },

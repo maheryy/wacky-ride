@@ -28,7 +28,7 @@ function registerConversationHandlers(
     const existingConversation = await getConversation(adminId, conversationId);
 
     if (!existingConversation) {
-      throw new WackyRideError("Conversation not found");
+      throw new WackyRideError("Conversation non trouvée");
     }
 
     const conversation = await endConversation(adminId, conversationId);

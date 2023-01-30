@@ -68,11 +68,11 @@ export async function restoreRoom(roomId: IRoom["id"]) {
     });
 
     if (!room) {
-      throw new WackyRideError("The room does not exist");
+      throw new WackyRideError("Ce salon n'existe pas");
     }
 
     if (!room.deletedAt) {
-      throw new WackyRideError("The room is not deleted");
+      throw new WackyRideError("Ce salon n'était pas supprimé");
     }
 
     await room.restore({ transaction });
@@ -86,3 +86,4 @@ export async function restoreRoom(roomId: IRoom["id"]) {
     throw error;
   }
 }
+

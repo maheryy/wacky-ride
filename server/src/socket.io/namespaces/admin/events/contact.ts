@@ -35,11 +35,11 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
     const contact = await getContactById(contactId);
 
     if (!contact) {
-      throw new WackyRideError("Contact not found");
+      throw new WackyRideError("Demande non trouvée");
     }
 
     if (contact.status !== EContactStatus.pending) {
-      throw new WackyRideError("Contact is not pending");
+      throw new WackyRideError("Demande déjà traitée");
     }
 
     const updatedContact = await updateContactStatus(
@@ -81,11 +81,11 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
     const contact = await getContactById(contactId);
 
     if (!contact) {
-      throw new WackyRideError("Contact not found");
+      throw new WackyRideError("Demande non trouvée");
     }
 
     if (contact.status !== EContactStatus.pending) {
-      throw new WackyRideError("Contact is not pending");
+      throw new WackyRideError("Demande déjà traitée");
     }
 
     const updatedContact = await updateContactStatus(

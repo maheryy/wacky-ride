@@ -22,7 +22,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
     const isUserInRoom = socket.rooms.has(`room:${roomId}`);
 
     if (!isUserInRoom) {
-      throw new WackyRideError("You are not in this room");
+      throw new WackyRideError("Vous n'êtes pas dans ce salon");
     }
 
     const message = await createMessage({
@@ -46,7 +46,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
     const room = await getRoomWithMessages(roomId);
 
     if (!room) {
-      throw new WackyRideError("The room does not exist");
+      throw new WackyRideError("Ce salon n'existe pas");
     }
 
     const sockets = await io.in(`room:${room.id}`).fetchSockets();
@@ -58,7 +58,7 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
     const isRoomFull = uniqueUserIds.size >= room.limit;
 
     if (!socket.data.user.isAdmin && !isUserInRoom && isRoomFull) {
-      throw new WackyRideError("The room is full");
+      throw new WackyRideError("Ce salon est complet");
     }
 
     socket.join(`room:${roomId}`);

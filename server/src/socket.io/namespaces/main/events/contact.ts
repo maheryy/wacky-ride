@@ -26,7 +26,9 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
     const isAdminAvailable = await isAnyAdminOnline(io);
 
     if (!isAdminAvailable) {
-      throw new WackyRideError("No admin is available");
+      throw new WackyRideError(
+        "Aucun conseiller n'est disponible pour le moment, nous vous prions de bien vouloir réessayer ultérieurement"
+      );
     }
 
     const { id: userId } = socket.data.user;
@@ -44,7 +46,7 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
     );
 
     if (notEndedAdvisorConversation) {
-      throw new WackyRideError("An advisor is already helping you");
+      throw new WackyRideError("Un conseiller s'occupe déjà de vous");
     }
 
     const newContact = await createContact(userId);
@@ -58,3 +60,4 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
 }
 
 export default registerContactHandlers;
+
