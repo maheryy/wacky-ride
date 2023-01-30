@@ -64,10 +64,16 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
+        validate: {
+          isBoolean: true,
+        },
       },
       endedAt: {
         allowNull: true,
         type: DataTypes.DATE,
+        validate: {
+          isDate: true,
+        },
       },
     },
     {
@@ -156,3 +162,4 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
 };
 
 export default Conversation;
+

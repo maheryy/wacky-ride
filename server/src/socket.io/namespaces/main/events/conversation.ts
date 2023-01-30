@@ -27,6 +27,10 @@ const registerConversationHandlers = (
     conversationId: IConversation["id"],
     content: IMessage["content"]
   ) {
+    if (typeof conversationId !== "number") {
+      throw new WackyRideError("Identifiant de conversation invalide");
+    }
+
     console.log("[socket.io]: conversation:message:send");
 
     const { id: authorId } = socket.data.user;
@@ -58,6 +62,10 @@ const registerConversationHandlers = (
   }
 
   async function onConversation(conversationId: IConversation["id"]) {
+    if (typeof conversationId !== "number") {
+      throw new WackyRideError("Identifiant de conversation invalide");
+    }
+
     const conversation = await getConversation(
       socket.data.user.id,
       conversationId
@@ -71,6 +79,10 @@ const registerConversationHandlers = (
   }
 
   async function onConversate(receiverId: IUser["id"]) {
+    if (typeof receiverId !== "number") {
+      throw new WackyRideError("Identifiant d'utilisateur invalide");
+    }
+
     const receiver = await getUserById(receiverId);
 
     if (!receiver) {

@@ -28,6 +28,10 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
    * conversation to the client and the user that created the contact.
    */
   async function onContactAccept(contactId: IContact["id"]) {
+    if (typeof contactId !== "number") {
+      throw new WackyRideError("Identifiant de demande invalide");
+    }
+
     const contact = await getContactById(contactId);
 
     if (!contact) {
@@ -70,6 +74,10 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
    * that created the contact.
    */
   async function onContactRefuse(contactId: IContact["id"]) {
+    if (typeof contactId !== "number") {
+      throw new WackyRideError("Identifiant de demande invalide");
+    }
+
     const contact = await getContactById(contactId);
 
     if (!contact) {
@@ -93,6 +101,10 @@ function registerContactHandlers(io: TContactIO, socket: TContactSocket) {
   }
 
   async function onContacts(page: number) {
+    if (typeof page !== "number") {
+      throw new WackyRideError("Numéro de page invalide");
+    }
+
     const data = await getContacts(page);
 
     socket.emit("contacts", { data });

@@ -48,6 +48,15 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
       },
       content: {
         type: DataTypes.STRING(255),
+        validate: {
+          notEmpty: {
+            msg: "Votre message ne peut pas être vide",
+          },
+          len: {
+            args: [0, 255],
+            msg: "Votre message ne pas dépasser 255 caractères",
+          },
+        },
         allowNull: false,
       },
     },
@@ -171,3 +180,4 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
 };
 
 export default Message;
+

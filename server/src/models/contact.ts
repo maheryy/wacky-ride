@@ -37,6 +37,9 @@ const Contact = (sequelize: Sequelize): typeof ContactModel => {
       status: {
         type: DataTypes.ENUM(...ContactStatus),
         allowNull: false,
+        validate: {
+          isIn: [ContactStatus],
+        },
         defaultValue: EContactStatus.pending,
       },
     },
@@ -68,3 +71,4 @@ const Contact = (sequelize: Sequelize): typeof ContactModel => {
 };
 
 export default Contact;
+

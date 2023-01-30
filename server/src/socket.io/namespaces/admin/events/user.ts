@@ -50,3 +50,4 @@ function registerUserHandlers(io: TUserIO, socket: TUserSocket) {
 }
 
 export default registerUserHandlers;
+

@@ -7,6 +7,7 @@ import {
 } from "../../../../services/room.service";
 import { IRoom, TRoomCreate, TRoomUpdate } from "../../../../types/room";
 import { IRoomEmitEvents, TRoomIO, TRoomSocket } from "../../../@types/admin";
+import { WackyRideError } from "../../../errors/WackyRideError";
 import { withErrorHandling } from "../../../helpers/withErrorHandling";
 
 function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
@@ -30,6 +31,10 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   async function onUpdate(fields: TRoomUpdate) {
     const { id, limit, name } = fields;
 
+    if (typeof id !== "number") {
+      throw new WackyRideError("Identifiant de salon invalide");
+    }
+
     const room = { id, limit, name };
 
     await updateRoom(room);
@@ -47,6 +52,10 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
    * Emits `room:deleted` to the client and the main namespace
    */
   async function onDelete(id: IRoom["id"]) {
+    if (typeof id !== "number") {
+      throw new WackyRideError("Identifiant de salon invalide");
+    }
+
     await deleteRoom(id);
 
     socket.emit("room:deleted", { data: { id } });
@@ -60,6 +69,10 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
    * Emits `room:restored` to the client and the main namespace
    */
   async function onRestore(id: IRoom["id"]) {
+    if (typeof id !== "number") {
+      throw new WackyRideError("Identifiant de salon invalide");
+    }
+
     const room = await restoreRoom(id);
 
     socket.emit("room:restored", { data: { room } });
@@ -74,3 +87,4 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 }
 
 export default registerRoomHandlers;
+

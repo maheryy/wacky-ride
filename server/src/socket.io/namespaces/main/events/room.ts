@@ -13,6 +13,10 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   const handle = withErrorHandling<IRoomEmitEvents>(socket);
 
   async function onMessage(roomId: IRoom["id"], content: IMessage["content"]) {
+    if (typeof roomId !== "number") {
+      throw new WackyRideError("Identifiant de salon invalide");
+    }
+
     console.log("[socket.io]: room:message:send");
 
     const isUserInRoom = socket.rooms.has(`room:${roomId}`);
@@ -33,6 +37,10 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   }
 
   async function onJoin(roomId: number) {
+    if (typeof roomId !== "number") {
+      throw new WackyRideError("Identifiant de salon invalide");
+    }
+
     console.log("[socket.io]: room:join", roomId);
 
     const room = await getRoomWithMessages(roomId);
@@ -59,6 +67,10 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   }
 
   async function onLeave(roomId: number) {
+    if (typeof roomId !== "number") {
+      throw new WackyRideError("Identifiant de salon invalide");
+    }
+
     console.log("[socket.io]: room:leave", roomId);
 
     socket.leave(`room:${roomId}`);
@@ -79,3 +91,4 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 }
 
 export default registerRoomHandlers;
+
