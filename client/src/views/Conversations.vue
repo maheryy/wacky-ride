@@ -134,7 +134,7 @@ function toggleIsEndedConversationDisplayed() {
 
 <template>
   <div class="main-container">
-    <section id="conversations">
+    <section id="conversations" class="community">
       <header>
         <RouterLink to="/community" class="back">ᐸ</RouterLink>
         <h3>Conversations</h3>
@@ -169,15 +169,6 @@ function toggleIsEndedConversationDisplayed() {
 
 <style scoped lang="scss">
 #conversations {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  height: 500px;
-  max-height: 500px;
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-  width: 400px;
-
   header {
     display: grid;
     align-items: center;

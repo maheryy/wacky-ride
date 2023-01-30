@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <section id="community">
+    <section id="community" class="community">
       <header>
         <h3>Communauté</h3>
       </header>
@@ -14,15 +14,6 @@
 
 <style scoped lang="scss">
 #community {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  height: 500px;
-  max-height: 500px;
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-  width: 400px;
-
   header {
     display: grid;
     justify-content: center;

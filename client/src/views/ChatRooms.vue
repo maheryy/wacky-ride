@@ -30,7 +30,7 @@ onMounted(() => {
 
 <template>
   <div class="main-container">
-    <section id="rooms">
+    <section id="rooms" class="community">
       <header>
         <RouterLink to="/community" class="back">ᐸ</RouterLink>
         <h3>Salons de discussion</h3>

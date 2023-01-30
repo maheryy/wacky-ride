@@ -87,7 +87,7 @@ onUnmounted(() => {
 
 <template>
   <div class="main-container">
-    <section id="room">
+    <section id="room" class="community">
       <header>
         <RouterLink to="/rooms" class="back">ᐸ</RouterLink>
         <h3>{{ room?.name }}</h3>

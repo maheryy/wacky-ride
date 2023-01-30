@@ -104,7 +104,7 @@ function endConversation() {
 
 <template>
   <div class="main-container">
-    <section id="conversation">
+    <section id="conversation" class="community">
       <header>
         <RouterLink to="/conversations" class="back">ᐸ</RouterLink>
         <h3>{{ conversation?.receiver.username }}</h3>
@@ -143,15 +143,6 @@ function endConversation() {
 
 <style scoped lang="scss">
 #conversation {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  height: 500px;
-  max-height: 500px;
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-  width: 400px;
-
   header {
     display: grid;
     align-items: center;
