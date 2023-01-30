@@ -36,7 +36,6 @@ const formatDate = (dateString: string) => {
   flex-direction: column;
   align-items: flex-start;
   padding: 1rem;
-  border-radius: 0.5rem;
   background-color: #f5f5f5;
   margin-bottom: 1rem;
 }

@@ -295,10 +295,10 @@ function isUserSortKey(key: string): key is TUserSortKey {
                 v-if="contact.status === EContactStatus.pending"
               >
                 <button @click="onAcceptContact(contact.id)" id="accept">
-                  Accept
+                  Accepter
                 </button>
                 <button @click="onRefuseContact(contact.id)" id="refuse">
-                  Refuse
+                  Refuser
                 </button>
               </div>
               <div v-else class="treated">
@@ -358,19 +358,19 @@ function isUserSortKey(key: string): key is TUserSortKey {
       padding: 0.5rem;
       background: white;
       color: #5f8efd;
-      border-radius: 15px;
+      border-radius: 5px;
       border: 1px solid #5f8efd;
     }
 
     input {
-      border-radius: 15px;
+      border-radius: 5px;
       border: 1px solid #5f8efd;
     }
 
     #refresh {
       padding: 0.5rem;
       border: 1px solid #2758ce;
-      border-radius: 15px;
+      border-radius: 5px;
       background: white;
       &:disabled {
         background: #f3f3f3;

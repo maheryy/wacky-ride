@@ -172,7 +172,7 @@ onUnmounted(() => {
   button {
     padding: 0.5rem 1rem;
     border: 1px solid #2758ce;
-    border-radius: 15px;
+    border-radius: 5px;
     background: white;
     cursor: pointer;
 

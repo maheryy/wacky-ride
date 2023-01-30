@@ -27,9 +27,9 @@ const room = reactive(props.initialRoom);
     </div>
     <div class="actions">
       <button @click="updateRoom(room)" type="button" class="update">
-        Update
+        Modifier
       </button>
-      <button @click="deleteRoom(room.id)" class="delete">Delete</button>
+      <button @click="deleteRoom(room.id)" class="delete">Supprimer</button>
     </div>
   </div>
 </template>
@@ -39,7 +39,6 @@ const room = reactive(props.initialRoom);
   display: grid;
   justify-content: center;
   background-color: rgba(95, 142, 253, 0.59);
-  border-radius: 15px;
   gap: 1.5rem;
   padding: 1rem;
 

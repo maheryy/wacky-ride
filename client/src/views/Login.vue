@@ -18,7 +18,7 @@ const form = reactive({
 const onSubmit = async () => {
   try {
     await auth.login(form);
-    router.push({ name: auth.isAdmin ? "admin" : "home" });
+    router.push({ name: auth.isAdmin ? "admin" : "community" });
   } catch (error: unknown) {
     if ((error as AxiosError).response?.status === 401) {
       toast.error("Nom d'utilisateur ou mot de passe incorrect");

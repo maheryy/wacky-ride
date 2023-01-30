@@ -37,7 +37,7 @@ export const loginResolver = (
   auth: TStoreAuth
 ) => {
   if (auth.isAuthenticated) {
-    return next({ name: auth.isAdmin ? "admin" : "home" });
+    return next({ name: auth.isAdmin ? "admin" : "community" });
   }
 
   next();
