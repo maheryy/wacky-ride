@@ -103,12 +103,12 @@ onUnmounted(() => {
     <section id="conversations" class="community">
       <header>
         <RouterLink to="/community" class="back">ᐸ</RouterLink>
-        <h1 class="title_conv text-4xl">Liste de vos conversations</h1>
+        <h3>Conversations</h3>
       </header>
       <ul v-if="conversations.length">
-        <li class="element_list" v-for="conversation of sortedConversations" :key="conversation?.id">
+        <li v-for="conversation of sortedConversations" :key="conversation?.id">
           <RouterLink
-            :to="{
+              :to="{
               name: 'conversation',
               params: { conversationId: conversation?.id },
             }"
@@ -120,12 +120,12 @@ onUnmounted(() => {
       </ul>
       <div class="show-ended-conversations">
         <input
-          v-model="isEndedConversationDisplayed"
-          type="checkbox"
-          id="ended-conversations"
+            v-model="isEndedConversationDisplayed"
+            type="checkbox"
+            id="ended-conversations"
         />
         <label for="ended-conversations"
-          >Afficher les conversations terminées</label
+        >Afficher les conversations terminées</label
         >
       </div>
     </section>
@@ -133,37 +133,12 @@ onUnmounted(() => {
 </template>
 
 <style scoped lang="scss">
-.title_conv {
-  color: #5f8efd;
-}
 #conversations {
-  display: flex;
-  flex-direction: column;
-  height: 500px;
-  max-height: 500px;
-  background-color: white;
-  color: #232323;
-  width: 80%;
-  margin-top:20px;
-
-  .contact_btn{
-    width: fit-content;
-    padding: 10px 20px;
-    margin: auto;
-    height: 50px;
-    background-color: #5f8efd;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 25px;
-  }
-
   header {
     display: grid;
     align-items: center;
     justify-content: center;
-    background: #232323;
+    background: black;
     color: white;
     position: relative;
 
@@ -218,14 +193,8 @@ onUnmounted(() => {
     }
 
     li {
-      height: 3rem;
-      border: 1px solid #C7C7C7FF;
-      border-radius: 20px;
-      padding-left: 1rem;
-      margin: 0.5rem 0;
-
       &:hover {
-        background-color: #5f8efd;
+        background-color: black;
         color: white;
       }
 

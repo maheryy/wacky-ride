@@ -9,12 +9,6 @@ const getRoutes = (auth: TStoreAuth): RouteRecordRaw[] => {
 
   return [
     {
-      path: "/dashboard",
-      name: "dashboard",
-      component: () => import("../views/Dashboard.vue"),
-      ...options,
-    },
-    {
       path: "/community",
       name: "community",
       component: () => import("../views/Community.vue"),

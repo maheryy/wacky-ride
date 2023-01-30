@@ -25,13 +25,13 @@ const bottom = ref<HTMLDivElement | null>(null);
 const canSendMessage = ref(false);
 
 const sortedMessages = computed(() =>
-  messages.value.slice().sort((a, b) => {
-    if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
-      return 1;
-    }
+    messages.value.slice().sort((a, b) => {
+      if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
+        return 1;
+      }
 
-    return -1;
-  })
+      return -1;
+    })
 );
 
 const sendMessage = () => {
@@ -94,9 +94,9 @@ onUnmounted(() => {
       </header>
       <ul v-if="sortedMessages.length" class="messages">
         <Message
-          v-for="message in sortedMessages"
-          :key="message.id"
-          :message="message"
+            v-for="message in sortedMessages"
+            :key="message.id"
+            :message="message"
         />
         <div ref="bottom" />
       </ul>
@@ -105,12 +105,12 @@ onUnmounted(() => {
       </div>
       <div v-if="canSendMessage" class="board">
         <input
-          type="text"
-          v-model.trim="message"
-          @keyup.enter="sendMessage"
-          autofocus
-          maxlength="255"
-          minlength="1"
+            type="text"
+            v-model.trim="message"
+            @keyup.enter="sendMessage"
+            autofocus
+            maxlength="255"
+            minlength="1"
         />
         <button @click="sendMessage">Envoyer</button>
       </div>
@@ -123,22 +123,20 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 #room {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  display: flex;
+  flex-direction: column;
   height: 500px;
   max-height: 500px;
-  background: linear-gradient(to bottom right, #5f8efd, #bd4b4b);
-  color: #262626;
-  width: 600px;
-  border-radius:20px;
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+  width: 400px;
 
   header {
     display: grid;
     align-items: center;
-    background:#5f8efd;
-    border-radius:20px 20px 0 0;
+    background: black;
     position: relative;
-
     .back {
       position: absolute;
       left: 0.5rem;
@@ -149,14 +147,13 @@ onUnmounted(() => {
 
     h3 {
       padding: 0.5rem;
-      background-color: #5f8efd;
+      background-color: black;
       color: white;
       justify-self: center;
     }
   }
 
   .messages {
-    padding: 20px 10px 0 10px;
     display: grid;
     gap: 1rem;
     overflow-y: auto;
@@ -170,17 +167,15 @@ onUnmounted(() => {
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: #5f8efd;
+      background-color: #888;
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background-color: #2758ce;
+      background-color: #555;
     }
 
     li {
       height: fit-content;
-      border-radius: 25px;
-      background-color: rgba(252, 252, 252, 0.45);
     }
   }
 
@@ -196,28 +191,20 @@ onUnmounted(() => {
     align-items: center;
 
     input {
-      background-color: rgba(95, 142, 253, 0.56);
-      color: white;
       flex: 1;
       padding: 0.5em;
-      border-radius: 20px 0 0 20px ;
       border: none;
-      border-top: 2px solid #2758ce;
+      border-top: 1px solid black;
     }
 
     button {
-      padding: 0.5rem 1rem;
+      padding: 0.5rem;
       border: none;
+      border-top: 1px solid black;
+      border-left: 1px solid black;
+      background-color: black;
       color: white;
-      background-color: #2758ce;
       cursor: pointer;
-      border-top: 2px solid #2758ce;
-      border-radius:0 0 20px 0;
-
-      &:hover {
-        background-color: #f3f3f3;
-        color: #2758ce;
-      }
     }
   }
   .can-not-send-message {

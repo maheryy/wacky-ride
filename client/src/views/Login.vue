@@ -15,7 +15,7 @@ const form = reactive({
 const onSubmit = async () => {
   try {
     await auth.login(form);
-    router.push({ name: auth.isAdmin ? "admin" : "dashboard" });
+    router.push({ name: auth.isAdmin ? "admin" : "home" });
   } catch (error: unknown) {
     if ((error as AxiosError).response?.status === 401) {
       alert("Invalid credentials");

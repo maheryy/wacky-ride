@@ -22,23 +22,18 @@ const logout = () => {
               :to="{ name: 'home' }"
               class="text-white hover:underline text-4xl"
             >
-              Wacky Ride
+              <div class="flex flex-row items-center">
+                <img src="../../public/favicon.ico" style="width: 100px">
+                <p class="ml-5">Wacky Ride</p>
+              </div>
             </RouterLink>
           </li>
         </ul>
         <ul class="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
           <li>
             <RouterLink
-              :to="{ name: 'dashboard' }"
-              class="text-white hover:underline cursor-pointer text-lg"
-            >
-              Dashboard
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
               :to="{ name: 'community' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Communauté
             </RouterLink>
