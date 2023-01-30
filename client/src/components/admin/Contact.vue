@@ -147,7 +147,7 @@ onMounted(() => {
       storeContact.status = status;
     }
 
-    toast.success("Contact accepted, click here to go to the conversation", {
+    toast.success("Demande accepté, cliquez ici pour aller à la conversation", {
       onClick: () =>
         router.push({
           name: "conversation",

@@ -85,7 +85,7 @@ onMounted(() => {
 
     roomStore.deleteRoom(data.id);
 
-    toast.success("Room deleted, click to restore", {
+    toast.success("Salon supprimé, cliquez ici pour annuler", {
       timeout: 6000,
       onClick() {
         restoreRoom(data.id);

@@ -61,7 +61,7 @@ onMounted(() => {
       return;
     }
 
-    toast.success("Contact created, an advisor will contact you soon");
+    toast.success("Demande envoyée, un conseiller va vous contacter");
   });
 
   socket.on("contact:pending", ({ errors }) => {
@@ -73,7 +73,7 @@ onMounted(() => {
       return;
     }
 
-    toast.info("You already have a pending contact");
+    toast.info("Vous êtes déjà en attente d'un conseiller");
   });
 
   socket.on("contact:accepted", ({ data, errors }) => {
@@ -98,7 +98,7 @@ onMounted(() => {
       return;
     }
 
-    toast.warning("There is too many contacts, please try again later");
+    toast.warning("Aucun conseiller ne peut vous contacter pour le moment");
   });
 
   socket.on("conversation:ended", ({ data, errors }) => {
