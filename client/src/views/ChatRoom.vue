@@ -109,6 +109,8 @@ onUnmounted(() => {
           v-model.trim="message"
           @keyup.enter="sendMessage"
           autofocus
+          maxlength="255"
+          minlength="1"
         />
         <button @click="sendMessage">Envoyer</button>
       </div>
