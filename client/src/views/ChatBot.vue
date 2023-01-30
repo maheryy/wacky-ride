@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { IChatbotMessage } from "../types/message";
 import {
   WorkflowPayload,
@@ -11,9 +11,8 @@ import ChatBotMessage from "../components/ChatBotMessage.vue";
 import Workflow from "../lib/Workflow";
 
 const messages = ref<IChatbotMessage[]>([]);
-
 const action = ref<WorkflowAction>({ type: WorkflowActionTypes.NONE });
-
+const bottom = ref<HTMLElement | null>(null);
 let workflow: Workflow;
 
 const registerAnswer = async (data: WorkflowPayload) => {
@@ -22,15 +21,20 @@ const registerAnswer = async (data: WorkflowPayload) => {
       isBotMessage: false,
       content: data.label.toString(),
     });
+
     triggerUpdateFromWorkflow();
   }
 };
 
-const triggerUpdateFromWorkflow = () => {
+const triggerUpdateFromWorkflow = async () => {
   messages.value.push({
     isBotMessage: true,
     content: workflow.getMessage(),
   });
+
+  await nextTick();
+
+  bottom.value?.scrollIntoView({ block: "end" });
 
   action.value = {
     type: workflow.getActionType(),
@@ -40,21 +44,9 @@ const triggerUpdateFromWorkflow = () => {
   };
 };
 
-/* Scroll to the bottom for each new message */
-watch(
-  () => [...messages.value],
-  async (newMessages, oldMessages) => {
-    await nextTick();
-    if (newMessages.length > oldMessages.length) {
-      document
-        .getElementById("chat-bot-messages")
-        ?.scrollIntoView({ block: "end" });
-    }
-  }
-);
-
 onMounted(async () => {
   workflow = new Workflow();
+
   if (await workflow.init()) {
     triggerUpdateFromWorkflow();
   }
@@ -62,81 +54,85 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="main-container">
-    <div id="chat-bot" class="chat-bot">
-      <h3>{{ "WackyBot" }}</h3>
-      <div class="chat-bot__messages">
-        <ul id="chat-bot-messages" class="chat-bot__messages__container">
-          <ChatBotMessage
-            v-for="(message, index) in messages"
-            :key="index"
-            :message="message"
-          />
-        </ul>
-      </div>
+  <div class="main-container wacky-tile">
+    <section id="chat-bot" class="community">
+      <header>
+        <RouterLink to="/community" class="back">ᐸ</RouterLink>
+        <h3>Wacky bot</h3>
+      </header>
+      <ul>
+        <ChatBotMessage
+          v-for="(message, index) in messages"
+          :key="index"
+          :message="message"
+        />
+        <div ref="bottom" />
+      </ul>
       <ChatBotAction :action="action" :dispatch="registerAnswer" />
-    </div>
+    </section>
   </div>
 </template>
 
 <style scoped lang="scss">
-.chat-bot {
-  display: flex;
-  flex-direction: column;
-  height: 500px;
-  max-height: 500px;
-  background-color: #fff;
-  border: #999 solid 1px;
-  border-radius: 0.3em;
-  color: black;
-  width: 400px;
+#chat-bot {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 
-  h3 {
-    padding: 0.5em;
-    background-color: #999;
+  header {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    background: black;
     color: white;
-  }
-}
+    position: relative;
 
-.chat-bot__messages {
-  flex: 1;
-  overflow-y: auto;
+    .back {
+      position: absolute;
+      left: 0.5rem;
+      font-size: 1rem;
+      text-decoration: none;
+      color: white;
+    }
 
-  &::-webkit-scrollbar {
-    width: 0.5em;
-  }
+    h3 {
+      padding: 0.5rem;
+    }
 
-  &::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
-  }
+    button {
+      padding: 0.5rem;
+      background-color: black;
+      color: white;
+      border-bottom: 1px solid black;
 
-  &::-webkit-scrollbar-thumb {
-    background-color: #888;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-  }
-}
-
-.chat-bot__input {
-  display: flex;
-  align-items: center;
-
-  input {
-    flex: 1;
-    padding: 0.5em;
-    border: none;
-    border-top: #999 solid 1px;
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+    }
   }
 
-  button {
-    padding: 0.5em;
-    border: none;
-    border-top: #999 solid 1px;
-    border-left: #999 solid 1px;
-    background-color: gray;
-    cursor: pointer;
+  ul {
+    display: grid;
+    grid-auto-rows: min-content;
+    gap: 1rem;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 0.5rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #888;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+    }
   }
 }
 </style>
+

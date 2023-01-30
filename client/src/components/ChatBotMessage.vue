@@ -14,7 +14,7 @@ defineProps<MessageProps>();
       {{ message.content }}
     </div>
     <div class="message__meta" v-if="message.isBotMessage">
-      <span class="message__meta__user">JohnnyBot</span>
+      <span class="message__meta__user">Wacky bot</span>
     </div>
   </li>
 </template>
@@ -26,7 +26,6 @@ defineProps<MessageProps>();
   align-items: flex-start;
   padding: 1rem;
   background-color: #f5f5f5;
-  margin-bottom: 1rem;
 }
 
 .message__content {
@@ -44,3 +43,4 @@ defineProps<MessageProps>();
   margin-right: 0.5rem;
 }
 </style>
+
