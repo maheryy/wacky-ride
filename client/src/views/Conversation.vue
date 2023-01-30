@@ -103,7 +103,7 @@ function endConversation() {
 </script>
 
 <template>
-  <div class="main-container">
+  <div class="main-container wacky-tile">
     <section id="conversation" class="community">
       <header>
         <RouterLink to="/conversations" class="back">ᐸ</RouterLink>

@@ -29,7 +29,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="main-container">
+  <div class="main-container wacky-tile">
     <section id="rooms" class="community">
       <header>
         <RouterLink to="/community" class="back">ᐸ</RouterLink>

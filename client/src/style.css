@@ -31,6 +31,9 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.wacky-tile {
   background-image: url("./assets/wacky-tile.png");
   background-size: 10rem auto;
   background-repeat: repeat;

@@ -86,7 +86,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="main-container">
+  <div class="main-container wacky-tile">
     <section id="room" class="community">
       <header>
         <RouterLink to="/rooms" class="back">ᐸ</RouterLink>

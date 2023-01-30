@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div class="main-container wacky-tile">
     <section id="community" class="community">
       <header>
         <h3>Communauté</h3>
