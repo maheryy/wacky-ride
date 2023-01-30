@@ -98,13 +98,13 @@ onUnmounted(() => {
 });
 
 function endConversation() {
-  adminSocket.emit("conversation:end", conversationId);
+  adminSocket.emit("conversation:end", +conversationId);
 }
 </script>
 
 <template>
-  <div class="main-container">
-    <section id="conversation">
+  <div class="main-container wacky-tile">
+    <section id="conversation" class="community">
       <header>
         <RouterLink to="/conversations" class="back">ᐸ</RouterLink>
         <h3>{{ conversation?.receiver.username }}</h3>
@@ -129,6 +129,8 @@ function endConversation() {
           v-model.trim="message"
           @keyup.enter="sendMessage"
           autofocus
+          maxlength="255"
+          minlength="1"
         />
         <button @click="sendMessage">Envoyer</button>
       </div>
@@ -141,15 +143,6 @@ function endConversation() {
 
 <style scoped lang="scss">
 #conversation {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  height: 500px;
-  max-height: 500px;
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-  width: 400px;
-
   header {
     display: grid;
     align-items: center;

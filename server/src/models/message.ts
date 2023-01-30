@@ -54,7 +54,7 @@ const Message = (sequelize: Sequelize): typeof MessageModel => {
           },
           len: {
             args: [0, 255],
-            msg: "Votre message ne pas dépasser 255 caractères",
+            msg: "Votre message ne peut pas dépasser 255 caractères",
           },
         },
         allowNull: false,

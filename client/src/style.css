@@ -32,3 +32,27 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.wacky-tile {
+  background-image: url("./assets/wacky-tile.png");
+  background-size: 10rem auto;
+  background-repeat: repeat;
+  background-color: #883fab;
+  background-color: white;
+}
+
+.community {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 500px;
+  max-height: 500px;
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+  width: 400px;
+  box-shadow: #883fab 0px 0px 0px 2px, rgb(255, 255, 255) 10px -10px 0px -3px,
+    #efbc3c 10px -10px, rgb(255, 255, 255) 20px -20px 0px -3px,
+    #f16940 20px -20px, rgb(255, 255, 255) 30px -30px 0px -3px,
+    #883fab 30px -30px;
+}
+

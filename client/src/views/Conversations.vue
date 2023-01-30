@@ -52,30 +52,6 @@ onMounted(() => {
     store.updateConversations(data.conversations);
   });
 
-  socket.on("contact:created", ({ errors }) => {
-    if (errors) {
-      for (const error of errors) {
-        toast.error(error.message);
-      }
-
-      return;
-    }
-
-    toast.success("Contact created, an advisor will contact you soon");
-  });
-
-  socket.on("contact:pending", ({ errors }) => {
-    if (errors) {
-      for (const error of errors) {
-        toast.error(error.message);
-      }
-
-      return;
-    }
-
-    toast.info("You already have a pending contact");
-  });
-
   socket.on("contact:accepted", ({ data, errors }) => {
     if (errors) {
       for (const error of errors) {
@@ -85,7 +61,7 @@ onMounted(() => {
       return;
     }
 
-    toast.success("An advisor accepted your contact");
+    toast.success("Un conseiller à accepter votre demande");
     store.setConversation(data.conversation);
   });
 
@@ -98,7 +74,7 @@ onMounted(() => {
       return;
     }
 
-    toast.warning("There is too many contacts, please try again later");
+    toast.warning("Aucun conseiller ne peut vous contacter pour le moment");
   });
 
   socket.on("conversation:ended", ({ data, errors }) => {
@@ -116,26 +92,17 @@ onMounted(() => {
 
 onUnmounted(() => {
   socket.off("conversations");
-  socket.off("contact:created");
-  socket.off("contact:pending");
   socket.off("contact:accepted");
   socket.off("contact:refused");
   socket.off("conversation:ended");
 });
-
-function contact() {
-  socket.emit("contact:create");
-}
-
-function toggleIsEndedConversationDisplayed() {
-  isEndedConversationDisplayed.value = !isEndedConversationDisplayed.value;
-}
 </script>
 
 <template>
-  <div class="main-container">
-    <section id="conversations">
+  <div class="main-container wacky-tile">
+    <section id="conversations" class="community">
       <header>
+        <RouterLink to="/community" class="back">ᐸ</RouterLink>
         <h3>Conversations</h3>
       </header>
       <ul v-if="conversations.length">
@@ -161,27 +128,27 @@ function toggleIsEndedConversationDisplayed() {
           >Afficher les conversations terminées</label
         >
       </div>
-      <button @click="contact" v-if="!auth.isAdmin">Contact</button>
     </section>
   </div>
 </template>
 
 <style scoped lang="scss">
 #conversations {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  height: 500px;
-  max-height: 500px;
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-  width: 400px;
-
   header {
     display: grid;
+    align-items: center;
     justify-content: center;
     background: black;
     color: white;
+    position: relative;
+
+    .back {
+      position: absolute;
+      left: 0.5rem;
+      font-size: 1rem;
+      text-decoration: none;
+      color: white;
+    }
 
     h3 {
       padding: 0.5rem;

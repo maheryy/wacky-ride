@@ -41,6 +41,7 @@ const formatDate = (dateString: string) => {
 
 .message__content {
   margin-bottom: 0.5rem;
+  word-break: break-word;
 }
 
 .message__meta {

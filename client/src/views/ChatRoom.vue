@@ -86,8 +86,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="main-container">
-    <section id="room">
+  <div class="main-container wacky-tile">
+    <section id="room" class="community">
       <header>
         <RouterLink to="/rooms" class="back">ᐸ</RouterLink>
         <h3>{{ room?.name }}</h3>
@@ -109,6 +109,8 @@ onUnmounted(() => {
           v-model.trim="message"
           @keyup.enter="sendMessage"
           autofocus
+          maxlength="255"
+          minlength="1"
         />
         <button @click="sendMessage">Envoyer</button>
       </div>

@@ -51,6 +51,7 @@ export function getContactById(contactId: number) {
 export async function getContacts(page: number) {
   const { rows, count } = await Contact.scope("withUser").findAndCountAll({
     offset: (page - 1) * Contact.limit,
+    order: [["createdAt", "DESC"]],
   });
 
   return {
@@ -84,3 +85,4 @@ export async function updateContactStatus(
 
   return contact;
 }
+
