@@ -1,3 +1,4 @@
+import { AppointmentModel } from "../models/Appointment";
 import { ContactModel } from "../models/contact";
 import { ConversationModel } from "../models/conversation";
 import { MessageModel } from "../models/message";
@@ -10,6 +11,7 @@ export interface IListModel {
   Message: typeof MessageModel;
   Conversation: typeof ConversationModel;
   Contact: typeof ContactModel;
+  Appointment: typeof AppointmentModel;
 }
 
 export type DatabaseModel =
@@ -17,4 +19,5 @@ export type DatabaseModel =
   | typeof RoomModel
   | typeof MessageModel
   | typeof ConversationModel
-  | typeof ContactModel;
+  | typeof ContactModel
+  | typeof AppointmentModel;
