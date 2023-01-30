@@ -64,10 +64,10 @@ function conversate(receiverId: IUser["id"]) {
     </div>
     <div class="message__meta">
       <span
-        :class="{ message__meta__user: true, pointer: canConversate }"
+        :class="{ message__meta__user: true, talkableUser: canConversate }"
         @click="conversate(message.author.id)"
       >
-        {{ message.author.username }} {{ message.author.isAdmin ? "(conseillé)" : "" }}
+        {{ message.author.username }} {{ message.author.isAdmin ? "(conseiller)" : "" }}
       </span>
       <span class="message__meta__date" v-if="message.createdAt">
         {{ formatDate(message.createdAt as unknown as string) }}

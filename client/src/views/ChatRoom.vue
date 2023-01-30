@@ -96,6 +96,8 @@ onUnmounted(() => {
         <RouterLink to="/rooms" class="back">ᐸ</RouterLink>
         <h3>{{ room?.name }}</h3>
       </header>
+      <p class="text-gray-600 text-center italic">Cliquer sur un utilisateur pour communiquer avec lui</p>
+
       <ul v-if="sortedMessages.length" class="messages">
         <Message
           v-for="message in sortedMessages"
