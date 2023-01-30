@@ -11,9 +11,9 @@ export enum WorkflowActions {
 export interface Step {
   action: WorkflowActions;
   message: string;
-  getPayload?: () => Promise<WorkflowPayload[]>;
+  getPayload?: () => WorkflowPayload[];
   postHandler?: (...params: Array<unknown>) => string;
-  next?: unknown;
+  next?: Record<string, Step>;
 }
 
 export interface WorkflowPayload {

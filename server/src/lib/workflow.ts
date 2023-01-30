@@ -1,23 +1,21 @@
-import { WorkflowActions } from "../types/workflow";
+import { Step, WorkflowActions, WorkflowPayload } from "../types/workflow";
 
-const endStep = {
-  end: {
-    action: WorkflowActions.CHOICES,
-    message: "Autre chose ?",
-    getPayload: () => endChoices,
-    postHandler: (...params: any) => (params[0] === "yes" ? "reset" : "quit"),
-  },
+const endStep: Step = {
+  action: WorkflowActions.CHOICES,
+  message: "Autre chose ?",
+  getPayload: () => endChoices,
+  postHandler: (...params: any) => (params[0] === "yes" ? "reset" : "quit"),
 };
 
-const appointmentStep = {
+const appointmentStep: Step = {
   action: WorkflowActions.CHOICES,
   message: "Quand souhaitez-vous un rendez-vous ?",
   getPayload: () => dateChoices,
   postHandler: (...params: any) => "end",
-  next: { ...endStep },
+  next: { end: endStep },
 };
 
-export const CHATBOT_WORKFLOW = {
+export const CHATBOT_WORKFLOW: Step = {
   action: WorkflowActions.CHOICES,
   message:
     "Bonjour, je suis Wacky, votre assistant personnel. Comment puis-je vous aider ?",
@@ -53,7 +51,7 @@ export const CHATBOT_WORKFLOW = {
                   postHandler: (...params: any) => params[0],
                   next: {
                     yes: { ...appointmentStep },
-                    no: { ...endStep.end },
+                    no: { ...endStep },
                   },
                 },
               },
@@ -80,12 +78,12 @@ export const CHATBOT_WORKFLOW = {
       postHandler: (...params: any) => params[0],
       next: {
         phone: {
-          ...endStep.end,
+          ...endStep,
           message:
             "Le numéro de téléphone est le 01 23 45 67 89.\n Autre chose ?",
         },
         email: {
-          ...endStep.end,
+          ...endStep,
           message: "L'adresse email est wacky@contact.com.\n Autre chose ?",
         },
       },
@@ -119,7 +117,7 @@ const contactChoices = [
   },
 ];
 
-const endChoices = [
+const endChoices: WorkflowPayload[] = [
   {
     label: "Oui j'ai encore besoin d'aide",
     value: "yes",
@@ -130,7 +128,7 @@ const endChoices = [
   },
 ];
 
-const usageChoices = [
+const usageChoices: WorkflowPayload[] = [
   {
     label: "Routier",
     value: "road",
@@ -145,7 +143,7 @@ const usageChoices = [
   },
 ];
 
-const workflowChoices = [
+const workflowChoices: WorkflowPayload[] = [
   {
     label: "Vérifier l'entretien de ma moto",
     value: "check",
