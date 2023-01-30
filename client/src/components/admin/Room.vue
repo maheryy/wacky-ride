@@ -25,11 +25,11 @@ function updateRoom(room: TRoomUpdate) {
 }
 
 function deleteRoom(roomId: IRoom["id"]) {
-  adminSocket.emit("room:delete", roomId);
+  adminSocket.emit("room:delete", +roomId);
 }
 
 function restoreRoom(roomId: IRoom["id"]) {
-  adminSocket.emit("room:restore", roomId);
+  adminSocket.emit("room:restore", +roomId);
 }
 
 onMounted(() => {

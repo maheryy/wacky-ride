@@ -102,7 +102,7 @@ const sortedContacts = computed(() => {
 });
 
 // We can't use watchEffect here because emit is synchronous
-watch(page, (newPage) => adminSocket.emit("contacts", newPage), {
+watch(page, (newPage) => adminSocket.emit("contacts", +newPage), {
   immediate: true,
 });
 
@@ -199,15 +199,15 @@ onUnmounted(() => {
 });
 
 function onAcceptContact(contactId: IContact["id"]) {
-  adminSocket.emit("contact:accept", contactId);
+  adminSocket.emit("contact:accept", +contactId);
 }
 
 function onRefuseContact(contactId: IContact["id"]) {
-  adminSocket.emit("contact:refuse", contactId);
+  adminSocket.emit("contact:refuse", +contactId);
 }
 
 function onRefresh() {
-  adminSocket.emit("contacts", page.value);
+  adminSocket.emit("contacts", +page.value);
 }
 
 function onPreviousPage() {

@@ -98,7 +98,7 @@ onUnmounted(() => {
 });
 
 function endConversation() {
-  adminSocket.emit("conversation:end", conversationId);
+  adminSocket.emit("conversation:end", +conversationId);
 }
 </script>
 
