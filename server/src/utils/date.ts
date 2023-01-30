@@ -10,6 +10,7 @@ export const yearDiff = (date1: Date, date2: Date) => {
 export const getRemaingWeekDays = (current?: Date): Date[] => {
   const days: Date[] = [];
   let dt = new Date(current || new Date());
+  dt.setHours(2, 0, 0, 0);
 
   // Go to next sunday if current day is friday or saturday
   if (dt.getDay() >= 5) {

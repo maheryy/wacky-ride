@@ -1,3 +1,4 @@
+import { createAppointment } from "../../services/appointment.service";
 import { IUser } from "../../types/user";
 import { Step, WorkflowActions } from "../../types/workflow";
 import { localStringToDateTime, yearDiff } from "../../utils/date";
@@ -16,7 +17,10 @@ const appointmentStep: Step = {
   getPayload: Choices.date,
   postHandler: async (user: IUser, ...params) => {
     const date = params[0] ? localStringToDateTime(params[0]) : null;
-    console.log(user, date);
+    if (date) {
+      date.setHours(2, 0, 0, 0);
+      await createAppointment({ meetAt: date, userId: user.id });
+    }
     return "end";
   },
   next: {

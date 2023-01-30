@@ -1,3 +1,4 @@
+import { getAppointmentsBetween } from "../../services/appointment.service";
 import { WorkflowPayload } from "../../types/workflow";
 import { getRemaingWeekDays, toDateChoicesPayload } from "../../utils/date";
 
@@ -54,8 +55,13 @@ export const date = async (): Promise<WorkflowPayload[]> => {
     dates = getRemaingWeekDays(
       dates.length ? dates[dates.length - 1] : undefined
     );
-    // TODO: check if not already booked
-    availableDates = dates.filter((day) => true);
+    const appointments = (
+      await getAppointmentsBetween(dates[0], dates[dates.length - 1])
+    ).map((appointment) => appointment.meetAt.toDateString());
+
+    availableDates = dates.filter(
+      (day) => !appointments.includes(day.toDateString())
+    );
   } while (!availableDates.length);
 
   return toDateChoicesPayload(availableDates);
