@@ -17,7 +17,9 @@ import Contact from "../../components/admin/Contact.vue";
   padding: 1rem;
   display: grid;
   grid-auto-flow: row;
+  margin: 0 auto;
   gap: 3rem;
+  max-width: 1080px;
 }
 </style>
 
