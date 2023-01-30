@@ -9,9 +9,25 @@ const auth = useAuthStore();
 const socket = auth.socket as TSocket;
 const toast = useToast();
 
-const hasConversations = computed(
-  () => Object.keys(store.conversations).length > 0
-);
+const conversations = computed(() => Object.values(store.conversations));
+
+const sortedConversations = computed(() => {
+  return conversations.value.sort((a, b) => {
+    if (a?.endedAt && b?.endedAt) {
+      return 0;
+    }
+
+    if (a?.endedAt) {
+      return 1;
+    }
+
+    if (b?.endedAt) {
+      return -1;
+    }
+
+    return 0;
+  });
+});
 
 onMounted(() => {
   socket.emit("conversations");
@@ -110,8 +126,8 @@ function contact() {
       <header>
         <h3>Conversations</h3>
       </header>
-      <ul v-if="hasConversations">
-        <li v-for="conversation of store.conversations" :key="conversation?.id">
+      <ul v-if="conversations.length">
+        <li v-for="conversation of sortedConversations" :key="conversation?.id">
           <RouterLink
             :to="{
               name: 'conversation',
