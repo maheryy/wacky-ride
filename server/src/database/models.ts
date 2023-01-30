@@ -5,6 +5,7 @@ import Message from "../models/message";
 import Room from "../models/room";
 import User from "../models/user";
 import { DatabaseModel, IListModel } from "../types/models";
+import Appointment from "../models/Appointment";
 
 export const getModels = (sequelize: Sequelize): IListModel => {
   const models: IListModel = {
@@ -13,6 +14,7 @@ export const getModels = (sequelize: Sequelize): IListModel => {
     Conversation: Conversation(sequelize),
     Message: Message(sequelize),
     Contact: Contact(sequelize),
+    Appointment: Appointment(sequelize),
   };
 
   Object.values(models).forEach(

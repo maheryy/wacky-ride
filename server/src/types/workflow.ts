@@ -1,3 +1,5 @@
+import { IUser } from "./user";
+
 export enum WorkflowActions {
   BOOLEAN = "boolean",
   DATE = "date",
@@ -12,8 +14,8 @@ export interface Step {
   action: WorkflowActions;
   message: string;
   getPayload?: () => Promise<WorkflowPayload[]>;
-  postHandler?: (...params: Array<unknown>) => string;
-  next?: unknown;
+  postHandler?: (user: IUser, ...params: Array<any>) => Promise<string>;
+  next?: Record<string, Step>;
 }
 
 export interface WorkflowPayload {
