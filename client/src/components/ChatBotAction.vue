@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import {
   WorkflowPayload,
   WorkflowAction,
@@ -14,27 +13,41 @@ interface ActionProps {
 defineProps<ActionProps>();
 
 const form: any = {};
-
 </script>
 
 <template>
   <div class="chat-bot__action">
     <form @submit.prevent="">
       <div v-if="action.type === WorkflowActionTypes.TEXT">
-        <input type="text" name="text" v-model="form.text" required/>
-        <button @click="form.text && dispatch({ value: form.text, label: form.text }); form.text = null">
+        <input type="text" name="text" v-model="form.text" required />
+        <button
+          @click="
+            form.text && dispatch({ value: form.text, label: form.text });
+            form.text = null;
+          "
+        >
           Valider
         </button>
       </div>
       <div v-else-if="action.type === WorkflowActionTypes.NUMBER">
-        <input type="number" name="number" v-model="form.number" required/>
-        <button @click="form.number && dispatch({ value: form.number, label: form.number }); form.number = null">
+        <input type="number" name="number" v-model="form.number" required />
+        <button
+          @click="
+            form.number && dispatch({ value: form.number, label: form.number });
+            form.number = null;
+          "
+        >
           Valider
         </button>
       </div>
       <div v-else-if="action.type === WorkflowActionTypes.DATE">
-        <input type="date" name="date" v-model="form.date" required/>
-        <button @click="form.date && dispatch({ value: form.date, label: form.date }); form.date = null">
+        <input type="date" name="date" v-model="form.date" required />
+        <button
+          @click="
+            form.date && dispatch({ value: form.date, label: form.date });
+            form.date = null;
+          "
+        >
           Valider
         </button>
       </div>
@@ -62,13 +75,26 @@ const form: any = {};
   </div>
 </template>
 
-<style>
+<style scoped lang="scss">
 .chat-bot__action {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  gap: 1rem;
   align-items: flex-start;
   padding: 1rem;
-  background-color: #f5f5f5;
-  margin-bottom: 1rem;
+  background-color: black;
+  color: white;
+}
+
+form {
+  div {
+    display: grid;
+    gap: 0.25rem;
+
+    input {
+      padding: 0.5rem;
+      color: black;
+    }
+  }
 }
 </style>
+
