@@ -18,11 +18,23 @@ const room = reactive(props.initialRoom);
     <div class="fields">
       <div>
         <label :for="`name-${room.id}`">Nom</label>
-        <input v-model="room.name" type="text" :id="`name-${room.id}`" />
+        <input
+          v-model="room.name"
+          type="text"
+          :id="`name-${room.id}`"
+          minLength="2"
+          maxlength="50"
+        />
       </div>
       <div>
         <label :for="`limit-${room.id}`">Limite</label>
-        <input v-model="room.limit" type="number" :id="`limit-${room.id}`" />
+        <input
+          v-model="room.limit"
+          type="number"
+          :id="`limit-${room.id}`"
+          min="2"
+          max="50"
+        />
       </div>
     </div>
     <div class="actions">
