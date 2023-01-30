@@ -248,7 +248,7 @@ function isUserSortKey(key: string): key is TUserSortKey {
 
 <template>
   <section id="contact">
-    <h2>Demandes de prise en contact</h2>
+    <h2 class="text-2xl sub_title">Demande de contacts : </h2>
     <div id="header">
       <div id="filter">
         <select v-model="filter.key">
@@ -256,17 +256,18 @@ function isUserSortKey(key: string): key is TUserSortKey {
             {{ key }}
           </option>
         </select>
-        <input v-model="filter.search" type="text" />
+        <input v-model="filter.search" type="text" placeholder="élément à filtrer"/>
+        <button
+            @click="onRefresh"
+            id="refresh"
+            :disabled="!canRefresh"
+            :class="{ highlighted: canRefresh }"
+        >
+          Rafraîchir
+        </button>
       </div>
-      <button
-        @click="onRefresh"
-        id="refresh"
-        :disabled="!canRefresh"
-        :class="{ highlighted: canRefresh }"
-      >
-        Rafraîchir
-      </button>
     </div>
+    <hr/>
     <div v-if="sortedContacts" id="contacts">
       <table>
         <thead>
@@ -294,10 +295,10 @@ function isUserSortKey(key: string): key is TUserSortKey {
                 v-if="contact.status === EContactStatus.pending"
               >
                 <button @click="onAcceptContact(contact.id)" id="accept">
-                  Accept
+                  Accepter
                 </button>
                 <button @click="onRefuseContact(contact.id)" id="refuse">
-                  Refuse
+                  Refuser
                 </button>
               </div>
               <div v-else class="treated">
@@ -338,14 +339,14 @@ function isUserSortKey(key: string): key is TUserSortKey {
 }
 
 #header {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
   gap: 1rem;
 
   #filter {
-    display: grid;
-    grid-template-columns: auto 1fr;
+    display: flex;
+    justify-content: space-around;
     gap: 1rem;
+    max-width: 600px;
 
     input,
     select {
@@ -354,42 +355,38 @@ function isUserSortKey(key: string): key is TUserSortKey {
 
     select {
       cursor: pointer;
+      padding: 0.5rem;
+      background: white;
+      color: #5f8efd;
+      border-radius: 5px;
+      border: 1px solid #5f8efd;
     }
 
     input {
-      border: 1px solid black;
+      border-radius: 5px;
+      border: 1px solid #5f8efd;
     }
 
-    select {
+    #refresh {
+      padding: 0.5rem;
+      border: 1px solid #2758ce;
+      border-radius: 5px;
       background: white;
-      border: 1px solid black;
-    }
-  }
-
-  #refresh {
-    display: grid;
-    justify-content: end;
-
-    padding: 0.5rem;
-    border: 1px solid black;
-    background: white;
-
-    &:disabled {
-      background: #f3f3f3;
-      cursor: not-allowed;
-    }
-
-    &.highlighted {
-      animation: highlight 1s ease-in-out infinite alternate;
-
-      @keyframes highlight {
-        0% {
-          background: white;
-          color: black;
-        }
-        100% {
-          background: black;
-          color: white;
+      &:disabled {
+        background: #f3f3f3;
+        cursor: not-allowed;
+      }
+      &.highlighted {
+        animation: highlight 1s ease-in-out infinite alternate;
+        @keyframes highlight {
+          0% {
+            background: white;
+            color: #2758ce;
+          }
+          100% {
+            background: #2758ce;
+            color: white;
+          }
         }
       }
     }
@@ -402,7 +399,7 @@ function isUserSortKey(key: string): key is TUserSortKey {
 
   table {
     thead {
-      border: 1px solid black;
+      background-color: #ececec;
     }
 
     tbody {
@@ -413,7 +410,7 @@ function isUserSortKey(key: string): key is TUserSortKey {
         height: 4rem;
 
         &:nth-child(odd) {
-          background: #f3f3f3;
+          background: rgba(39, 88, 206, 0.19);
         }
       }
     }
@@ -448,24 +445,24 @@ function isUserSortKey(key: string): key is TUserSortKey {
 
       button {
         padding: 0.5rem;
-        border: 1px solid black;
+        border: 1px solid #bbbbbb;
         background: white;
       }
 
       #accept {
-        color: green;
+        color: #6abb6a;
 
         &:hover {
-          background: green;
+          background: #6abb6a;
           color: white;
         }
       }
 
       #refuse {
-        color: red;
+        color: #d94f4f;
 
         &:hover {
-          background: red;
+          background: #d94f4f;
           color: white;
         }
       }

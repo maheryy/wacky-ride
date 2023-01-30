@@ -60,7 +60,9 @@ onUnmounted(() => {
     cursor: pointer;
     padding: 0.5rem;
     background: white;
-    border: 1px solid black;
+    color: #5f8efd;
+    border-radius: 5px;
+    border: 1px solid #5f8efd;
   }
 }
 </style>

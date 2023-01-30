@@ -20,25 +20,20 @@ const logout = () => {
           <li>
             <RouterLink
               :to="{ name: 'home' }"
-              class="text-white hover:underline text-4xl"
+              class="text-white text-4xl"
             >
-              Wacky Ride
+              <div class="flex flex-row items-center">
+                <img src="../../public/favicon.ico" style="width: 75px">
+                <p class="ml-5">Wacky Ride</p>
+              </div>
             </RouterLink>
           </li>
         </ul>
         <ul class="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
           <li>
             <RouterLink
-              :to="{ name: 'dashboard' }"
-              class="text-white hover:underline"
-            >
-              Dashboard
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
               :to="{ name: 'community' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Communauté
             </RouterLink>
@@ -46,7 +41,7 @@ const logout = () => {
           <li v-if="auth.isAuthenticated && !auth.isAdmin">
             <RouterLink
               :to="{ name: 'chatbot' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Chatbot
             </RouterLink>
@@ -54,7 +49,7 @@ const logout = () => {
           <li v-if="auth.isAdmin">
             <RouterLink
               :to="{ name: 'admin' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Admin
             </RouterLink>
@@ -62,7 +57,7 @@ const logout = () => {
           <li v-if="auth.isAdmin">
             <RouterLink
               :to="{ name: 'notification' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Notification
             </RouterLink>
@@ -70,7 +65,7 @@ const logout = () => {
           <li v-if="auth.isAuthenticated">
             <a
               @click="logout"
-              class="text-white hover:underline cursor-pointer"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Logout
             </a>
@@ -78,7 +73,7 @@ const logout = () => {
           <li v-else>
             <RouterLink
               :to="{ name: 'login' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Login
             </RouterLink>

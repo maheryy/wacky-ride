@@ -108,7 +108,7 @@ onUnmounted(() => {
       <ul v-if="conversations.length">
         <li v-for="conversation of sortedConversations" :key="conversation?.id">
           <RouterLink
-            :to="{
+              :to="{
               name: 'conversation',
               params: { conversationId: conversation?.id },
             }"
@@ -120,12 +120,12 @@ onUnmounted(() => {
       </ul>
       <div class="show-ended-conversations">
         <input
-          v-model="isEndedConversationDisplayed"
-          type="checkbox"
-          id="ended-conversations"
+            v-model="isEndedConversationDisplayed"
+            type="checkbox"
+            id="ended-conversations"
         />
         <label for="ended-conversations"
-          >Afficher les conversations terminées</label
+        >Afficher les conversations terminées</label
         >
       </div>
     </section>

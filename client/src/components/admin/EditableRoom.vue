@@ -27,9 +27,9 @@ const room = reactive(props.initialRoom);
     </div>
     <div class="actions">
       <button @click="updateRoom(room)" type="button" class="update">
-        Update
+        Modifier
       </button>
-      <button @click="deleteRoom(room.id)" class="delete">Delete</button>
+      <button @click="deleteRoom(room.id)" class="delete">Supprimer</button>
     </div>
   </div>
 </template>
@@ -37,7 +37,8 @@ const room = reactive(props.initialRoom);
 <style scoped lang="scss">
 .editable-room {
   display: grid;
-  border: 1px solid black;
+  justify-content: center;
+  background-color: rgba(95, 142, 253, 0.59);
   gap: 1.5rem;
   padding: 1rem;
 
@@ -47,8 +48,10 @@ const room = reactive(props.initialRoom);
 
     input {
       width: 100%;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid black;
+      background-color: rgba(39, 88, 206, 0.75);
+      padding:0.5rem 1rem;
+      color: white;
+      border-bottom: 1px solid #2758ce;
 
       &:focus {
         outline: none;
@@ -68,18 +71,18 @@ const room = reactive(props.initialRoom);
 
       &.update {
         padding: 0.5rem;
-        border: 1px solid black;
-        color: green;
+        border: 1px solid #bbbbbb;
+        color: #6abb6a;
 
         &:hover {
-          background-color: green;
+          background-color: #6abb6a;
           color: white;
         }
       }
     }
 
     .delete {
-      color: red;
+      color: #d94f4f;
       cursor: pointer;
       width: fit-content;
     }

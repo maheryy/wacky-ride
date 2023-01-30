@@ -25,13 +25,13 @@ const bottom = ref<HTMLDivElement | null>(null);
 const canSendMessage = ref(false);
 
 const sortedMessages = computed(() =>
-  messages.value.slice().sort((a, b) => {
-    if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
-      return 1;
-    }
+    messages.value.slice().sort((a, b) => {
+      if (dayjs(a.createdAt).isAfter(dayjs(b.createdAt))) {
+        return 1;
+      }
 
-    return -1;
-  })
+      return -1;
+    })
 );
 
 const sendMessage = () => {
@@ -94,9 +94,9 @@ onUnmounted(() => {
       </header>
       <ul v-if="sortedMessages.length" class="messages">
         <Message
-          v-for="message in sortedMessages"
-          :key="message.id"
-          :message="message"
+            v-for="message in sortedMessages"
+            :key="message.id"
+            :message="message"
         />
         <div ref="bottom" />
       </ul>
@@ -105,12 +105,12 @@ onUnmounted(() => {
       </div>
       <div v-if="canSendMessage" class="board">
         <input
-          type="text"
-          v-model.trim="message"
-          @keyup.enter="sendMessage"
-          autofocus
-          maxlength="255"
-          minlength="1"
+            type="text"
+            v-model.trim="message"
+            @keyup.enter="sendMessage"
+            autofocus
+            maxlength="255"
+            minlength="1"
         />
         <button @click="sendMessage">Envoyer</button>
       </div>

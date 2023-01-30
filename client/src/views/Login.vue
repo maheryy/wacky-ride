@@ -3,9 +3,12 @@ import { useRouter } from "vue-router";
 import { reactive } from "vue";
 import { useAuthStore } from "../stores";
 import { AxiosError } from "axios";
+import {useToast} from "vue-toastification";
 
 const router = useRouter();
 const auth = useAuthStore();
+const toast = useToast();
+
 
 const form = reactive({
   email: "",
@@ -15,12 +18,12 @@ const form = reactive({
 const onSubmit = async () => {
   try {
     await auth.login(form);
-    router.push({ name: auth.isAdmin ? "admin" : "dashboard" });
+    router.push({ name: auth.isAdmin ? "admin" : "community" });
   } catch (error: unknown) {
     if ((error as AxiosError).response?.status === 401) {
-      alert("Invalid credentials");
+      toast.error("Nom d'utilisateur ou mot de passe incorrect");
     } else {
-      alert("Something went wrong");
+      toast.error("Une erreur est survenue");
     }
   }
 };
@@ -29,12 +32,13 @@ const onSubmit = async () => {
 <template>
   <div class="main-container">
     <div class="form-wrapper w-80">
+      <h1 class="text-center text-3xl text-gray-600">Login</h1>
       <form @submit.prevent="onSubmit" class="flex flex-col gap-4 py-8">
         <input
           type="text"
           placeholder="email"
           name="email"
-          class="px-2 py-2 rounded-md text-black"
+          class="px-2 py-2 rounded-md text-black border-2 border-gray-300"
           v-model="form.email"
           required
         />
@@ -42,7 +46,7 @@ const onSubmit = async () => {
           type="password"
           placeholder="password"
           name="password"
-          class="px-2 py-2 rounded-md text-black"
+          class="px-2 py-2 rounded-md text-black border-2 border-gray-300"
           v-model="form.password"
           required
         />
