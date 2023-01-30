@@ -30,7 +30,7 @@ const logout = () => {
           <li>
             <RouterLink
               :to="{ name: 'dashboard' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Dashboard
             </RouterLink>
@@ -46,7 +46,7 @@ const logout = () => {
           <li v-if="auth.isAuthenticated && !auth.isAdmin">
             <RouterLink
               :to="{ name: 'chatbot' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Chatbot
             </RouterLink>
@@ -54,7 +54,7 @@ const logout = () => {
           <li v-if="auth.isAdmin">
             <RouterLink
               :to="{ name: 'admin' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Admin
             </RouterLink>
@@ -62,7 +62,7 @@ const logout = () => {
           <li v-if="auth.isAdmin">
             <RouterLink
               :to="{ name: 'notification' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Notification
             </RouterLink>
@@ -70,7 +70,7 @@ const logout = () => {
           <li v-if="auth.isAuthenticated">
             <a
               @click="logout"
-              class="text-white hover:underline cursor-pointer"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Logout
             </a>
@@ -78,7 +78,7 @@ const logout = () => {
           <li v-else>
             <RouterLink
               :to="{ name: 'login' }"
-              class="text-white hover:underline"
+              class="text-white hover:underline cursor-pointer text-lg"
             >
               Login
             </RouterLink>

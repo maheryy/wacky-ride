@@ -123,20 +123,22 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 #room {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   height: 500px;
   max-height: 500px;
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-  width: 400px;
+  background: linear-gradient(to bottom right, #5f8efd, #bd4b4b);
+  color: #262626;
+  width: 600px;
+  border-radius:20px;
 
   header {
     display: grid;
     align-items: center;
-    background: black;
+    background:#5f8efd;
+    border-radius:20px 20px 0 0;
     position: relative;
+
     .back {
       position: absolute;
       left: 0.5rem;
@@ -147,13 +149,14 @@ onUnmounted(() => {
 
     h3 {
       padding: 0.5rem;
-      background-color: black;
+      background-color: #5f8efd;
       color: white;
       justify-self: center;
     }
   }
 
   .messages {
+    padding: 20px 10px 0 10px;
     display: grid;
     gap: 1rem;
     overflow-y: auto;
@@ -167,15 +170,17 @@ onUnmounted(() => {
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: #888;
+      background-color: #5f8efd;
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background-color: #555;
+      background-color: #2758ce;
     }
 
     li {
       height: fit-content;
+      border-radius: 25px;
+      background-color: rgba(252, 252, 252, 0.45);
     }
   }
 
@@ -191,20 +196,28 @@ onUnmounted(() => {
     align-items: center;
 
     input {
+      background-color: rgba(95, 142, 253, 0.56);
+      color: white;
       flex: 1;
       padding: 0.5em;
+      border-radius: 20px 0 0 20px ;
       border: none;
-      border-top: 1px solid black;
+      border-top: 2px solid #2758ce;
     }
 
     button {
-      padding: 0.5rem;
+      padding: 0.5rem 1rem;
       border: none;
-      border-top: 1px solid black;
-      border-left: 1px solid black;
-      background-color: black;
       color: white;
+      background-color: #2758ce;
       cursor: pointer;
+      border-top: 2px solid #2758ce;
+      border-radius:0 0 20px 0;
+
+      &:hover {
+        background-color: #f3f3f3;
+        color: #2758ce;
+      }
     }
   }
   .can-not-send-message {

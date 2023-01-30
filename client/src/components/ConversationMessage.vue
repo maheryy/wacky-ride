@@ -56,7 +56,7 @@ const formatDate = (dateString: string) => {
 }
 
 .message__meta__date {
-  color: #999;
+  color: #2758ce;
 }
 
 .message__meta__date::before {

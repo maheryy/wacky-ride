@@ -33,7 +33,7 @@ onMounted(() => {
     <section id="rooms" class="community">
       <header>
         <RouterLink to="/community" class="back">ᐸ</RouterLink>
-        <h3>Salons de discussion</h3>
+        <h3 class="text-4xl title_rooms">Salons de discussion</h3>
       </header>
       <ul>
         <li v-if="hasRooms" v-for="room of store.rooms" :key="room?.id">
@@ -47,21 +47,29 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+
+.title_rooms {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #5f8efd;
+
+}
 #rooms {
   display: flex;
   flex-direction: column;
   height: 500px;
   max-height: 500px;
   background-color: white;
-  border: 1px solid black;
-  color: black;
-  width: 400px;
+  color: #232323;
+  width: 80%;
+  margin-top:20px;
 
   header {
     display: grid;
     align-items: center;
     justify-content: center;
-    background: black;
+    background: #232323;
     color: white;
     position: relative;
     .back {
@@ -115,9 +123,13 @@ onMounted(() => {
 
     li {
       height: 3rem;
+      border: 1px solid #C7C7C7FF;
+      border-radius: 20px;
+      padding-left: 1rem;
+      margin: 0.5rem 0;
 
       &:hover {
-        background-color: black;
+        background-color: #5f8efd;
         color: white;
       }
 

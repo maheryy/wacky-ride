@@ -116,18 +116,26 @@ onUnmounted(() => {
 
 <template>
   <section id="room">
-    <h2>Salons de discussion</h2>
-    <div id="new-room">
-      <input
-        type="text"
-        v-model="room.name"
-        placeholder="Retour d’expérience"
-        minlength="2"
-        maxlength="50"
-      />
-      <input type="number" v-model="room.limit" min="2" max="50" />
-      <button type="button" @click="createRoom">Créer</button>
+    <h2 class="text-2xl sub_title">Ajouter un salon de discussion : </h2>
+    <div id="new-room" class="flex flex-col ml-10">
+      <div class="row">
+        <input
+            type="text"
+            v-model="room.name"
+            placeholder="Nom du salon"
+            minlength="2"
+            maxlength="50"
+        />
+      </div>
+      <div class="mt-5">
+        <input type="number" v-model="room.limit" min="2" max="50" class="mr-5"/>
+        <button type="button" @click="createRoom" >Créer</button>
+      </div>
     </div>
+    <div class="flex justify-center">
+      <hr class="w-1/2"/>
+    </div>
+    <h2 class="text-2xl sub_title">Liste des salons de discussion : </h2>
     <div id="rooms">
       <template v-for="room in rooms" :key="room?.id">
         <EditableRoom
@@ -149,13 +157,12 @@ onUnmounted(() => {
 }
 
 #new-room {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 1rem;
+  display: flex;
 
   input {
     padding: 0.5rem;
-    border: 1px solid black;
+    border: 1px solid #a1a1a1;
+    border-radius: 0.5rem;
 
     &:invalid {
       color: red;
@@ -163,22 +170,24 @@ onUnmounted(() => {
   }
 
   button {
-    padding: 0.5rem;
-    border: 1px solid black;
-    background-color: white;
+    padding: 0.5rem 1rem;
+    border: 1px solid #2758ce;
+    border-radius: 15px;
+    background: white;
     cursor: pointer;
 
     &:hover {
-      background-color: black;
+      background-color: #2758ce;
       color: white;
     }
   }
 }
 
 #rooms {
-  display: grid;
-  gap: 1rem;
+  display: flex;
+  justify-content: space-around;
   align-items: center;
+  margin: 1rem 0;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(6, 1fr);

@@ -103,10 +103,10 @@ onUnmounted(() => {
     <section id="conversations" class="community">
       <header>
         <RouterLink to="/community" class="back">ᐸ</RouterLink>
-        <h3>Conversations</h3>
+        <h1 class="title_conv text-4xl">Liste de vos conversations</h1>
       </header>
       <ul v-if="conversations.length">
-        <li v-for="conversation of sortedConversations" :key="conversation?.id">
+        <li class="element_list" v-for="conversation of sortedConversations" :key="conversation?.id">
           <RouterLink
             :to="{
               name: 'conversation',
@@ -133,12 +133,37 @@ onUnmounted(() => {
 </template>
 
 <style scoped lang="scss">
+.title_conv {
+  color: #5f8efd;
+}
 #conversations {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  max-height: 500px;
+  background-color: white;
+  color: #232323;
+  width: 80%;
+  margin-top:20px;
+
+  .contact_btn{
+    width: fit-content;
+    padding: 10px 20px;
+    margin: auto;
+    height: 50px;
+    background-color: #5f8efd;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 25px;
+  }
+
   header {
     display: grid;
     align-items: center;
     justify-content: center;
-    background: black;
+    background: #232323;
     color: white;
     position: relative;
 
@@ -193,8 +218,14 @@ onUnmounted(() => {
     }
 
     li {
+      height: 3rem;
+      border: 1px solid #C7C7C7FF;
+      border-radius: 20px;
+      padding-left: 1rem;
+      margin: 0.5rem 0;
+
       &:hover {
-        background-color: black;
+        background-color: #5f8efd;
         color: white;
       }
 
