@@ -19,12 +19,11 @@ import Contact from "../../components/admin/Contact.vue";
   grid-auto-flow: row;
   margin: 0 auto;
   gap: 3rem;
-  max-width: 1080px;
 }
 </style>
 
 <style>
-.sub_title{
+.sub_title {
   color: #2758ce;
 }
 </style>
