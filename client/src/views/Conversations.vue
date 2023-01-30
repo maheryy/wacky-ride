@@ -52,30 +52,6 @@ onMounted(() => {
     store.updateConversations(data.conversations);
   });
 
-  socket.on("contact:created", ({ errors }) => {
-    if (errors) {
-      for (const error of errors) {
-        toast.error(error.message);
-      }
-
-      return;
-    }
-
-    toast.success("Demande envoyée, un conseiller va vous contacter");
-  });
-
-  socket.on("contact:pending", ({ errors }) => {
-    if (errors) {
-      for (const error of errors) {
-        toast.error(error.message);
-      }
-
-      return;
-    }
-
-    toast.info("Vous êtes déjà en attente d'un conseiller");
-  });
-
   socket.on("contact:accepted", ({ data, errors }) => {
     if (errors) {
       for (const error of errors) {
@@ -85,7 +61,7 @@ onMounted(() => {
       return;
     }
 
-    toast.success("An advisor accepted your contact");
+    toast.success("Un conseiller à accepter votre demande");
     store.setConversation(data.conversation);
   });
 
@@ -116,20 +92,10 @@ onMounted(() => {
 
 onUnmounted(() => {
   socket.off("conversations");
-  socket.off("contact:created");
-  socket.off("contact:pending");
   socket.off("contact:accepted");
   socket.off("contact:refused");
   socket.off("conversation:ended");
 });
-
-function contact() {
-  socket.emit("contact:create");
-}
-
-function toggleIsEndedConversationDisplayed() {
-  isEndedConversationDisplayed.value = !isEndedConversationDisplayed.value;
-}
 </script>
 
 <template>
@@ -162,7 +128,6 @@ function toggleIsEndedConversationDisplayed() {
           >Afficher les conversations terminées</label
         >
       </div>
-      <button @click="contact" v-if="!auth.isAdmin">Contact</button>
     </section>
   </div>
 </template>
