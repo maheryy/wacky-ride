@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, nextTick, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { TSocket } from "../types/socket.io";
 import Message from "../components/RoomMessage.vue";
 import { IRoom } from "../types/room";
@@ -42,17 +42,9 @@ const sendMessage = () => {
   socket.emit("room:message:send", roomId, message.value);
 
   message.value = "";
+
+  bottom.value?.scrollIntoView({ block: "end" });
 };
-
-/* Scroll to the bottom for each new message */
-watch(
-  () => messages.value.length,
-  async () => {
-    await nextTick();
-
-    bottom.value?.scrollIntoView({ block: "end" });
-  }
-);
 
 onMounted(() => {
   bottom.value?.scrollIntoView({ block: "end" });

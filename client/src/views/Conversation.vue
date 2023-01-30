@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted, nextTick, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { TSocket } from "../types/socket.io";
 import Message from "../components/ConversationMessage.vue";
 import { useAuthStore, useConversationStore } from "../stores";
@@ -46,17 +46,9 @@ const sendMessage = () => {
   socket.emit("conversation:message:send", conversationId, message.value);
 
   message.value = "";
+
+  bottom.value?.scrollIntoView({ block: "end" });
 };
-
-/* Scroll to the bottom for each new message */
-watch(
-  () => messages.value.length,
-  async () => {
-    await nextTick();
-
-    bottom.value?.scrollIntoView({ block: "end" });
-  }
-);
 
 onMounted(() => {
   bottom.value?.scrollIntoView({ block: "end" });
