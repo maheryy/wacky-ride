@@ -32,6 +32,7 @@ onMounted(() => {
   <div class="main-container">
     <section id="rooms">
       <header>
+        <RouterLink to="/community" class="back">ᐸ</RouterLink>
         <h3>Salons de discussion</h3>
       </header>
       <ul>
@@ -58,9 +59,18 @@ onMounted(() => {
 
   header {
     display: grid;
+    align-items: center;
     justify-content: center;
     background: black;
     color: white;
+    position: relative;
+    .back {
+      position: absolute;
+      left: 0.5rem;
+      font-size: 1rem;
+      text-decoration: none;
+      color: white;
+    }
 
     h3 {
       padding: 0.5rem;

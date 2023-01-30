@@ -37,18 +37,10 @@ const logout = () => {
           </li>
           <li>
             <RouterLink
-              :to="{ name: 'conversations' }"
+              :to="{ name: 'community' }"
               class="text-white hover:underline"
             >
-              Conversations
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              :to="{ name: 'rooms' }"
-              class="text-white hover:underline"
-            >
-              Rooms
+              Communauté
             </RouterLink>
           </li>
           <li v-if="auth.isAuthenticated && !auth.isAdmin">
@@ -96,3 +88,4 @@ const logout = () => {
     </div>
   </nav>
 </template>
+
