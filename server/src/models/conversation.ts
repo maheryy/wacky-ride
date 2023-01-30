@@ -142,11 +142,12 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
         users[1],
         faker.helpers.arrayElement(users),
       ][i % 3];
+
       const randomUser2 = faker.helpers.arrayElement(users);
 
       if (
         randomUser1.id == randomUser2.id ||
-        binds.includes(`${randomUser2.id}-${randomUser1.id}`)
+        binds.includes(`${randomUser1.id}-${randomUser2.id}`)
       ) {
         i--;
         continue;
@@ -156,6 +157,7 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
 
       await conversation.setSender(randomUser1);
       await conversation.setReceiver(randomUser2);
+
       binds.push(`${randomUser1.id}-${randomUser2.id}`);
     }
   };
