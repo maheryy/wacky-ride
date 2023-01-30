@@ -20,10 +20,10 @@ const logout = () => {
           <li>
             <RouterLink
               :to="{ name: 'home' }"
-              class="text-white hover:underline text-4xl"
+              class="text-white text-4xl"
             >
               <div class="flex flex-row items-center">
-                <img src="../../public/favicon.ico" style="width: 100px">
+                <img src="../../public/favicon.ico" style="width: 75px">
                 <p class="ml-5">Wacky Ride</p>
               </div>
             </RouterLink>
