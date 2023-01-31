@@ -1,5 +1,6 @@
 import { createMessage } from "../../../../services/message.service";
 import {
+  getRoomById,
   getRooms,
   getRoomWithMessages,
 } from "../../../../services/room.service";
@@ -15,6 +16,11 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
   async function onMessage(roomId: IRoom["id"], content: IMessage["content"]) {
     if (typeof roomId !== "number") {
       throw new WackyRideError("Identifiant de salon invalide");
+    }
+    const room = await getRoomById(roomId);
+
+    if (!room || room.deletedAt) {
+      throw new WackyRideError("Ce salon n'existe pas");
     }
 
     console.log("[socket.io]: room:message:send");
@@ -91,4 +97,3 @@ function registerRoomHandlers(io: TRoomIO, socket: TRoomSocket) {
 }
 
 export default registerRoomHandlers;
-
