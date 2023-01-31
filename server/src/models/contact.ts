@@ -67,8 +67,25 @@ const Contact = (sequelize: Sequelize): typeof ContactModel => {
     });
   };
 
+  ContactModel.seed = async (models: IListModel) => {
+    const conversations = await models.Conversation.findAll({
+      where: { isAdvise: true },
+    });
+
+    await Promise.all(
+      conversations.map(async (conversation) => {
+        const sender = await conversation.getSender();
+        const receiver = await conversation.getReceiver();
+
+        return ContactModel.create({
+          userId: !sender.isAdmin ? sender.id : receiver.id,
+          status: EContactStatus.accepted,
+        });
+      })
+    );
+  };
+
   return ContactModel;
 };
 
 export default Contact;
-
