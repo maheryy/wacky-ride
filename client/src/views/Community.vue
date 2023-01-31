@@ -95,7 +95,7 @@ function contact() {
         <li><RouterLink to="rooms">Salons de discussion</RouterLink></li>
         <li><RouterLink to="conversations">Conversations</RouterLink></li>
         <li @click="contact" v-if="!auth.isAdmin">
-          <span>Demander de l'aide</span>
+          <span>Contacter un conseiller</span>
         </li>
         <li>
           <RouterLink to="chatbot">Wacky bot</RouterLink>

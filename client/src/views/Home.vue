@@ -30,7 +30,7 @@
         </div>
       </div>
     </section>
-    <hr class="w-1/2 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+    <hr class="w-1/2 h-px my-8 bg-gray-200 border-0">
     <section class="mt-10 w-3/4 mb-10">
       <div class="flex justify-around">
         <div class="relative h-fit">
