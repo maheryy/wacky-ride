@@ -110,8 +110,11 @@ function endConversation() {
     <section id="conversation" class="community">
       <header>
         <RouterLink to="/conversations" class="back">ᐸ</RouterLink>
-        <h3>{{ conversation?.receiver.username }}</h3>
-        <button @click="endConversation" v-if="canEndConversation">
+        <h3>
+          {{ conversation?.receiver.username }}
+          {{ conversation?.receiver.isAdmin ? "(Conseiller)" : "" }}
+        </h3>
+        <button @click="endConversation" v-if="canEndConversation && !conversation?.receiver.isAdmin">
           Terminer
         </button>
       </header>
@@ -247,4 +250,3 @@ function endConversation() {
   }
 }
 </style>
-
