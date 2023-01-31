@@ -154,7 +154,9 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
         continue;
       }
 
-      const isAdvise = !randomUser1.isAdmin || !randomUser2.isAdmin;
+      const isAdvise =
+        (!randomUser1.isAdmin && randomUser2.isAdmin) ||
+        (!randomUser2.isAdmin && randomUser1.isAdmin);
       const conversation = await ConversationModel.create({
         isAdvise,
         endedAt: isAdvise ? faker.date.past() : null,
