@@ -147,14 +147,20 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
 
       if (
         randomUser1.id == randomUser2.id ||
-        binds.includes(`${randomUser1.id}-${randomUser2.id}`)
+        binds.includes(`${randomUser1.id}-${randomUser2.id}`) ||
+        binds.includes(`${randomUser2.id}-${randomUser1.id}`)
       ) {
         i--;
         continue;
       }
 
-      const conversation = await ConversationModel.create();
-
+      const isAdvise =
+        (!randomUser1.isAdmin && randomUser2.isAdmin) ||
+        (!randomUser2.isAdmin && randomUser1.isAdmin);
+      const conversation = await ConversationModel.create({
+        isAdvise,
+        endedAt: isAdvise ? faker.date.past() : null,
+      });
       await conversation.setSender(randomUser1);
       await conversation.setReceiver(randomUser2);
 
@@ -166,4 +172,3 @@ const Conversation = (sequelize: Sequelize): typeof ConversationModel => {
 };
 
 export default Conversation;
-

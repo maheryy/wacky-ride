@@ -31,9 +31,11 @@ dev:
 	@cd ./server && npm ci
 	@cd ./client && npm ci
 
+# Start postgres database
 start-db:
 	@docker compose up -d
 
+# Stop postgres database
 stop-db:
 	@docker compose down
 
