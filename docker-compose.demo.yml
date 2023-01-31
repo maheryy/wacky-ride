@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  client:
+    container_name: wacky-ride-client
+    build:
+      context: ./client
+      args:
+        - VITE_API_URL=http://localhost:3000
+    ports:
+      - "8080:80"
+
+  server:
+    container_name: wacky-ride-server
+    build:
+      context: ./server
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_URI=postgres://root:password@database/app
+      - JWT_SECRET=mySecret
+    depends_on:
+      - database
+
+  database:
+    container_name: wacky-ride-db
+    image: postgres:15-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - wacky-ride-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=app
+
+volumes:
+  wacky-ride-data: {}
