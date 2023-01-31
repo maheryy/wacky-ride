@@ -7,11 +7,12 @@
 
 ## Try it out
 
-Run the app for the first time with :
+Run the app for the first time using the following command
 
 ```
-make build start seed
+make build start seed  
 ```
+Wacky Ride will then be available at http://localhost:8080  
 
 Log in with the following credentials
 
@@ -61,18 +62,22 @@ Start a postgres container with the provided docker-compose file
 make start-db
 ```
 
-Populate the database with random data
-
-```
-make seed
-```
-
 Then you can start working on client or server separately
 
 ```
-cd client && npm run dev
+$ cd client 
+$ npm run dev
 ```
 
 ```
-cd server && npm run dev
+$ cd server
+$ npm run dev
+$ npm run seed
 ```
+
+
+## Contributors
+
+[@3kezoh](https://github.com/3kezoh)  
+[@Arthur-creator](https://github.com/Arthur-creator)  
+[@maheryy](https://github.com/maheryy)  
