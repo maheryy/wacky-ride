@@ -5,11 +5,10 @@ export interface IConversation {
   id: number;
   createdAt: Date;
   endedAt: string;
-  receiver: Pick<IUser, "id" | "username">;
-  sender: Pick<IUser, "id" | "username">;
+  receiver: Pick<IUser, "id" | "username" | "isAdmin">;
+  sender: Pick<IUser, "id" | "username" | "isAdmin">;
 }
 
 export type TConversationWithMessages = IConversation & {
   messages: TMessage[];
 };
-
